@@ -11,7 +11,7 @@ namespace ClassSchedule.Domain.Models
     /// План по определенной дисциплине на определенную неделю 
     /// определенного семестра определенного курса
     /// </summary>
-    [Table("DisciplineWeekPlan", Schema = "acpl")]
+    [Table("DisciplineWeekPlan", Schema = "plan")]
     public class DisciplineWeekPlan
     {
         public int DisciplineWeekPlanId { get; set; }

@@ -11,7 +11,7 @@ namespace ClassSchedule.Domain.Models
     /// Детализация графика учебного процесса 
     /// для конкретного курса на определенный семестр
     /// </summary>
-    [Table("SemesterSchedule", Schema = "acpl")]
+    [Table("SemesterSchedule", Schema = "plan")]
     public class SemesterSchedule
     {
         public int SemesterScheduleId { get; set; }

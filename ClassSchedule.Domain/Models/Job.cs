@@ -101,6 +101,11 @@ namespace ClassSchedule.Domain.Models
         /// Занятия
         /// </summary>
         public virtual ICollection<Lesson> Lessons { get; set; }
+
+        /// <summary>
+        /// Семестровые планы по дисциплинам
+        /// </summary>
+        public virtual ICollection<DisciplineSemesterPlan> DisciplineSemesterPlans { get; set; } 
     }
 
 }

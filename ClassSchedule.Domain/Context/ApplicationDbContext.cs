@@ -15,6 +15,7 @@ namespace ClassSchedule.Domain.Context
         public DbSet<CourseSchedule> CourseSchedules { get; set; }
         public DbSet<Discipline> Disciplines { get; set; }
         public DbSet<DisciplineSemesterPlan> DisciplineSemesterPlans { get; set; }
+        // public DbSet<DisciplineSemesterPlanJob> DisciplineSemesterPlanJobs { get; set; }
         public DbSet<DisciplineWeekPlan> DisciplineWeekPlans { get; set; }
         public DbSet<EducationDirection> EducationDirections { get; set; }
         public DbSet<EducationForm> EducationForms { get; set; }
@@ -56,6 +57,16 @@ namespace ClassSchedule.Domain.Context
 
             // Запрещаем создание имен таблиц в множественном числе в т.ч. при связи многие к многим
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+
+            modelBuilder.Entity<DisciplineSemesterPlan>()
+                .HasMany(p => p.Jobs)
+                .WithMany(s => s.DisciplineSemesterPlans)
+                .Map(c =>
+                    {
+                        c.MapLeftKey("DisciplineSemesterPlanId");
+                        c.MapRightKey("JobId");
+                        c.ToTable("DisciplineSemesterPlanJob");
+                    });
 
             base.OnModelCreating(modelBuilder);
         }

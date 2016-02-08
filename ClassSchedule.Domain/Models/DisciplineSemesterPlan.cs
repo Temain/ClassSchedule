@@ -10,7 +10,7 @@ namespace ClassSchedule.Domain.Models
     /// <summary>
     /// План по определенной дисциплине на определенный семестр определенного курса
     /// </summary>
-    [Table("DisciplineSemesterPlan", Schema = "acpl")]
+    [Table("DisciplineSemesterPlan", Schema = "plan")]
     public class DisciplineSemesterPlan
     {
         public int DisciplineSemesterPlanId { get; set; }
@@ -57,6 +57,11 @@ namespace ClassSchedule.Domain.Models
         /// <summary>
         /// Понедельно расписанное количество часов этой дисциплины
         /// </summary>
-        public ICollection<DisciplineWeekPlan> DisciplineWeekPlans { get; set; } 
+        public ICollection<DisciplineWeekPlan> DisciplineWeekPlans { get; set; }
+
+        /// <summary>
+        /// Возможные преподаватели
+        /// </summary>
+        public ICollection<Job> Jobs { get; set; } 
     }
 }

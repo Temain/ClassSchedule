@@ -81,6 +81,14 @@
     <Compile Include="Migrations\201602081856577_AddJobFieldToLessonTable.Designer.cs">
       <DependentUpon>201602081856577_AddJobFieldToLessonTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201602081904145_AddManyToManyJobsDisciplineSemesterPlans.cs" />
+    <Compile Include="Migrations\201602081904145_AddManyToManyJobsDisciplineSemesterPlans.Designer.cs">
+      <DependentUpon>201602081904145_AddManyToManyJobsDisciplineSemesterPlans.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602081936096_RemakeManyToManyDisciplineSemesterPlanJob.cs" />
+    <Compile Include="Migrations\201602081936096_RemakeManyToManyDisciplineSemesterPlanJob.Designer.cs">
+      <DependentUpon>201602081936096_RemakeManyToManyDisciplineSemesterPlanJob.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AcademicPlan.cs" />
     <Compile Include="Models\Auditorium.cs" />
@@ -88,6 +96,7 @@
     <Compile Include="Models\Chair.cs" />
     <Compile Include="Models\Course.cs" />
     <Compile Include="Models\Discipline.cs" />
+    <Compile Include="Models\DisciplineSemesterPlanJob.cs" />
     <Compile Include="Models\DisciplineWeekPlan.cs" />
     <Compile Include="Models\DisciplineSemesterPlan.cs" />
     <Compile Include="Models\Employee.cs" />
@@ -132,6 +141,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201602081856577_AddJobFieldToLessonTable.resx">
       <DependentUpon>201602081856577_AddJobFieldToLessonTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602081904145_AddManyToManyJobsDisciplineSemesterPlans.resx">
+      <DependentUpon>201602081904145_AddManyToManyJobsDisciplineSemesterPlans.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602081936096_RemakeManyToManyDisciplineSemesterPlanJob.resx">
+      <DependentUpon>201602081936096_RemakeManyToManyDisciplineSemesterPlanJob.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

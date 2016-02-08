@@ -10,7 +10,7 @@ namespace ClassSchedule.Domain.Models
     /// <summary>
     /// Учебный план
     /// </summary>
-    [Table("AcademicPlan", Schema = "acpl")]
+    [Table("AcademicPlan", Schema = "plan")]
     public class AcademicPlan
     {
         public int AcademicPlanId { get; set; }

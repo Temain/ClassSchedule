@@ -10,7 +10,7 @@ namespace ClassSchedule.Domain.Models
     /// <summary>
     /// Детализация графика учебного процесса по курсам
     /// </summary>
-    [Table("CourseSchedule", Schema = "acpl")]
+    [Table("CourseSchedule", Schema = "plan")]
     public class CourseSchedule
     {
         public int CourseScheduleId { get; set; }
