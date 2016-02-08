@@ -61,5 +61,10 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         public int ProgramOfEducationId { get; set; }
         public virtual ProgramOfEducation ProgramOfEducation { get; set; }
+
+        /// <summary>
+        /// Занятия
+        /// </summary>
+        public virtual ICollection<Lesson> Lessons { get; set; } 
     }
 }

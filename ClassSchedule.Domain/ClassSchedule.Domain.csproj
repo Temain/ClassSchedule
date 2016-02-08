@@ -69,6 +69,18 @@
     <Compile Include="Migrations\201602081400142_CreateRelations.Designer.cs">
       <DependentUpon>201602081400142_CreateRelations.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201602081808053_AddRelationLessonToGroup.cs" />
+    <Compile Include="Migrations\201602081808053_AddRelationLessonToGroup.Designer.cs">
+      <DependentUpon>201602081808053_AddRelationLessonToGroup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602081822200_AddDisciplineAndChairToLessonTable.cs" />
+    <Compile Include="Migrations\201602081822200_AddDisciplineAndChairToLessonTable.Designer.cs">
+      <DependentUpon>201602081822200_AddDisciplineAndChairToLessonTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602081856577_AddJobFieldToLessonTable.cs" />
+    <Compile Include="Migrations\201602081856577_AddJobFieldToLessonTable.Designer.cs">
+      <DependentUpon>201602081856577_AddJobFieldToLessonTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AcademicPlan.cs" />
     <Compile Include="Models\Auditorium.cs" />
@@ -111,6 +123,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201602081400142_CreateRelations.resx">
       <DependentUpon>201602081400142_CreateRelations.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602081808053_AddRelationLessonToGroup.resx">
+      <DependentUpon>201602081808053_AddRelationLessonToGroup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602081822200_AddDisciplineAndChairToLessonTable.resx">
+      <DependentUpon>201602081822200_AddDisciplineAndChairToLessonTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602081856577_AddJobFieldToLessonTable.resx">
+      <DependentUpon>201602081856577_AddJobFieldToLessonTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

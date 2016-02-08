@@ -33,10 +33,39 @@ namespace ClassSchedule.Domain.Models
         public int WeekNumber { get; set; }
 
         /// <summary>
+        /// Номер дня недели
+        /// </summary>
+        public int DayNumber { get; set; }
+
+        /// <summary>
+        /// Кафедра
+        /// </summary>
+        public int ChairId { get; set; }
+        public virtual Chair Chair { get; set; }
+
+        /// <summary>
+        /// Преподаватель
+        /// </summary>
+        public int JobId { get; set; }
+        public virtual Job Job { get; set; }
+
+        /// <summary>
+        /// Дисциплина
+        /// </summary>
+        public int DisciplineId { get; set; }
+        public virtual Discipline Discipline { get; set; }
+
+        /// <summary>
         /// Аудитория
         /// </summary>
         public int? AuditoriumId { get; set; }
         public virtual Auditorium Auditorium { get; set; }
+
+        /// <summary>
+        /// Группа
+        /// </summary>
+        public int GroupId { get; set; }
+        public virtual Group Group { get; set; }
 
         /// <summary>
         /// Тип занятия

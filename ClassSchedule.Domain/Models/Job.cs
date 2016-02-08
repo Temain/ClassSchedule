@@ -97,6 +97,10 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         public virtual ICollection<PersonVacation> PersonVacations { get; set; }
 
+        /// <summary>
+        /// Занятия
+        /// </summary>
+        public virtual ICollection<Lesson> Lessons { get; set; }
     }
 
 }

@@ -29,14 +29,6 @@ namespace ClassSchedule.Domain.Models
         public string DisciplineName { get; set; }
 
         /// <summary>
-        /// Привязка дисциплины к кафедре
-        /// </summary>
-        // todo: пересмотреть решение
-        //[ForeignKey("DisciplineDivisionBinding")]
-        //public int DisciplineDivisionBindingId { get; set; }
-        //public virtual DisciplineDivisionBinding DisciplineDivisionBinding { get; set; }
-
-        /// <summary>
         /// Отметка об удалении записи
         /// </summary>
         public bool? IsDeleted { get; set; }
@@ -45,5 +37,10 @@ namespace ClassSchedule.Domain.Models
         /// Дата последнего обновления записи
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Занятия
+        /// </summary>
+        public virtual ICollection<Lesson> Lessons { get; set; } 
     }
 }
