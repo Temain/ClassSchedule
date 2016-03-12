@@ -14,7 +14,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassSchedule.Domain", "Cla
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcademicPlan.Parser", "AcademicPlan.Parser\AcademicPlan.Parser.csproj", "{52507CDF-1B2E-4C01-982B-BFB450B406AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcademicPlan.Test", "AcademicPlan.Test\AcademicPlan.Test.csproj", "{7CB16557-EC96-4A65-8435-C53A74DB9C31}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcademicPlan.Test", "AcademicPlan.Test\AcademicPlan.Test.csproj", "{1B8B0D0E-457D-47EA-A3AF-7F0CC4D44CA5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{52507CDF-1B2E-4C01-982B-BFB450B406AE} = {52507CDF-1B2E-4C01-982B-BFB450B406AE}
 	EndProjectSection
@@ -41,10 +41,10 @@ Global
 		{52507CDF-1B2E-4C01-982B-BFB450B406AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52507CDF-1B2E-4C01-982B-BFB450B406AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52507CDF-1B2E-4C01-982B-BFB450B406AE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7CB16557-EC96-4A65-8435-C53A74DB9C31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7CB16557-EC96-4A65-8435-C53A74DB9C31}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7CB16557-EC96-4A65-8435-C53A74DB9C31}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7CB16557-EC96-4A65-8435-C53A74DB9C31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B8B0D0E-457D-47EA-A3AF-7F0CC4D44CA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B8B0D0E-457D-47EA-A3AF-7F0CC4D44CA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B8B0D0E-457D-47EA-A3AF-7F0CC4D44CA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B8B0D0E-457D-47EA-A3AF-7F0CC4D44CA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
