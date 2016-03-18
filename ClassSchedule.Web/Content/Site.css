@@ -18,9 +18,11 @@
 
 .navbar-brand {
     display: block;
-    height: 50px;
-    width: 189px;       
+    height: 60px;
+    width: 238px;       
     background: url('/Content/Images/logo.png') top left no-repeat;
+    margin-top: 10px;
+    margin-left: 15px;
 }
 
 .filter {
@@ -52,7 +54,7 @@ textarea {
     Страница редактирования расписания
 */
 .schedule-container {
-    margin-top: 90px;
+    margin-top: 135px;
 }
 
 .bordered-right {
@@ -72,20 +74,26 @@ textarea {
     background: white;
     font-weight: bold;
     font-size: 1.2em;
+    height: 25px;
     position: fixed;
     left: 0;
     right: 0;
-    top: 50px;
+    top: 85px;
 }
 
 .group-panel {
     background: white;
     border-top: 1px #ccc solid;
     font-weight: bold;
+    height: 25px;
     position: fixed;
     left: 0;
     right: 0;
-    top: 70px;
+    top: 110px;
+}
+
+.group-panel > div {
+    height: 25px;
 }
 
 .days-panel {
@@ -122,4 +130,70 @@ textarea {
     background: #F5F5F5;
     border-bottom: 1px #ccc solid;
     height: 5px;
+    margin-top: 2px;
 }
+
+.lesson-cell:hover {
+    /* border: 1px #000000 solid;*/
+    box-shadow: 0 0 5px rgba(0,0,0,0.5); 
+}
+
+
+/* Главная панель */
+.navbar {
+    height: 85px;
+  /*min-height: 80px;*/
+  /*border-radius: 0;*/
+}
+
+/*.navbar-default {
+  background-color: #98172c;
+  border-color: #98172c;
+}*/
+
+.fa {
+  /*color: #cccccc;*/
+}
+
+.fa-32px {
+    font-size: 32px;
+}
+
+/*.mojo-logo {
+  max-height: 60px;
+}*/
+
+#nav-print, #nav-microphone, #nav-video, #nav-exit {
+  /*display: block;*/
+}
+
+.navbar-nav > li > a {
+  /*padding-bottom: 20px;*/
+}
+
+.nav-icon-text {
+  /*display: block;*/
+  /*color: white;*/
+  /*font-size: 16px;*/
+  /*margin: 0;
+  padding: 0;*/
+  /*text-align: center;*/
+  /*font-family: Garamond Pro;*/
+}
+
+.navbar-nav > li > a:hover .nav-icon-text {
+  /*display: block;*/
+  /*color:darkorange;*/    
+}
+
+.nav > li > a {
+  /*padding: 10px 0;*/
+  
+}
+
+.nav > li {
+  /*padding-top: 10px;*/
+  /*min-height: 70px;
+  min-width: 65px;*/
+  text-align: center;
+}    

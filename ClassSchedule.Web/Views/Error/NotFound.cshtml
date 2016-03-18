@@ -1,0 +1,35 @@
+﻿@model HandleErrorInfo
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Расписание занятий | Ошибка";
+}
+
+<div class="container">
+
+    <div class="error-template">
+        <h1 class="text-danger">
+            Ошибка 404!
+        </h1>
+        <div>
+            Запрошенная Вами страница не найдена!
+        </div>
+        <div>
+            Обратитесь в службу поддержки по телефону 6-36.
+        </div>
+        <div class="error-actions">
+            <a href="/" class="btn btn-default btn-lg">
+                <span class="glyphicon glyphicon-home"></span>
+                Вернуться на главную страницу
+            </a>
+        </div>
+    </div>
+
+    @if (User.IsInRole("Admin"))
+    {
+        <blockquote>
+            <p>@Model.Exception.Message</p>
+            <footer>@Model.Exception.StackTrace</footer>
+        </blockquote>
+    }
+
+</div>

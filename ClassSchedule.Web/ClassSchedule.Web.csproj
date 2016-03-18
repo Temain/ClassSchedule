@@ -40,6 +40,50 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.RegistrationByConvention, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.2.3\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLog.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.Web.4.2\lib\net35\NLog.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLogEx, Version=1.0.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLogEx.1.0.11.0\lib\NLogEx.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLogEx.Mvc, Version=1.0.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLogEx.1.0.11.0\lib\NLogEx.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLogEx.Wcf, Version=1.0.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLogEx.1.0.11.0\lib\NLogEx.Wcf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLogEx.Web, Version=1.0.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLogEx.1.0.11.0\lib\NLogEx.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLogEx.WebApi, Version=1.0.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLogEx.1.0.11.0\lib\NLogEx.WebApi.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -92,6 +136,10 @@
     <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Mvc5, Version=1.2.3.0, Culture=neutral, PublicKeyToken=43da31bc42a85347, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.Mvc5.1.2.3\lib\net45\Unity.Mvc5.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
@@ -156,9 +204,13 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
+    <Compile Include="App_Start\NLogConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
@@ -172,6 +224,8 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\Images\bg_trans.png" />
     <Content Include="Content\Images\default_avatar.png" />
     <Content Include="Content\Images\divider_shadow_bottom.png" />
@@ -179,6 +233,8 @@
     <Content Include="Content\Images\favicon.ico" />
     <Content Include="Content\Images\footer-bg.png" />
     <Content Include="Content\Images\lawn.jpg" />
+    <Content Include="Content\Images\logo3.png" />
+    <Content Include="Content\Images\logo2.png" />
     <Content Include="Content\Images\logo.png" />
     <Content Include="Content\Images\logo_vert2.png" />
     <Content Include="Content\Images\logo_vert2_240.png" />
@@ -188,6 +244,7 @@
     <Content Include="Fonts\blisspro-bolditalic-webfont.svg" />
     <Content Include="Fonts\blisspro-italic-webfont.svg" />
     <Content Include="Fonts\blisspro-regular-webfont.svg" />
+    <Content Include="Fonts\fontawesome-webfont.svg" />
     <Content Include="Fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -205,6 +262,11 @@
     <Content Include="Fonts\blisspro-regular-webfont.eot" />
     <Content Include="Fonts\blisspro-regular-webfont.ttf" />
     <Content Include="Fonts\blisspro-regular-webfont.woff" />
+    <Content Include="Fonts\fontawesome-webfont.woff2" />
+    <Content Include="Fonts\fontawesome-webfont.woff" />
+    <Content Include="Fonts\fontawesome-webfont.ttf" />
+    <Content Include="Fonts\fontawesome-webfont.eot" />
+    <Content Include="Fonts\FontAwesome.otf" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -254,6 +316,9 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Home\Index1.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Error\BadRequest.cshtml" />
+    <Content Include="Views\Error\NotFound.cshtml" />
+    <Content Include="Views\Account\ChangePassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

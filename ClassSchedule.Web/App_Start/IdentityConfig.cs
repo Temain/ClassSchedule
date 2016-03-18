@@ -56,7 +56,7 @@ namespace ClassSchedule.Web
             manager.PasswordValidator = new PasswordValidator
             {
                 RequiredLength = 6,
-                RequireNonLetterOrDigit = true,
+                RequireNonLetterOrDigit = false,
                 RequireDigit = true,
                 RequireLowercase = true,
                 RequireUppercase = true,
@@ -86,6 +86,22 @@ namespace ClassSchedule.Web
                 manager.UserTokenProvider = 
                     new DataProtectorTokenProvider<ApplicationUser>(dataProtectionProvider.Create("ASP.NET Identity"));
             }
+            return manager;
+        }
+    }
+
+    // Настройка диспетчера ролей приложения
+    public class ApplicationRoleManager : RoleManager<ApplicationRole>
+    {
+        public ApplicationRoleManager(IRoleStore<ApplicationRole, string> roleStore)
+            : base(roleStore) { }
+
+        public static ApplicationRoleManager Create(
+            IdentityFactoryOptions<ApplicationRoleManager> options,
+            IOwinContext context)
+        {
+            var manager = new ApplicationRoleManager(
+                new RoleStore<ApplicationRole>(context.Get<ApplicationDbContext>()));
             return manager;
         }
     }

@@ -49,6 +49,9 @@ namespace ClassSchedule.Web.Models
     public class LoginViewModel
     {
         [Required]
+        [Display(Name = "Логин")]
+        public string UserName { get; set; }
+
         [Display(Name = "Адрес электронной почты")]
         [EmailAddress]
         public string Email { get; set; }
@@ -108,5 +111,26 @@ namespace ClassSchedule.Web.Models
         [EmailAddress]
         [Display(Name = "Почта")]
         public string Email { get; set; }
+    }
+
+    public class ChangePasswordBindingModel
+    {
+        [Required]
+        [DataType(DataType.Password)]
+        [Display(Name = "Имя пользователя")]
+        public string UserId { get; set; }
+
+        [Required]
+        [StringLength(100, ErrorMessage = "{0} должен быть длинной не менее {2} символов.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Новый пароль")]
+        public string NewPassword { get; set; }
+
+        [Required]
+        [DataType(DataType.Password)]
+        [Display(Name = "Подтверждение нового пароля")]
+        [Compare("NewPassword", ErrorMessage = "Новый пароль и его подтверждение не совпадают.")]
+        public string ConfirmPassword { get; set; }
+
     }
 }

@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using ClassSchedule.Domain.DataAccess.Interfaces;
 
 namespace ClassSchedule.Web.Controllers
 {
-    public class HomeController : Controller
+    [Authorize]
+    public class HomeController : BaseController
     {
+        public HomeController(IUnitOfWork unitOfWork)
+            : base(unitOfWork)
+        {
+        }
+
         public ActionResult Index()
         {
             return View();
