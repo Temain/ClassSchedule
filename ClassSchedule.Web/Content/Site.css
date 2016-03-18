@@ -1,6 +1,19 @@
 ﻿body {
-    padding-top: 50px;
-    padding-bottom: 20px;
+    /*padding-top: 50px;
+    padding-bottom: 20px;*/
+
+    font-family: 'BlissPro', Arial, sans-serif;
+}
+
+@font-face {
+    font-family: 'BlissPro';
+    src: url('../../../Fonts/blisspro-regular-webfont.eot');
+    src: url('../../../Fonts/blisspro-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../../../Fonts/blisspro-regular-webfont.woff') format('woff'),
+         url('../../../Fonts/blisspro-regular-webfont.ttf') format('truetype'),
+         url('../../../Fonts/blisspro-regular-webfont.svg#BlissPro') format('svg');
+    font-style: normal;
+    font-weight: normal;
 }
 
 /* Set padding to keep content from hitting the edges */
@@ -21,4 +34,80 @@ input,
 select,
 textarea {
     max-width: 280px;
+}
+
+/* 
+    Страница редактирования расписания
+*/
+.schedule-container {
+    margin-top: 90px;
+}
+
+.bordered-right {
+    border-right: 1px #ccc solid;
+}
+
+.bordered-bottom {
+    border-bottom: 1px #ccc solid;
+}
+
+.bordered-rb {
+    border-right: 1px #ccc solid;
+    border-bottom: 1px #ccc solid;
+}
+
+.week-panel {
+    background: white;
+    font-weight: bold;
+    font-size: 1.2em;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 50px;
+}
+
+.group-panel {
+    background: white;
+    border-top: 1px #ccc solid;
+    font-weight: bold;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 70px;
+}
+
+.days-panel {
+    font-weight: bold;
+}
+
+/* Вертикальное выравнивание текста */
+.days-panel > div {
+    line-height: 300px;
+}
+
+.days-panel > div > span {
+  display: inline-block; 
+  vertical-align: middle;
+  line-height: normal;  
+}
+
+.lessons-number-panel {
+    font-size: 1.1em;
+}
+
+.lessons-number-panel > div {
+    line-height: 50px;
+}
+
+
+.lessons-number-panel > div > span {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: normal;  
+}
+
+.day-separator {
+    background: #F5F5F5;
+    border-bottom: 1px #ccc solid;
+    height: 5px;
 }

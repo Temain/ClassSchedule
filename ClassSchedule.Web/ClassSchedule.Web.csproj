@@ -173,11 +173,27 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="favicon.ico" />
+    <Content Include="Fonts\blisspro-bold-webfont.svg" />
+    <Content Include="Fonts\blisspro-bolditalic-webfont.svg" />
+    <Content Include="Fonts\blisspro-italic-webfont.svg" />
+    <Content Include="Fonts\blisspro-regular-webfont.svg" />
     <Content Include="Fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Fonts\blisspro-bold-webfont.eot" />
+    <Content Include="Fonts\blisspro-bold-webfont.ttf" />
+    <Content Include="Fonts\blisspro-bold-webfont.woff" />
+    <Content Include="Fonts\blisspro-bolditalic-webfont.eot" />
+    <Content Include="Fonts\blisspro-bolditalic-webfont.ttf" />
+    <Content Include="Fonts\blisspro-bolditalic-webfont.woff" />
+    <Content Include="Fonts\blisspro-italic-webfont.eot" />
+    <Content Include="Fonts\blisspro-italic-webfont.ttf" />
+    <Content Include="Fonts\blisspro-italic-webfont.woff" />
+    <Content Include="Fonts\blisspro-regular-webfont.eot" />
+    <Content Include="Fonts\blisspro-regular-webfont.ttf" />
+    <Content Include="Fonts\blisspro-regular-webfont.woff" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -203,7 +219,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\Index_Old.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
@@ -225,6 +241,8 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Home\Index1.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
