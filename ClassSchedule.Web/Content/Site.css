@@ -16,6 +16,18 @@
     font-weight: normal;
 }
 
+.navbar-brand {
+    display: block;
+    height: 50px;
+    width: 189px;       
+    background: url('/Content/Images/logo.png') top left no-repeat;
+}
+
+.filter {
+  -webkit-filter: brightness(0) invert(1);
+  filter: brightness(0) invert(1);
+}
+
 /* Set padding to keep content from hitting the edges */
 .body-content {
     padding-left: 15px;

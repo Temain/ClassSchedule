@@ -172,6 +172,17 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\bg_trans.png" />
+    <Content Include="Content\Images\default_avatar.png" />
+    <Content Include="Content\Images\divider_shadow_bottom.png" />
+    <Content Include="Content\Images\divider_shadow_top.png" />
+    <Content Include="Content\Images\favicon.ico" />
+    <Content Include="Content\Images\footer-bg.png" />
+    <Content Include="Content\Images\lawn.jpg" />
+    <Content Include="Content\Images\logo.png" />
+    <Content Include="Content\Images\logo_vert2.png" />
+    <Content Include="Content\Images\logo_vert2_240.png" />
+    <Content Include="Content\Images\pdf_icon.png" />
     <Content Include="favicon.ico" />
     <Content Include="Fonts\blisspro-bold-webfont.svg" />
     <Content Include="Fonts\blisspro-bolditalic-webfont.svg" />
