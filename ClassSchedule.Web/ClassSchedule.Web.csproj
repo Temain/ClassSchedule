@@ -216,6 +216,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\Helpers.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -226,11 +227,11 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\Images\favicon.ico" />
     <Content Include="Content\Images\bg_trans.png" />
     <Content Include="Content\Images\default_avatar.png" />
     <Content Include="Content\Images\divider_shadow_bottom.png" />
     <Content Include="Content\Images\divider_shadow_top.png" />
-    <Content Include="Content\Images\favicon.ico" />
     <Content Include="Content\Images\footer-bg.png" />
     <Content Include="Content\Images\lawn.jpg" />
     <Content Include="Content\Images\logo3.png" />

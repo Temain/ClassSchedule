@@ -54,7 +54,7 @@ textarea {
     Страница редактирования расписания
 */
 .schedule-container {
-    margin-top: 135px;
+    margin-top: 137px;
 }
 
 .bordered-right {
@@ -71,7 +71,8 @@ textarea {
 }
 
 .week-panel {
-    background: white;
+    background-color: #2E7F3E;
+    color: white;
     font-weight: bold;
     font-size: 1.2em;
     height: 25px;
@@ -82,6 +83,7 @@ textarea {
 }
 
 .group-panel {
+    box-shadow: 0 5px 5px -5px #333;
     background: white;
     border-top: 1px #ccc solid;
     font-weight: bold;
@@ -112,19 +114,28 @@ textarea {
 }
 
 .lessons-number-panel {
-    font-size: 1.1em;
+    /*font-size: 1.1em;*/
+}
+
+.lessons-number-panel > div > span {
+    font-size: 15px;
+}
+
+.lessons-number-panel > div > p {
+    color: #999999;
+    font-size: 10px;
 }
 
 .lessons-number-panel > div {
-    line-height: 50px;
+    /*line-height: 50px;*/
 }
 
 
-.lessons-number-panel > div > span {
+/*.lessons-number-panel > div > span {
     display: inline-block;
     vertical-align: middle;
     line-height: normal;  
-}
+}*/
 
 .day-separator {
     background: #F5F5F5;
@@ -132,6 +143,33 @@ textarea {
     height: 5px;
     margin-top: 2px;
 }
+
+.lesson-cell {
+    padding: 0 5px;
+}
+
+.lesson-cell > .lesson-cell-part {
+    /*height: 15px;*/
+    line-height: 15px;
+}
+
+.lesson-cell > .lesson-cell-part > .discipline {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.lesson-cell > .lesson-cell-part > .teacher {
+    font-size: 12px;
+}
+
+.lesson-cell > .lesson-cell-part > .auditorium {
+    font-size: 12px;
+}
+
+.red {
+    color: rgb(255, 65, 0);
+}
+
 
 .lesson-cell > .actions {
     /*display: none;*/
@@ -151,7 +189,7 @@ textarea {
 
 .lesson-cell:hover {
     /* border: 1px #000000 solid;*/
-    box-shadow: 0 0 3px rgba(0,0,0,0.5);
+    box-shadow: 0 0 4px #2E7F3E;
     /*border: 1px solid #df691a;
     box-shadow: 0 0 2px rgb(255, 92, 2);
     -webkit-box-shadow: 0 0 2px rgb(255, 92, 2);

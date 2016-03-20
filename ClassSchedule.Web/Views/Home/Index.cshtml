@@ -1,23 +1,23 @@
 ﻿@using System.Globalization
+@using ClassSchedule.Web.Helpers
 @{
     ViewBag.Title = "Расписание занятий";
 
     string[] groups = new[] { "ПИ0904", "ПИ0905", "ИТ0904" };
-    
+
     int numberOfDays = 6;
     int numberOfLessons = 6;
     int numberOfGroups = groups.Length;
-    
-    int totalWidthOfColumns  = 100;
-    int widthOfInfoColumn  = 3;
+
+    int totalWidthOfColumns = 100;
+    int widthOfInfoColumn = 3;
     string widthOfGroupColumn = Math.Round((totalWidthOfColumns - widthOfInfoColumn * 2f) / numberOfGroups, 2).ToString(CultureInfo.GetCultureInfo("en-US"));
 }
 
 <div class="schedule-container">
-    <div class="navbar navbar-inverse navbar-fixed-top">    
+    <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            </button>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"></button>
             <a class="navbar-brand filter" href="@Url.Action("Index", "Home")"></a>
         </div>
         <div class="navbar-collapse collapse">
@@ -80,22 +80,22 @@
 
                     <ul class="nav navbar-nav navbar-right">
                         @*<li>
-                            <span class="navbar-text"><span>Здравствуйте,</span> <span class="glyphicon glyphicon-user"></span> <span>@(ViewBag.UserName + "!")</span></span>
-                        </li>*@
+                                <span class="navbar-text"><span>Здравствуйте,</span> <span class="glyphicon glyphicon-user"></span> <span>@(ViewBag.UserName + "!")</span></span>
+                            </li>*@
 
                         @*<li><a href="javascript:document.getElementById('logoutForm').submit()">Выйти</a></li>*@
                         @*<li>
-                            <a href="#">
-                                <i class="fa fa-user fa-32px"></i><br>
-                                <span class="nav-icon-text">Здравствуйте, @(ViewBag.UserName + "!")</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="javascript:document.getElementById('logoutForm').submit()">
-                                <i class="fa fa-power-off fa-32px"></i><br>
-                                <span class="nav-icon-text">Выйти</span>
-                            </a>
-                        </li>*@
+                                <a href="#">
+                                    <i class="fa fa-user fa-32px"></i><br>
+                                    <span class="nav-icon-text">Здравствуйте, @(ViewBag.UserName + "!")</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:document.getElementById('logoutForm').submit()">
+                                    <i class="fa fa-power-off fa-32px"></i><br>
+                                    <span class="nav-icon-text">Выйти</span>
+                                </a>
+                            </li>*@
 
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -113,7 +113,7 @@
     </div>
 
     <div class="week-panel text-center">
-        Первая неделя
+        Первая [16] неделя (21.03 - 26.03)
     </div>
 
     <div class="group-panel">
@@ -159,10 +159,10 @@
             for (int j = 0; j < numberOfLessons; j++)
             {
                 <div class="bordered-rb text-center" style="height: 50px;">
-                    <span>@(j + 1)</span>
+                    <span>@(j + 1)</span> <br> <p>@Helpers.TimeOfLesson(i, j)</p>
                 </div>
             }
-            
+
             <div class="day-separator"></div>
         }
     </div>
@@ -174,22 +174,31 @@
             {
                 <div class="bordered-rb lesson-cell" style="height: 50px"></div>
                 <div class="bordered-rb lesson-cell" style="height: 50px">
-                    <div class="actions">
-                        <a href="#">
-                            <i class="fa fa-pencil text-success"></i><span> Редактировать</span>
-                        </a>
-                        <br/>
-                        <a href="#">
-                            <i class="fa fa-trash text-danger"></i><span> Удалить</span>
-                        </a>
+                    @*<div class="actions">
+                            <a href="#">
+                                <i class="fa fa-pencil text-success"></i><span> Редактировать</span>
+                            </a>
+                            <br/>
+                            <a href="#">
+                                <i class="fa fa-trash text-danger"></i><span> Удалить</span>
+                            </a>
+                        </div>*@
+                </div>
+                <div class="bordered-rb lesson-cell" style="height: 50px">
+                    <div class="lesson-cell-part">
+                        <span class="discipline red">Автоматизация систем управления sffgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgfd</span> - <span class="teacher">Потешин И.И.</span><span class="auditorium">(220гл.)</span>,
+                        <span class="teacher">Гормыко Д.В.</span><span class="auditorium">(014зоо.)</span><br/>
+                    </div>
+                    <div class="lesson-cell-part">
+                        <span class="discipline">Автоматизация систем управления</span> - <span class="teacher">Потешин И.И.</span><span class="auditorium">(220гл.)</span>,
+                        <span class="teacher">Гормыко Д.В.</span><span class="auditorium">(014зоо.)</span><br/>
                     </div>
                 </div>
                 <div class="bordered-rb lesson-cell" style="height: 50px"></div>
                 <div class="bordered-rb lesson-cell" style="height: 50px"></div>
                 <div class="bordered-rb lesson-cell" style="height: 50px"></div>
-                <div class="bordered-rb lesson-cell" style="height: 50px"></div>
                 <div class="day-separator"></div>
-            }           
+            }
         </div>
     }
 </div>
