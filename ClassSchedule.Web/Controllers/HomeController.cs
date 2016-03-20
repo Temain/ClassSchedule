@@ -4,6 +4,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using ClassSchedule.Domain.DataAccess.Interfaces;
+using ClassSchedule.Domain.Models;
+using ClassSchedule.Web.Models;
+using Microsoft.AspNet.Identity;
 
 namespace ClassSchedule.Web.Controllers
 {
@@ -20,18 +23,34 @@ namespace ClassSchedule.Web.Controllers
             return View();
         }
 
-        public ActionResult About()
+        [HttpGet]
+        public ActionResult SelectFlow()
         {
-            ViewBag.Message = "Your application description page.";
+            var faculties = UnitOfWork.Repository<Faculty>()
+                .GetQ(f => f.IsDeleted != true, orderBy: o => o.OrderBy(n => n.DivisionName))
+                .Select(x => new {x.FacultyId, FacultyName = x.DivisionName});
+            ViewBag.Faculties = new SelectList(faculties, "FacultyId", "FacultyName");
 
             return View();
         }
 
-        public ActionResult Contact()
+        [HttpPost]
+        public ActionResult SelectFlow(SelectFlowViewModel viewModel)
         {
-            ViewBag.Message = "Your contact page.";
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
 
-            return View();
+            if (viewModel.CourseId != null || viewModel.GroupId != null || viewModel.FlowId != null)
+            {
+                UserProfile.CourseId = viewModel.CourseId;
+                UserProfile.GroupId = viewModel.GroupId;
+
+                UserManager.Update(UserProfile);
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }

@@ -62,5 +62,10 @@ namespace ClassSchedule.Domain.Models
         /// Привязка групп к курсу
         /// </summary>
         public virtual ICollection<Group> Groups { get; set; }
+
+        /// <summary>
+        /// Пользователи, которые редактируют расписание для этого курса
+        /// </summary>
+        public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; }
     }
 }

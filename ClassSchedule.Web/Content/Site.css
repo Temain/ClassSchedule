@@ -1,9 +1,7 @@
-﻿body {
-    /*padding-top: 50px;
-    padding-bottom: 20px;*/
-
-    font-family: 'BlissPro', Arial, sans-serif;
-}
+﻿/*body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}*/
 
 @font-face {
     font-family: 'BlissPro';
@@ -15,6 +13,28 @@
     font-style: normal;
     font-weight: normal;
 }
+
+body, h1, h2, h3, h4, h5, h6 { font-family: 'BlissPro', Arial, sans-serif; }
+
+.wrap { margin-bottom: 36px; }
+
+.float-left { float: left; }
+
+.mrgtop12 { margin-top: 12px; }
+
+.mrgtop24 { margin-top: 24px; }
+
+.mrgtop36 { margin-top: 36px; }
+
+.mrgbtm12 { margin-bottom: 12px; }
+
+.mrgbtm24 { margin-bottom: 24px; }
+
+.mrgbtm36 { margin-bottom: 36px; }
+
+.full-width { width: 100%; }
+
+.float-right { float: right; }
 
 .navbar-brand {
     display: block;
@@ -44,11 +64,11 @@
 }
 
 /* Set width on the form input elements since they're 100% wide by default */
-input,
+/*input,
 select,
 textarea {
     max-width: 280px;
-}
+}*/
 
 /* 
     Страница редактирования расписания
@@ -74,7 +94,7 @@ textarea {
     background-color: #2E7F3E;
     color: white;
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 1.1em;
     height: 25px;
     position: fixed;
     left: 0;
@@ -83,7 +103,7 @@ textarea {
 }
 
 .group-panel {
-    box-shadow: 0 5px 5px -5px #333;
+    /* box-shadow: 0 5px 5px -5px #333;*/
     background: white;
     border-top: 1px #ccc solid;
     font-weight: bold;
@@ -267,4 +287,53 @@ textarea {
 
 .dropdown-menu {
     text-align: left;
+}
+
+
+
+/*Error page*/
+
+.error-template {
+    padding: 40px 15px;
+    text-align: center;
+}
+
+.error-actions {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.error-actions .btn { margin-right: 10px; }
+
+a.disabled-link,
+a.disabled-link:visited ,
+a.disabled-link:active,
+a.disabled-link:hover {
+    background-color: #E2E2E2 !important;
+    color: #615F5F !important;
+}
+
+.panel-subtitle {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.font-lg {
+    font-size: 1.1em;
+}
+
+.table tbody>tr>td{
+    vertical-align: middle;
+}
+
+.pagination {
+    margin: 0 !important;
+}
+
+
+.icon-flipped {
+transform: scaleX(-1);
+-moz-transform: scaleX(-1);
+-webkit-transform: scaleX(-1);
+-ms-transform: scaleX(-1);
 }

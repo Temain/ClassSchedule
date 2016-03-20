@@ -4,6 +4,32 @@
     ViewBag.Title = "Ошибка";
 }
 
-<h1 class="text-danger">Ошибка.</h1>
-<h2 class="text-danger">При обработке запроса произошла ошибка.</h2>
+<div class="container">
 
+    <div class="error-template">
+        <h1 class="text-danger">
+            Ошибка
+        </h1>
+        <div>
+            При обработке запроса произошла ошибка.
+        </div>
+        <div>
+            Обратитесь в службу поддержки по телефону 6-36.
+        </div>
+        <div class="error-actions">
+            <a href="/" class="btn btn-default btn-lg">
+                <span class="glyphicon glyphicon-home"></span>
+                Вернуться на главную страницу
+            </a>
+        </div>
+    </div>
+
+    @if (User.IsInRole("Administrator"))
+    {
+        <blockquote>
+            <p>@Model.Exception.Message</p>
+            <footer>@Model.Exception.StackTrace</footer>
+        </blockquote>
+    }
+
+</div>

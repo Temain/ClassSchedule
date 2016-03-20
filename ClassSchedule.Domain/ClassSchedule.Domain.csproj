@@ -89,6 +89,10 @@
     <Compile Include="Migrations\201602081936096_RemakeManyToManyDisciplineSemesterPlanJob.Designer.cs">
       <DependentUpon>201602081936096_RemakeManyToManyDisciplineSemesterPlanJob.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603201815070_AddCourseAndGroupFieldToApplicationUser.cs" />
+    <Compile Include="Migrations\201603201815070_AddCourseAndGroupFieldToApplicationUser.Designer.cs">
+      <DependentUpon>201603201815070_AddCourseAndGroupFieldToApplicationUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AcademicPlan.cs" />
     <Compile Include="Models\Auditorium.cs" />
@@ -147,6 +151,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201602081936096_RemakeManyToManyDisciplineSemesterPlanJob.resx">
       <DependentUpon>201602081936096_RemakeManyToManyDisciplineSemesterPlanJob.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603201815070_AddCourseAndGroupFieldToApplicationUser.resx">
+      <DependentUpon>201603201815070_AddCourseAndGroupFieldToApplicationUser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

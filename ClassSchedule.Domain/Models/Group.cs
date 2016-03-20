@@ -65,6 +65,11 @@ namespace ClassSchedule.Domain.Models
         /// <summary>
         /// Занятия
         /// </summary>
-        public virtual ICollection<Lesson> Lessons { get; set; } 
+        public virtual ICollection<Lesson> Lessons { get; set; }
+
+        /// <summary>
+        /// Пользователи, которые редактируют расписание для этой группы
+        /// </summary>
+        public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; }
     }
 }

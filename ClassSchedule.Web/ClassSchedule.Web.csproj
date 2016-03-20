@@ -210,6 +210,7 @@
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\DictionaryController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -219,6 +220,7 @@
     <Compile Include="Helpers\Helpers.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\SelectFlowViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -227,11 +229,11 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
-    <Content Include="Content\Images\favicon.ico" />
     <Content Include="Content\Images\bg_trans.png" />
     <Content Include="Content\Images\default_avatar.png" />
     <Content Include="Content\Images\divider_shadow_bottom.png" />
     <Content Include="Content\Images\divider_shadow_top.png" />
+    <Content Include="Content\Images\favicon.ico" />
     <Content Include="Content\Images\footer-bg.png" />
     <Content Include="Content\Images\lawn.jpg" />
     <Content Include="Content\Images\logo3.png" />
@@ -290,7 +292,6 @@
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
@@ -321,9 +322,13 @@
     <Content Include="Views\Error\BadRequest.cshtml" />
     <Content Include="Views\Error\NotFound.cshtml" />
     <Content Include="Views\Account\ChangePassword.cshtml" />
+    <Content Include="Views\Home\_Navbar.cshtml" />
+    <Content Include="Views\Home\SelectFlow.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Dictionary\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Fonts\glyphicons-halflings-regular.woff" />

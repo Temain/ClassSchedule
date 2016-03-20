@@ -1,0 +1,96 @@
+﻿<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"></button>
+        <a class="navbar-brand filter" href="@Url.Action("Index", "Home")"></a>
+    </div>
+    <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+            <li>
+                <a href="@Url.Action("SelectFlow")">
+                    <i class="fa fa-users fa-32px"></i><br>
+                    <span class="nav-icon-text">Выбрать поток</span>
+                </a>
+            </li>
+
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-print fa-32px"></i><br>
+                    <span class="nav-icon-text"></span>Печать расписания<span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="@Url.Action("Index", "Home")"> Печать расписания потока</a></li>
+                    <li><a href="@Url.Action("Index", "Home")"> Печать расписания кафедры</a></li>
+                </ul>
+            </li>
+
+            <li class="navbar-divider"></li>
+
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-university fa-32px"></i><br>
+                    <span class="nav-icon-text"></span>Аудитории <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="@Url.Action("Index", "Home")"> Просмотр расписания аудитории</a></li>
+                    <li><a href="@Url.Action("Index", "Home")"> Поиск свободных аудиторий</a></li>
+                </ul>
+            </li>
+
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-graduation-cap fa-32px"></i><br>
+                    <span class="nav-icon-text"></span>Преподаватели <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="@Url.Action("Index", "Home")"> Просмотр расписания преподавателя</a></li>
+                </ul>
+            </li>
+
+            <li class="navbar-divider"></li>
+
+            <li>
+                <a href="#">
+                    <i class="fa fa-cloud-upload fa-32px"></i><br>
+                    <span class="nav-icon-text">Обновить на сайте</span>
+                </a>
+            </li>
+        </ul>
+        @if (Request.IsAuthenticated)
+        {
+            using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <ul class="nav navbar-nav navbar-right">
+                    @*<li>
+                            <span class="navbar-text"><span>Здравствуйте,</span> <span class="glyphicon glyphicon-user"></span> <span>@(ViewBag.UserName + "!")</span></span>
+                        </li>*@
+
+                    @*<li><a href="javascript:document.getElementById('logoutForm').submit()">Выйти</a></li>*@
+                    @*<li>
+                            <a href="#">
+                                <i class="fa fa-user fa-32px"></i><br>
+                                <span class="nav-icon-text">Здравствуйте, @(ViewBag.UserName + "!")</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:document.getElementById('logoutForm').submit()">
+                                <i class="fa fa-power-off fa-32px"></i><br>
+                                <span class="nav-icon-text">Выйти</span>
+                            </a>
+                        </li>*@
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-user fa-32px"></i><br>
+                            <span class="nav-icon-text"></span>Здравствуйте, @(ViewBag.UserName + "!") <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="javascript:document.getElementById('logoutForm').submit()"><span class="fa fa-power-off"></span> Выйти</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            }
+        }
+    </div>
+</div>
