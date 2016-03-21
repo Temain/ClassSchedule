@@ -17,9 +17,25 @@ namespace ClassSchedule.Domain.Models
             return userIdentity;
         }
 
+        /// <summary>
+        /// Фамилия
+        /// </summary>
         public string LastName { get; set; }
+
+        /// <summary>
+        /// Имя
+        /// </summary>
         public string FirstName { get; set; }
+
+        /// <summary>
+        /// Отчество
+        /// </summary>
         public string MiddleName { get; set; }
+
+        /// <summary>
+        /// Номер редактируемой недели (по порядку)
+        /// </summary>
+        public int WeekNumber { get; set; }
 
         /// <summary>
         /// Курс для которого редактируется расписание
@@ -33,7 +49,11 @@ namespace ClassSchedule.Domain.Models
         public int? GroupId { get; set; }
         public virtual Group Group { get; set; }
 
-        // public bool CanCreateAndEdit { get; set; }
+        /// <summary>
+        /// Учебный год
+        /// </summary>
+        public int? EducationYearId { get; set; }
+        public virtual EducationYear EducationYear { get; set; }
 
         /// <summary>
         /// Инициалы и фамилия: Иванов И.И.

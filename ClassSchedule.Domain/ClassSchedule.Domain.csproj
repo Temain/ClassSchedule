@@ -93,6 +93,18 @@
     <Compile Include="Migrations\201603201815070_AddCourseAndGroupFieldToApplicationUser.Designer.cs">
       <DependentUpon>201603201815070_AddCourseAndGroupFieldToApplicationUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603210833256_AddWeekNumberFieldToApplicationUser.cs" />
+    <Compile Include="Migrations\201603210833256_AddWeekNumberFieldToApplicationUser.Designer.cs">
+      <DependentUpon>201603210833256_AddWeekNumberFieldToApplicationUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603210835433_MakeWeekNumberFieldRequired.cs" />
+    <Compile Include="Migrations\201603210835433_MakeWeekNumberFieldRequired.Designer.cs">
+      <DependentUpon>201603210835433_MakeWeekNumberFieldRequired.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603210845578_AddEducationYearTable.cs" />
+    <Compile Include="Migrations\201603210845578_AddEducationYearTable.Designer.cs">
+      <DependentUpon>201603210845578_AddEducationYearTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AcademicPlan.cs" />
     <Compile Include="Models\Auditorium.cs" />
@@ -103,6 +115,7 @@
     <Compile Include="Models\DisciplineSemesterPlanJob.cs" />
     <Compile Include="Models\DisciplineWeekPlan.cs" />
     <Compile Include="Models\DisciplineSemesterPlan.cs" />
+    <Compile Include="Models\EducationYear.cs" />
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\EmploymentType.cs" />
     <Compile Include="Models\Housing.cs" />
@@ -154,6 +167,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603201815070_AddCourseAndGroupFieldToApplicationUser.resx">
       <DependentUpon>201603201815070_AddCourseAndGroupFieldToApplicationUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603210833256_AddWeekNumberFieldToApplicationUser.resx">
+      <DependentUpon>201603210833256_AddWeekNumberFieldToApplicationUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603210835433_MakeWeekNumberFieldRequired.resx">
+      <DependentUpon>201603210835433_MakeWeekNumberFieldRequired.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603210845578_AddEducationYearTable.resx">
+      <DependentUpon>201603210845578_AddEducationYearTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

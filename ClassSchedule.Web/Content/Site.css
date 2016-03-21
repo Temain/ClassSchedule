@@ -70,9 +70,8 @@ textarea {
     max-width: 280px;
 }*/
 
-/* 
-    Страница редактирования расписания
-*/
+/* Страница редактирования расписания
+-------------------------------------------*/
 .schedule-container {
     margin-top: 137px;
 }
@@ -122,7 +121,8 @@ textarea {
     font-weight: bold;
 }
 
-/* Вертикальное выравнивание текста */
+/* Вертикальное выравнивание текста 
+--------------------------------------------*/
 .days-panel > div {
     line-height: 300px;
 }
@@ -190,7 +190,6 @@ textarea {
     color: rgb(255, 65, 0);
 }
 
-
 .lesson-cell > .actions {
     /*display: none;*/
     /*padding-top: 3px;*/
@@ -217,9 +216,8 @@ textarea {
 }
 
 
-
-
-/* Главная панель */
+/* Главная панель 
+--------------------------------------------------*/
 .navbar {
     height: 85px;
   /*min-height: 80px;*/
@@ -291,7 +289,8 @@ textarea {
 
 
 
-/*Error page*/
+/* Страшица ошибки
+--------------------------------------------------*/
 
 .error-template {
     padding: 40px 15px;
@@ -330,10 +329,29 @@ a.disabled-link:hover {
     margin: 0 !important;
 }
 
-
 .icon-flipped {
 transform: scaleX(-1);
 -moz-transform: scaleX(-1);
 -webkit-transform: scaleX(-1);
 -ms-transform: scaleX(-1);
 }
+
+
+/* Кастомное модальное окно
+-------------------------------------------------*/
+.custom-modal-content {
+    /*border-radius: 0 !important;*/
+}
+
+.custom-modal-header {
+    background-color: #2E7F3E;
+    color: white;
+}
+
+.custom-modal-header  > .close {
+    color: white;
+}
+
+/* Исправляет сдвиг фиксированных сверху панелей */
+body.modal-open { padding-right: 0 !important; } 
+html { overflow-y: auto !important; }

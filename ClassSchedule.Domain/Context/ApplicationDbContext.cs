@@ -20,6 +20,7 @@ namespace ClassSchedule.Domain.Context
         public DbSet<EducationDirection> EducationDirections { get; set; }
         public DbSet<EducationForm> EducationForms { get; set; }
         public DbSet<EducationLevel> EducationLevels { get; set; }
+        public DbSet<EducationYear> EducationYears { get; set; }  
         public DbSet<EducationProfile> EducationProfiles { get; set; }
         public DbSet<Employee> Employees{ get; set; }
         public DbSet<EmploymentType> EmploymentTypes { get; set; }

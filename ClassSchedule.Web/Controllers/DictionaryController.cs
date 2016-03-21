@@ -21,7 +21,9 @@ namespace ClassSchedule.Web.Controllers
             if (Request.IsAjaxRequest())
             {
                 var courses = UnitOfWork.Repository<Course>()
-                    .GetQ(x => x.IsDeleted != true && x.FacultyId == facultyId,
+                    .GetQ(
+                        filter: x => x.IsDeleted != true && x.FacultyId == facultyId && x.YearStart != null 
+                            && x.YearStart + x.CourseNumber == UserProfile.EducationYear.YearEnd,
                         orderBy: o => o.OrderBy(n => n.CourseName))
                     .Select(x => new {x.CourseId, x.CourseName});
 

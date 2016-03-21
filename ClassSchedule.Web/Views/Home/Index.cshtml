@@ -1,13 +1,14 @@
 ﻿@using System.Globalization
 @using ClassSchedule.Web.Helpers
+@model ClassSchedule.Web.Models.Schedule.ScheduleViewModel
 @{
     ViewBag.Title = "Расписание занятий";
 
-    string[] groups = new[] { "ПИ0904", "ПИ0905", "ИТ0904" }; //, "ИТ0905", "УФ0904", "УФ0905"
+    // string[] groups = new[] { "ПИ0904", "ПИ0905", "ИТ0904" }; //, "ИТ0905", "УФ0904", "УФ0905"
 
     int numberOfDays = 6;
     int numberOfLessons = 6;
-    int numberOfGroups = groups.Length;
+    int numberOfGroups = Model.GroupLessons.Count;
 
     int totalWidthOfColumns = 100;
     int widthOfInfoColumn = 3;
@@ -18,44 +19,28 @@
     @Html.Partial("_Navbar")
 
     <div class="week-panel text-center">
-        Первая [16] неделя (21.03 - 26.03)
+        @(Model.WeekNumber % 2 == 0 ? "Вторая" : "Первая") [@Model.WeekNumber] неделя (@Model.FirstDayOfWeek.ToString("dd.MM") - @Model.LastDayOfWeek.ToString("dd.MM"))
     </div>
 
     <div class="group-panel">
         <div class="bordered-rb text-center" style="width: 3%; float: left">День</div>
         <div class="bordered-rb text-center" style="width: 3%; float: left">Пара</div>
-        @foreach (var group in groups)
+        @foreach (var group in Model.GroupLessons)
         {
-            <div class="bordered-rb text-center" style="width: @widthOfGroupColumn%; float:left">
-                @group
+            <div class="bordered-rb text-center" style="width: @widthOfGroupColumn%; float: left">
+                @group.GroupName
             </div>
         }
     </div>
 
     <div class="days-panel" style="width: 3%; float: left">
-        <div class="bordered-rb text-center" style="height: 300px;">
-            <span>Пн <br><small>21.03</small></span>
-        </div>
-        <div class="day-separator"></div>
-        <div class="bordered-rb text-center" style="height: 300px;">
-            <span>Вт <br><small>22.03</small></span>
-        </div>
-        <div class="day-separator"></div>
-        <div class="bordered-rb text-center" style="height: 300px;">
-            <span>Ср <br><small>23.03</small></span>
-        </div>
-        <div class="day-separator"></div>
-        <div class="bordered-rb text-center" style="height: 300px;">
-            <span>Чт <br><small>24.03</small></span>
-        </div>
-        <div class="day-separator"></div>
-        <div class="bordered-rb text-center" style="height: 300px;">
-            <span>Пт <br><small>25.03</small></span>
-        </div>
-        <div class="day-separator"></div>
-        <div class="bordered-rb text-center" style="height: 300px;">
-            <span>Сб <br><small>26.03</small></span>
-        </div>
+        @for (int i = 0; i < 6; i++)
+        {
+            <div class="bordered-rb text-center" style="height: 300px;">
+                <span>@Helpers.DayOfWeek(i) <br><small>@Model.FirstDayOfWeek.AddDays(i).ToString("dd.MM")</small></span>
+            </div>
+            <div class="day-separator"></div>
+        }
     </div>
 
     <div class="lessons-number-panel" style="width: 3%; float: left">
@@ -64,7 +49,8 @@
             for (int j = 0; j < numberOfLessons; j++)
             {
                 <div class="bordered-rb text-center" style="height: 50px;">
-                    <span>@(j + 1)</span> <br> <p>@Helpers.TimeOfLesson(i, j)</p>
+                    <span>@(j + 1)</span> <br>
+                    <p>@Helpers.TimeOfLesson(i, j)</p>
                 </div>
             }
 
@@ -91,13 +77,13 @@
                 </div>
                 <div class="bordered-rb lesson-cell" style="height: 50px">
                     @*<div class="lesson-cell-part">
-                        <span class="discipline red">Автоматизация систем управления sffgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgfd</span> - <span class="teacher">Потешин И.И.</span><span class="auditorium">(220гл.)</span>,
-                        <span class="teacher">Гормыко Д.В.</span><span class="auditorium">(014зоо.)</span><br/>
-                    </div>
-                    <div class="lesson-cell-part">
-                        <span class="discipline">Автоматизация систем управления</span> - <span class="teacher">Потешин И.И.</span><span class="auditorium">(220гл.)</span>,
-                        <span class="teacher">Гормыко Д.В.</span><span class="auditorium">(014зоо.)</span><br/>
-                    </div>*@
+                            <span class="discipline red">Автоматизация систем управления sffgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgfd</span> - <span class="teacher">Потешин И.И.</span><span class="auditorium">(220гл.)</span>,
+                            <span class="teacher">Гормыко Д.В.</span><span class="auditorium">(014зоо.)</span><br/>
+                        </div>
+                        <div class="lesson-cell-part">
+                            <span class="discipline">Автоматизация систем управления</span> - <span class="teacher">Потешин И.И.</span><span class="auditorium">(220гл.)</span>,
+                            <span class="teacher">Гормыко Д.В.</span><span class="auditorium">(014зоо.)</span><br/>
+                        </div>*@
                 </div>
                 <div class="bordered-rb lesson-cell" style="height: 50px"></div>
                 <div class="bordered-rb lesson-cell" style="height: 50px"></div>
@@ -107,3 +93,46 @@
         </div>
     }
 </div>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content custom-modal-content">
+            <div class="modal-header custom-modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Редактирование занятия</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Таким образом консультация с широким активом в значительной степени обуславливает создание системы обучения кадров,
+                    соответствует насущным потребностям. Задача организации, в особенности же дальнейшее развитие различных форм деятельности влечет
+                    за собой процесс внедрения и модернизации направлений прогрессивного развития. С другой стороны рамки и место обучения кадров влечет за
+                    собой процесс внедрения и модернизации форм развития. Таким образом реализация намеченных плановых заданий требуют определения и
+                    уточнения существенных финансовых и административных условий.
+                    Разнообразный и богатый опыт постоянное информационно-пропагандистское обеспечение нашей деятельности способствует подготовки и
+                    реализации соответствующий условий активизации. Повседневная практика показывает, что рамки и место обучения кадров позволяет
+                    оценить значение систем массового участия.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-success">Сохранить</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function() {
+            $(".lesson-cell").dblclick(function() {
+                $('#myModal').modal('show');
+            });
+        });
+    </script>
+}

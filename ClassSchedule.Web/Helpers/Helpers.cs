@@ -43,5 +43,12 @@ namespace ClassSchedule.Web.Helpers
 
             return MvcHtmlString.Create(result);
         }
+
+        public static string DayOfWeek(int dayNumber)
+        {
+            string[] days = {"Пн","Вт","Ср","Чт","Пт","Сб","Вс"};
+
+            return days[dayNumber];
+        }
     }
 }

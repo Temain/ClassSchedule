@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using ClassSchedule.Domain.DataAccess.Interfaces;
 using ClassSchedule.Domain.Models;
 using ClassSchedule.Web.Models;
+using ClassSchedule.Web.Models.Schedule;
 using Microsoft.AspNet.Identity;
 
 namespace ClassSchedule.Web.Controllers
@@ -20,7 +21,38 @@ namespace ClassSchedule.Web.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            var viewModel = new ScheduleViewModel();
+            var groups = UnitOfWork.Repository<Group>()
+                .GetQ(g => g.IsDeleted != true);
+
+            if (UserProfile.GroupId != null)
+            {
+                groups = groups.Where(g => g.GroupId == UserProfile.GroupId);                
+            }
+            else if (UserProfile.CourseId != null)
+            {
+                groups = groups.Where(g => g.CourseId == UserProfile.CourseId);
+                viewModel.FacultyName = UserProfile.Course.Faculty.DivisionName;
+            }
+            
+            var groupLessons = groups
+                .Select(x => new GroupLessonsViewModel()
+                {
+                    GroupId = x.GroupId,
+                    GroupName = x.DivisionName
+                })
+                .ToList();
+            viewModel.GroupLessons = groupLessons;
+            viewModel.WeekNumber = UserProfile.WeekNumber;
+
+            // Вычисление дат занятий по номеру недели
+            DateTime yearStartDate = UserProfile.EducationYear.DateStart;
+            int delta = DayOfWeek.Monday - yearStartDate.DayOfWeek;
+            DateTime firstMonday = yearStartDate.AddDays(delta);
+            viewModel.FirstDayOfWeek = firstMonday.AddDays(UserProfile.WeekNumber*7);
+            viewModel.LastDayOfWeek = viewModel.FirstDayOfWeek.AddDays(6);
+
+            return View(viewModel);
         }
 
         [HttpGet]
