@@ -224,6 +224,10 @@ textarea {
   /*border-radius: 0;*/
 }
 
+#logoutForm {
+    margin-right: 15px;  
+}
+
 /*.navbar-default {
   background-color: #98172c;
   border-color: #98172c;
