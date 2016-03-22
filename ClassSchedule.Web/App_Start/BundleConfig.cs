@@ -23,6 +23,11 @@ namespace ClassSchedule.Web
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/upload").Include(
+                      "~/Scripts/jquery.ui.widget.js",
+                      /*"~/Scripts/jquery.iframe-transport.js",*/
+                      "~/Scripts/jquery.fileupload.js"));
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/font-awesome.css",

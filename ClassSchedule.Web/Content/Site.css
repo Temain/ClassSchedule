@@ -128,9 +128,9 @@ textarea {
 }
 
 .days-panel > div > span {
-  display: inline-block; 
-  vertical-align: middle;
-  line-height: normal;  
+    display: inline-block; 
+    vertical-align: middle;
+    line-height: normal;  
 }
 
 .lessons-number-panel {
@@ -359,3 +359,41 @@ transform: scaleX(-1);
 /* Исправляет сдвиг фиксированных сверху панелей */
 body.modal-open { padding-right: 0 !important; } 
 html { overflow-y: auto !important; }
+
+
+/* Загрузка файлов 
+-------------------------------------------------*/
+.file-container {
+    border-bottom: 1px #ccc dashed;
+    padding: 8px 0;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.file-actions {
+    text-align: center;
+}
+
+.file-progress {
+    height: 12px;
+    margin-top: 5px;
+}
+
+.link-btn {
+    font-size: 1.2em;
+    text-decoration: none !important;
+    cursor: pointer;
+}
+
+.file-info .filename {
+    font-size: 1.1em;
+}
+
+.file-info .filesize {
+    font-size: 0.9em;
+    color: #757575;
+}
+
+.bigger {
+    font-size: 1.1em;
+}
