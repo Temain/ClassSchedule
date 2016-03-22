@@ -80,6 +80,8 @@
                             <span class="nav-icon-text"></span>Здравствуйте, @(ViewBag.UserName + "!") <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
+                            <li><a href="@Url.Action("Load", "AcademicPlan")"><span class="fa fa-upload"></span> Загрузка учебных планов</a></li>
+                            <li role="separator" class="divider"></li>
                             <li><a href="javascript:document.getElementById('logoutForm').submit()"><span class="fa fa-power-off"></span> Выйти</a></li>
                         </ul>
                     </li>

@@ -19,7 +19,7 @@
     @Html.Partial("_Navbar")
 
     <div class="week-panel text-center">
-        @(Model.WeekNumber % 2 == 0 ? "Вторая" : "Первая") [@Model.WeekNumber] неделя (@Model.FirstDayOfWeek.ToString("dd.MM") - @Model.LastDayOfWeek.ToString("dd.MM"))
+        @(Model.WeekNumber%2 == 0 ? "Вторая" : "Первая") [@Model.WeekNumber] неделя (@Model.FirstDayOfWeek.ToString("dd.MM") - @Model.LastDayOfWeek.ToString("dd.MM"))
     </div>
 
     <div class="group-panel">
@@ -94,38 +94,7 @@
     }
 </div>
 
-<!-- Modal -->
-<div id="editLesson" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-
-        <!-- Modal content-->
-        <div class="modal-content custom-modal-content">
-            <div class="modal-header custom-modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Редактирование занятия</h4>
-            </div>
-            <div class="modal-body">
-                <p>
-                    Таким образом консультация с широким активом в значительной степени обуславливает создание системы обучения кадров,
-                    соответствует насущным потребностям. Задача организации, в особенности же дальнейшее развитие различных форм деятельности влечет
-                    за собой процесс внедрения и модернизации направлений прогрессивного развития. С другой стороны рамки и место обучения кадров влечет за
-                    собой процесс внедрения и модернизации форм развития. Таким образом реализация намеченных плановых заданий требуют определения и
-                    уточнения существенных финансовых и административных условий.
-                    Разнообразный и богатый опыт постоянное информационно-пропагандистское обеспечение нашей деятельности способствует подготовки и
-                    реализации соответствующий условий активизации. Повседневная практика показывает, что рамки и место обучения кадров позволяет
-                    оценить значение систем массового участия.
-                </p>
-            </div>
-            <div class="modal-footer">
-                <div class="btn-group" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
-                    <button type="button" class="btn btn-success">Сохранить</button>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
+@Html.Partial("_EditLesson")
 
 @section Scripts {
     <script>

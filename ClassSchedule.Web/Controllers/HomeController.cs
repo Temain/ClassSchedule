@@ -45,7 +45,7 @@ namespace ClassSchedule.Web.Controllers
             viewModel.GroupLessons = groupLessons;
             viewModel.WeekNumber = UserProfile.WeekNumber;
 
-            // Вычисление дат занятий по номеру недели
+            // Вычисление первой и последней даты редактируемой недели 
             DateTime yearStartDate = UserProfile.EducationYear.DateStart;
             int delta = DayOfWeek.Monday - yearStartDate.DayOfWeek;
             DateTime firstMonday = yearStartDate.AddDays(delta);
