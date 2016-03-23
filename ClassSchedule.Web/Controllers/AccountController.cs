@@ -56,7 +56,9 @@ namespace ClassSchedule.Web.Controllers
                 RoleManager.Create(new ApplicationRole { Name = "Administrator" });
             }
 
-            var user = new ApplicationUser { UserName = "admin@kubsau.ru", Email = "admin@kubsau.ru" };
+            var user = new ApplicationUser { UserName = "admin@kubsau.ru", Email = "admin@kubsau.ru",
+                LastName = "Асеев", FirstName = "Артём", MiddleName = "Михайлович",
+                EducationYearId = 9, WeekNumber = 1 };
             if (UserManager.FindByName("admin@kubsau.ru") == null)
             {
                 var result = UserManager.Create(user, "1973648205_qQ");

@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassSchedule.Web", "ClassSchedule.Web\ClassSchedule.Web.csproj", "{C1F5593E-4012-49D4-9FC9-F23906326C47}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6B467930-4307-4D8B-B6A0-941BCDDB16C3} = {6B467930-4307-4D8B-B6A0-941BCDDB16C3}
+		{52507CDF-1B2E-4C01-982B-BFB450B406AE} = {52507CDF-1B2E-4C01-982B-BFB450B406AE}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassSchedule.Tests", "ClassSchedule.Tests\ClassSchedule.Tests.csproj", "{7911961B-E19A-4BBD-82C6-95BB4A6BA0EE}"

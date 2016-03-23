@@ -286,20 +286,7 @@
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\FileUpload\app.js" />
-    <Content Include="Scripts\FileUpload\cors\jquery.postmessage-transport.js" />
-    <Content Include="Scripts\FileUpload\cors\jquery.xdr-transport.js" />
-    <Content Include="Scripts\FileUpload\jquery.fileupload-angular.js" />
-    <Content Include="Scripts\FileUpload\jquery.fileupload-audio.js" />
-    <Content Include="Scripts\FileUpload\jquery.fileupload-image.js" />
-    <Content Include="Scripts\FileUpload\jquery.fileupload-jquery-ui.js" />
-    <Content Include="Scripts\FileUpload\jquery.fileupload-process.js" />
-    <Content Include="Scripts\FileUpload\jquery.fileupload-ui.js" />
-    <Content Include="Scripts\FileUpload\jquery.fileupload-validate.js" />
-    <Content Include="Scripts\FileUpload\jquery.fileupload-video.js" />
     <Content Include="Scripts\jquery.fileupload.js" />
-    <Content Include="Scripts\FileUpload\jquery.iframe-transport.js" />
-    <Content Include="Scripts\FileUpload\main.js" />
     <Content Include="Scripts\jquery.ui.widget.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -359,7 +346,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Scripts\FileUpload\vendor\" />
     <Folder Include="Views\Dictionary\" />
   </ItemGroup>
   <ItemGroup>
@@ -367,6 +353,10 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AcademicPlan.Parser\AcademicPlan.Parser.csproj">
+      <Project>{52507cdf-1b2e-4c01-982b-bfb450b406ae}</Project>
+      <Name>AcademicPlan.Parser</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ClassSchedule.Domain\ClassSchedule.Domain.csproj">
       <Project>{6b467930-4307-4d8b-b6a0-941bcddb16c3}</Project>
       <Name>ClassSchedule.Domain</Name>
