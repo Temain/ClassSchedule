@@ -25,26 +25,65 @@ namespace ClassSchedule.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Upload(int formId,int levelId, int yearStart)
+        public ActionResult Upload(int? programOfEducationId)
         {
             foreach (string file in Request.Files)
             {
                 HttpPostedFileBase hpf = Request.Files[file] as HttpPostedFileBase;
-                if (hpf == null || hpf.ContentLength == 0)
+                if (hpf == null || hpf.ContentLength == 0 || hpf.FileName == null)
                 {
                     continue;
                 }
 
-                if (hpf.FileName != null)
-                {
-                    string savedFileName = Path.Combine(Server.MapPath("~/App_Data"), Path.GetFileName(hpf.FileName));
-                    hpf.SaveAs(savedFileName);
+                string savedFileName = Path.Combine(Server.MapPath("~/App_Data"), Path.GetFileName(hpf.FileName));
+                hpf.SaveAs(savedFileName);
 
-                    Parse(savedFileName);
+                if (programOfEducationId == null)
+                {
+                    return AcademicPlanInfo(savedFileName);
                 }
+
+                Parse(savedFileName);               
             }
 
-            return Content("{\"name\":\"" + "Name" + "\",\"type\":\"" + "Type" + "\",\"size\":\"" + string.Format("{0} bytes", 555) + "\"}", "application/json");
+            return Content("{\"Status\":\"Success\"}", "application/json");
+        }
+
+        public ActionResult AcademicPlanInfo(string fileName)
+        {
+            string xml = System.IO.File.ReadAllText(fileName);
+            var document = xml.ParseXml<Document>();
+
+            string educationFormPlan = document.Plan.EducationForm.Substring(0, 3); 
+            string directionCodePlan = document.Plan.PlanTitle.DirectionCode;
+
+            var educationForm = UnitOfWork.Repository<EducationForm>()
+                .Get(x => x.IsDeleted != true && x.EducationFormName.StartsWith(educationFormPlan))
+                .SingleOrDefault();
+
+            var direction = UnitOfWork.Repository<EducationDirection>()
+                .Get(x => x.EducationDirectionCode == directionCodePlan || x.EducationDirectionCode.Replace(".", "") == directionCodePlan)
+                .FirstOrDefault();
+
+            int yearStartPlan = Convert.ToInt32(document.Plan.PlanTitle.YearStart);
+
+            var properties = new List<string>();           
+            if (educationForm != null)
+            {
+                properties.Add("\"EducationFormId\":\"" + educationForm.EducationFormId + "\"");
+                properties.Add("\"EducationFormName\":\"" + educationForm.EducationFormName.Replace("ое","ая").ToLower() + "\"");
+            }
+            if (direction != null)
+            {
+                properties.Add("\"EducationDirectionId\":\"" + direction.EducationDirectionId + "\"");
+                properties.Add("\"EducationDirectionCode\":\"" + direction.EducationDirectionCode + "\"");
+                properties.Add("\"EducationDirectionName\":\"" + direction.EducationDirectionName + "\"");
+            }
+            properties.Add("\"YearStart\":\"" + yearStartPlan + "\"");
+            properties.Add("\"Status\":\"Info\"");
+            string result = "{" + String.Join(",", properties) + "}";
+
+            return Content(result, "application/json");
         }
 
         public void Parse(string fileName)

@@ -59,43 +59,8 @@
     @Scripts.Render("~/bundles/upload")
 
     <script>
-        $(document).ready(function () {
-            /* Подгружаем формы образования
-            ----------------------------------------------*/
-            var educationForms = [];
-            $.post('/Dictionary/EducationForm', {}, function (result) {
-                if (result) {
-                    educationForms = result;
-                }
-            });
-
-            /* Подгружаем уровни образования
-            ----------------------------------------------*/
-            var educationLevels = [];
-            $.post('/Dictionary/EducationLevel', {}, function (result) {
-                if (result) {
-                    educationLevels = result;
-                }
-            });
-
-            /* Подгружаем года начала обучения
-            ----------------------------------------------*/
-            var yearsStart = [];
-            $.post('/Dictionary/AcademicPlanYear', {}, function (result) {
-                if (result) {
-                    yearsStart = result;
-                }
-            });
-
-            /* Подгружаем направления
-            ----------------------------------------------*/
-            var directions = [];
-            $.post('/Dictionary/Direction', {}, function (result) {
-                if (result) {
-                    directions = result;
-                }
-            });
-
+        $(document).ready(function() {
+           
             /* Настройка плагина загрузки файлов
             ----------------------------------------------*/
             $("#fileuploadBtn").click(function() {
@@ -126,27 +91,14 @@
                                             </div>\
                                         </div>\
                                     </div>\
-                                    <div class='col-md-12'>\
-                                        <div class='col-md-4'>\
-                                            <label>Форма обучения</label>\
-                                            <select class='form form-control'></select>\
-                                        </div>\
-                                        <div class='col-md-4 levelBlock' style='display:none'>\
-                                            <label>Уровень образования</label>\
-                                            <select class='level form-control'></select>\
-                                        </div>\
-                                        <div class='col-md-4 yearBlock' style='display:none'>\
-                                            <label>Год начала обучения</label>\
-                                            <select class='year form-control'></select>\
+                                    <div class='col-md-12 mrgbtm12'>\
+                                        <div class='col-md-12'>\
+                                            Форма обучения: <span class='form'></span> | Год начала обучения: <span class='year'></span>\
                                         </div>\
                                     </div>\
-                                    <div class='col-md-12 mrgbtm12 mrgtop12'>\
-                                        <div class='col-md-6 directionBlock' style='display:none'>\
-                                            <label>Направление</label>\
-                                            <select class='direction form-control'></select>\
-                                        </div>\
-                                        <div class='col-md-6 profileBlock' style='display:none'>\
-                                            <label>Профиль</label>\
+                                    <div class='col-md-12 mrgbtm12'>\
+                                        <div class='col-md-12 profileBlock'>\
+                                            <label>Направление/специальность</label>\
                                             <select class='profile form-control'></select>\
                                         </div>\
                                     </div>\
@@ -172,106 +124,60 @@
                             data.context.closest(".file-container").remove();
                         });
 
-                    // Заполняем выпадающий список форм образования
-                    var fileContainer = data.context.closest(".file-container");
-                    var formSelect = fileContainer.find(".form");
-                    formSelect.html('');
-                    formSelect.append("<option></option>");
-                    $.each(educationForms, function(index, form) {
-                        var option = "<option value='" + form.EducationFormId + "'>" + form.EducationFormName + "</option>";
-                        formSelect.append(option);
-                    });                   
-
-                    // Заполняем выпадающий список уровней образования
-                    var levelSelect = fileContainer.find(".level");
-                    levelSelect.html('');
-                    levelSelect.append("<option></option>");
-                    $.each(educationLevels, function (index, level) {
-                        var option = "<option value='" + level.EducationLevelId + "'>" + level.EducationLevelName + "</option>";
-                        levelSelect.append(option);
-                    });
-
-                    // Заполняем выпадающий список года начала обучения
-                    var yearSelect = fileContainer.find(".year");
-                    yearSelect.html('');
-                    yearSelect.append("<option></option>");
-                    $.each(yearsStart, function (index, yearStart) {
-                        var option = "<option value='" + yearStart.Value + "'>" + yearStart.Value + "</option>";
-                        yearSelect.append(option);
-                    });
-
-                    // Заполняем выпадающий список года начала обучения
-                    var directionSelect = fileContainer.find(".direction");
-                    directionSelect.html('');
-                    directionSelect.append("<option></option>");
-                    $.each(directions, function (index, direction) {
-                        var option = "<option value='" + direction.EducationDirectionId + "'>" + direction.EducationDirectionName + "</option>";
-                        directionSelect.append(option);
-                    });
-
-                    // Показ/скрытие выпадающих списков
-                    var levelBlock = fileContainer.find(".levelBlock");
-                    formSelect.change(function () {
-                        var formId = $(this).val();
-                        if (formId) {
-                            levelBlock.show();
-                        } else {
-                            levelBlock.hide();
-                        }
-                    });
-
-                    var yearBlock = fileContainer.find(".yearBlock");
-                    levelSelect.change(function () {
-                        var levelId = $(this).val();
-                        if (levelId) {
-                            yearBlock.show();
-                        } else {
-                            yearBlock.hide();
-                        }
-                    });
-
-                    var directionBlock = fileContainer.find(".directionBlock");
-                    yearSelect.change(function () {
-                        var year = $(this).val();
-                        if (year) {
-                            directionBlock.show();
-                        } else {
-                            directionBlock.hide();
-                        }
-                    });
-
-                    var profileBlock = fileContainer.find(".profileBlock");
-                    directionSelect.change(function () {
-                        var directionId = $(this).val();
-                        if (directionId) {
-                            profileBlock.show();
-                        } else {
-                            profileBlock.hide();
-                        }
-                    });
+                    // Предварительная отправка формы для получения 
+                    // формы обучения, уровня образования, года начала обучения из файлов
+                    data.submit();
                 },
                 done: function(e, data) {
-                    data.context.html("<span class='bigger'><i class='fa fa-check bigger text-success'></i> Загрузка завершена</span>");
+                    if (data.result.Status === "Info") {
+                        var fileContainer = data.context.closest(".file-container");
+                        fileContainer.find(".form").text(data.result.EducationFormName);
+                        fileContainer.find(".year").text(data.result.YearStart);
+
+                        // Подгружаем профили
+                        var parameters = {
+                            educationFormId: data.result.EducationFormId,
+                            educationDirectionId: data.result.EducationDirectionId,
+                            yearStart: data.result.YearStart
+                        };
+                        $.post('/Dictionary/EducationProfile', parameters, function(profiles) {
+                            if (profiles) {
+
+                                // Заполняем выпадающий список профилей
+                                var profileSelect = fileContainer.find(".profile");
+                                profileSelect.html('');
+                                profileSelect.append("<option></option>");
+                                $.each(profiles, function(index, profile) {
+                                    var option = "<option value='" + profile.EducationProfileId + "'>" + profile.EducationProfileName + "</option>";
+                                    profileSelect.append(option);
+                                });
+                            }
+                        });
+                    }
+
+                    if (data.result.Status === "Success") {
+                        data.context.html("<span class='bigger'><i class='fa fa-check bigger text-success'></i> Загрузка завершена</span>");
+                    }
                 },
-                progress: function(e, data) {
-                    var progress = parseInt(data.loaded / data.total * 100, 10);
-                    var parent = data.context.closest(".file-container");
-                    parent.find(".file-progress .progress-bar").css('width', progress + '%');
+                progress: function (e, data) {
+                    var fileContainer = data.context.closest(".file-container");
+                    var programOfEducationId = fileContainer.find(".profile").val();
+
+                    if (programOfEducationId) {
+                        var progress = parseInt(data.loaded / data.total * 100, 10);                        
+                        fileContainer.find(".file-progress .progress-bar").css('width', progress + '%');
+                    }
                 }
             });
 
             $('#fileupload').bind('fileuploadsubmit', function(e, data) {
                 var fileContainer = data.context.closest(".file-container");
-                var formId = fileContainer.find(".form").val();
-                var levelId = fileContainer.find(".level").val();
-                var yearStart = fileContainer.find(".year").val();
+                var profileSelect = fileContainer.find(".profile");
+                var programOfEducationId = profileSelect.val();
 
-                // The example input, doesn't have to be part of the upload form:
-                // var input = $('#input');
-                data.formData = { formId: formId, levelId: levelId, yearStart: yearStart };
-                //if (!data.formData.example) {
-                //    data.context.find('button').prop('disabled', false);
-                //    input.focus();
+                data.formData = { programOfEducationId: programOfEducationId };
+                //if (!programOfEducationId) {
+                //    profileSelect.focus();
                 //    return false;
                 //}
             });

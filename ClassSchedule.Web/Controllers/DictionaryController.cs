@@ -126,5 +126,33 @@ namespace ClassSchedule.Web.Controllers
 
             return null;
         }
+
+        [HttpPost]
+        public ActionResult EducationProfile(int educationFormId, int educationDirectionId, int yearStart)
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var profiles = UnitOfWork.Repository<ProgramOfEducation>()
+                    .GetQ(x => x.IsDeleted != true && x.EducationFormId == educationFormId 
+                        && x.EducationProfile.EducationDirectionId == educationDirectionId
+                        && x.Groups.Any(g => g.Course.YearStart == yearStart))
+                    .Select(x => new
+                    {
+                        ProgramOfEducationid = x.ProgramOfEducationId,
+                        EducationProfileId = x.EducationProfileId,
+                        EducationLevelId = x.EducationLevelId,
+                        EducationProfileName =
+                            x.EducationProfile.EducationDirection.EducationDirectionCode + " " +
+                            x.EducationProfile.EducationProfileName + (x.EducationLevelId == 2 ? " (прикладной бакалавриат)" : "")
+                    })
+                    .OrderBy(n => n.EducationLevelId)
+                    .ThenBy(x => x.EducationProfileName)
+                    .ToList();
+
+                return Json(profiles);
+            }
+
+            return null;
+        }
     }
 }
