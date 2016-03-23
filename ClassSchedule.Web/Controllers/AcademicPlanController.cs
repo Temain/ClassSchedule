@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using AcademicPlan.Parser.Models;
 using AcademicPlan.Parser.Service;
 using ClassSchedule.Domain.DataAccess.Interfaces;
+using ClassSchedule.Domain.Models;
 
 namespace ClassSchedule.Web.Controllers
 {
@@ -24,7 +25,7 @@ namespace ClassSchedule.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Upload()
+        public ActionResult Upload(int formId,int levelId, int yearStart)
         {
             foreach (string file in Request.Files)
             {

@@ -54,5 +54,77 @@ namespace ClassSchedule.Web.Controllers
 
             return null;
         }
+
+        [HttpPost]
+        public ActionResult EducationForm()
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var forms = UnitOfWork.Repository<EducationForm>()
+                    .GetQ(x => x.IsDeleted != true, orderBy: o => o.OrderBy(n => n.EducationFormName))
+                    .Select(x => new { x.EducationFormId, x.EducationFormName });
+
+                return Json(forms);
+            }
+
+            return null;
+        }
+
+        [HttpPost]
+        public ActionResult EducationLevel()
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var levels = UnitOfWork.Repository<EducationLevel>()
+                    .GetQ(x => x.IsDeleted != true, orderBy: o => o.OrderBy(n => n.EducationLevelName))
+                    .Select(x => new { x.EducationLevelId, x.EducationLevelName });
+
+                return Json(levels);
+            }
+
+            return null;
+        }
+
+        [HttpPost]
+        public ActionResult AcademicPlanYear()
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var years = UnitOfWork.Repository<Course>()
+                .GetQ(x => x.IsDeleted != true)
+                .Select(x => new
+                {
+                    Value = x.YearStart
+                })
+                .Distinct()
+                .OrderBy(x => x.Value)
+                .ToList();
+
+                return Json(years);
+            }
+
+            return null;
+        }
+
+        [HttpPost]
+        public ActionResult Direction()
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var directions = UnitOfWork.Repository<EducationDirection>()
+                    .GetQ(x => x.IsDeleted != true, orderBy: o => o.OrderBy(n => n.EducationDirectionCode))
+                    .Select(
+                        x =>
+                            new
+                            {
+                                EducationDirection = x.EducationDirectionId,
+                                EducationDirectionName = x.EducationDirectionCode + " " + x.EducationDirectionName
+                            });
+
+                return Json(directions);
+            }
+
+            return null;
+        }
     }
 }
