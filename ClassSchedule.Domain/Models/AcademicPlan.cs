@@ -20,19 +20,29 @@ namespace ClassSchedule.Domain.Models
         /// <summary>
         /// Кафедра
         /// </summary>
-        public int ChairId { get; set; }
+        public int? ChairId { get; set; }
         public virtual Chair Chair { get; set; }
 
         /// <summary>
         /// Количество семестров
         /// </summary>
-        public string NumberOfSemesters { get; set; }
+        // public int NumberOfSemesters { get; set; }
 
         /// <summary>
         /// Программа обучения
         /// </summary>
         public int ProgramOfEducationId { get; set; }
         public virtual ProgramOfEducation ProgramOfEducation { get; set; }
+
+        /// <summary>
+        /// Дата загрузки
+        /// </summary>
+        public DateTime UploadedAt { get; set; }
+
+        /// <summary>
+        /// Путь к файлу
+        /// </summary>
+        public string FilePath { get; set; }
 
         public List<CourseSchedule> CourseSchedules { get; set; }
     }

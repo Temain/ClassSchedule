@@ -39,19 +39,23 @@
 </div>
 
 <div class="schedule-container">
+    <div class="week-panel text-center"></div>
+
     <div class="container">
         <h2>Загрузка учебных планов</h2>
-        <hr />
+        <hr/>
 
         <div class="row mrgbtm36">
             <div class="col-md-6">
                 <input id="fileupload" type="file" name="files[]" style="display: none" multiple>
                 <button id="fileuploadBtn" type="button" class="btn btn-success btn-lg">Выбрать файлы</button>
             </div>
-        </div>     
+        </div>
 
         <div id="files"></div>
     </div>
+</div>
+<div class="footer">
 </div>
 
 @section Scripts
@@ -60,7 +64,7 @@
 
     <script>
         $(document).ready(function() {
-           
+            
             /* Настройка плагина загрузки файлов
             ----------------------------------------------*/
             $("#fileuploadBtn").click(function() {
@@ -92,12 +96,12 @@
                                         </div>\
                                     </div>\
                                     <div class='col-md-12 mrgbtm12'>\
-                                        <div class='col-md-12'>\
+                                        <div class='col-md-12 plan-info-block' style='display:none'>\
                                             Форма обучения: <span class='form'></span> | Год начала обучения: <span class='year'></span>\
                                         </div>\
                                     </div>\
-                                    <div class='col-md-12 mrgbtm12'>\
-                                        <div class='col-md-12 profileBlock'>\
+                                    <div class='col-md-12 mrgbtm24'>\
+                                        <div class='col-md-12 profile-block' style='display:none'>\
                                             <label>Направление/специальность</label>\
                                             <select class='profile form-control'></select>\
                                         </div>\
@@ -112,7 +116,7 @@
                         .appendTo("#files")
                         .find(".upload")
                         .click(function() {
-                            data.context = $('<p/>').text('Загрузка...').replaceAll($(this));
+                            // data.context = $('<p/>').text('Загрузка...').replaceAll($(this));
                             data.submit();
                         });
 
@@ -128,9 +132,10 @@
                     // формы обучения, уровня образования, года начала обучения из файлов
                     data.submit();
                 },
-                done: function(e, data) {
-                    if (data.result.Status === "Info") {
-                        var fileContainer = data.context.closest(".file-container");
+                done: function (e, data) {
+                    var fileContainer = data.context.closest(".file-container");
+                    var profileSelect = fileContainer.find(".profile");
+                    if (data.result.Status === "Info") {                       
                         fileContainer.find(".form").text(data.result.EducationFormName);
                         fileContainer.find(".year").text(data.result.YearStart);
 
@@ -144,19 +149,23 @@
                             if (profiles) {
 
                                 // Заполняем выпадающий список профилей
-                                var profileSelect = fileContainer.find(".profile");
                                 profileSelect.html('');
                                 profileSelect.append("<option></option>");
                                 $.each(profiles, function(index, profile) {
                                     var option = "<option value='" + profile.EducationProfileId + "'>" + profile.EducationProfileName + "</option>";
                                     profileSelect.append(option);
                                 });
+
+                                fileContainer.find('.plan-info-block').show();
+                                fileContainer.find('.profile-block').show();
                             }
                         });
                     }
 
                     if (data.result.Status === "Success") {
-                        data.context.html("<span class='bigger'><i class='fa fa-check bigger text-success'></i> Загрузка завершена</span>");
+                        var actions = fileContainer.find(".file-actions");
+                        actions.html("<span class='bigger'><i class='fa fa-check bigger text-success'></i> Загрузка завершена</span>");
+                        profileSelect.attr('disabled', 'disabled');
                     }
                 },
                 progress: function (e, data) {
@@ -176,10 +185,12 @@
                 var programOfEducationId = profileSelect.val();
 
                 data.formData = { programOfEducationId: programOfEducationId };
-                //if (!programOfEducationId) {
-                //    profileSelect.focus();
-                //    return false;
-                //}
+
+                var profiles = profileSelect.find("option");
+                if (profiles.length > 0 && !programOfEducationId) {
+                    profileSelect.focus();
+                    return false;
+                }
             });
         });
     </script>

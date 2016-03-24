@@ -40,6 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Document.cs" />
+    <Compile Include="Models\Plan\Discipline.cs" />
+    <Compile Include="Models\Plan\DisciplineSemesterPlan.cs" />
     <Compile Include="Models\Plan\Plan.cs" />
     <Compile Include="Models\Plan\Title\Approval.cs" />
     <Compile Include="Models\Plan\Title\CourseSchedule.cs" />

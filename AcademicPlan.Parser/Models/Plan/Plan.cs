@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 using AcademicPlan.Parser.Models.Plan.Title;
 
 namespace AcademicPlan.Parser.Models.Plan
@@ -13,5 +14,11 @@ namespace AcademicPlan.Parser.Models.Plan
 
         [XmlElement("Титул")]
         public PlanTitle PlanTitle { get; set; }
+
+        /// <summary>
+        /// План по каждой дисциплине
+        /// </summary>
+        [XmlArray("СтрокиПлана"), XmlArrayItem("Строка")]
+        public List<Discipline> Disciplines { get; set; }
     }
 }

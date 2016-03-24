@@ -43,6 +43,21 @@ namespace ClassSchedule.Domain.Models
         public int? HoursOfPractice { get; set; }
 
         /// <summary>
+        /// Лекций в неделю
+        /// </summary>
+        public int LecturesPerWeek { get; set; }
+
+        /// <summary>
+        /// Практик в неделю
+        /// </summary>
+        public int PracticePerWeek { get; set; }
+
+        /// <summary>
+        /// Лабораторных в неделю
+        /// </summary>
+        public int LaboratoryPerWeek { get; set; }
+
+        /// <summary>
         /// График на семестр
         /// </summary>
         public int SemesterScheduleId { get; set; }
@@ -51,7 +66,7 @@ namespace ClassSchedule.Domain.Models
         /// <summary>
         /// Тип контроля (экзамен, зачет и т.д.)
         /// </summary>
-        public int SessionControlTypeId { get; set; }
+        public int? SessionControlTypeId { get; set; }
         public virtual SessionControlType SessionControlType { get; set; }
 
         /// <summary>

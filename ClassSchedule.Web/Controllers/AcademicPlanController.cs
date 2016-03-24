@@ -8,6 +8,7 @@ using AcademicPlan.Parser.Models;
 using AcademicPlan.Parser.Service;
 using ClassSchedule.Domain.DataAccess.Interfaces;
 using ClassSchedule.Domain.Models;
+using AcademicPlan = ClassSchedule.Domain.Models.AcademicPlan;
 
 namespace ClassSchedule.Web.Controllers
 {
@@ -35,23 +36,36 @@ namespace ClassSchedule.Web.Controllers
                     continue;
                 }
 
-                string savedFileName = Path.Combine(Server.MapPath("~/App_Data"), Path.GetFileName(hpf.FileName));
-                hpf.SaveAs(savedFileName);
-
                 if (programOfEducationId == null)
                 {
-                    return AcademicPlanInfo(savedFileName);
+                    return AcademicPlanInfo(hpf);
                 }
 
-                Parse(savedFileName);               
+                try
+                {
+                    string savedFileName = Path.Combine(Server.MapPath("~/App_Data"), Path.GetFileName(hpf.FileName));
+                    hpf.SaveAs(savedFileName);
+
+                    var academicPlan = Parse(savedFileName);
+                    academicPlan.ProgramOfEducationId = programOfEducationId.Value;
+
+                    UnitOfWork.Repository<Domain.Models.AcademicPlan>().Insert(academicPlan);
+                    UnitOfWork.Save();
+                }
+                catch (Exception ex)
+                {
+                    return Content("{\"Status\":\"Error\"}", "application/json");
+                }       
             }
 
             return Content("{\"Status\":\"Success\"}", "application/json");
         }
 
-        public ActionResult AcademicPlanInfo(string fileName)
+        public ActionResult AcademicPlanInfo(HttpPostedFileBase file)
         {
-            string xml = System.IO.File.ReadAllText(fileName);
+            BinaryReader reader = new BinaryReader(file.InputStream);
+            byte[] binData = reader.ReadBytes(file.ContentLength);
+            string xml = System.Text.Encoding.UTF8.GetString(binData);
             var document = xml.ParseXml<Document>();
 
             string educationFormPlan = document.Plan.EducationForm.Substring(0, 3); 
@@ -86,18 +100,110 @@ namespace ClassSchedule.Web.Controllers
             return Content(result, "application/json");
         }
 
-        public void Parse(string fileName)
+        public Domain.Models.AcademicPlan Parse(string fileName)
         {
             string xml = System.IO.File.ReadAllText(fileName);
             var document = xml.ParseXml<Document>();
 
+             // var dis = document.Plan.Disciplines.Select(x => x.DisciplineName).OrderBy(o => o).Distinct();
+
             var academicPlan = new Domain.Models.AcademicPlan
             {
                 AcademicPlanName = document.Plan.PlanTitle.PlanFullName,
-                NumberOfSemesters = document.Plan.PlanTitle.NumberOfSemesters
+                // NumberOfSemesters = document.Plan.PlanTitle.NumberOfSemesters,
+                FilePath = fileName,
+                UploadedAt = DateTime.Now
             };
 
+            // Расписание на курс
+            var courseSchedules = new List<CourseSchedule>();
+            foreach (var courseSchedulePlan in document.Plan.PlanTitle.CourseSchedules)
+            {
+                bool isRealSchedule = courseSchedulePlan.Schedule.Length !=
+                                      courseSchedulePlan.Schedule.Count(x => x == '=');
+                if (!isRealSchedule)
+                {
+                    continue;
+                }
 
+                var courseSchedule = new CourseSchedule
+                {
+                    CourseNumber = courseSchedulePlan.CourseNumber,
+                    ExamSessionWeeks = courseSchedulePlan.ExamSessionWeeks,
+                    FinalQualifyingWorkWeeks = courseSchedulePlan.FinalQualifyingWorkWeeks,
+                    PracticalTrainingWeeks = courseSchedulePlan.PracticalTrainingWeeks,
+                    StateExamsWeeks = courseSchedulePlan.StateExamsWeeks,
+                    StudyTrainingWeeks = courseSchedulePlan.StudyTrainingWeeks,
+                    TheoreticalTrainingWeeks = courseSchedulePlan.TheoreticalTrainingWeeks,
+                    WeeksOfHolidays = courseSchedulePlan.WeeksOfHolidays,
+                    FirstMaxLoad = courseSchedulePlan.FirstMaxLoad,
+                    SecondMaxLoad = courseSchedulePlan.SecondMaxLoad,
+                    SemesterSchedules = new List<SemesterSchedule>()
+                };
+
+                // Расписание на семестр определенного курса
+                foreach (var semesterSchedulePlan in courseSchedulePlan.SemesterSchedules)
+                {                   
+                    var semesterSchedule = new SemesterSchedule
+                    {
+                        SemesterNumber = semesterSchedulePlan.SemesterNumber,
+                        ExamSessionWeeks = semesterSchedulePlan.ExamSessionWeeks,
+                        FinalQualifyingWorkWeeks = semesterSchedulePlan.FinalQualifyingWorkWeeks,
+                        PracticalTrainingWeeks = semesterSchedulePlan.PracticalTrainingWeeks,
+                        StateExamsWeeks = semesterSchedulePlan.StateExamsWeeks,
+                        StudyTrainingWeeks = semesterSchedulePlan.StudyTrainingWeeks,
+                        TheoreticalTrainingWeeks = semesterSchedulePlan.TheoreticalTrainingWeeks,
+                        WeeksOfHolidays = semesterSchedulePlan.WeeksOfHolidays,
+                        NumberOfFirstWeek = semesterSchedulePlan.NumberOfFirstWeek,
+                        DisciplineSemesterPlans = new List<DisciplineSemesterPlan>()
+                    };
+
+                    // План по каждой дисциплине на каждый семестр
+                    foreach (var disciplinePlan in document.Plan.Disciplines)
+                    {
+                        var docDsp =
+                            disciplinePlan.DisciplineSemesterPlans.FirstOrDefault(
+                                p => p.SemesterNumber == (courseSchedule.CourseNumber - 1) * 2 + semesterSchedule.SemesterNumber);
+                        if (docDsp != null)
+                        {
+                            var discipline = UnitOfWork.Repository<Discipline>()
+                                .Get(d => d.DisciplineName == disciplinePlan.DisciplineName)
+                                .SingleOrDefault();
+                            if (discipline == null)
+                            {
+                                discipline = new Discipline { DisciplineGuid = Guid.NewGuid(), DisciplineName = disciplinePlan.DisciplineName };
+                                UnitOfWork.Repository<Discipline>().Insert(discipline);
+                                UnitOfWork.Save();
+                            }
+
+                            var disciplineSemesterPlan = new DisciplineSemesterPlan
+                            {
+                                DisciplineId = discipline.DisciplineId,
+                                Discipline = discipline,
+                                ChairId = 1,
+                                HoursOfLectures = docDsp.HoursOfLectures,
+                                HoursOfPractice = docDsp.HoursOfPractice,
+                                HoursOfLaboratory = docDsp.HoursOfLaboratory,
+                                LecturesPerWeek = docDsp.LecturesPerWeek,
+                                PracticePerWeek = docDsp.PracticePerWeek,
+                                LaboratoryPerWeek = docDsp.LaboratoryPerWeek
+                            };
+
+                            if (docDsp.Exam != 0) disciplineSemesterPlan.SessionControlTypeId = 1;
+                            if (docDsp.Check != 0) disciplineSemesterPlan.SessionControlTypeId = 2;
+
+                            semesterSchedule.DisciplineSemesterPlans.Add(disciplineSemesterPlan);
+                        }
+                    }
+                   
+                    courseSchedule.SemesterSchedules.Add(semesterSchedule);
+                }
+
+                courseSchedules.Add(courseSchedule);
+            }
+            academicPlan.CourseSchedules = courseSchedules;
+            
+            return academicPlan;
         }
     }
 }

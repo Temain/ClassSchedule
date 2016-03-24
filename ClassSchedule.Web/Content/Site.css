@@ -394,6 +394,15 @@ html { overflow-y: auto !important; }
     color: #757575;
 }
 
+.plan-info-block {
+    /*font-size: 0.9em;*/
+    color: #757575;
+}
+
 .bigger {
     font-size: 1.1em;
+}
+
+.footer {
+    padding-bottom: 140px;
 }

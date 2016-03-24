@@ -38,8 +38,13 @@ namespace AcademicPlan.Parser.Models.Plan.Title
         /// <summary>
         /// Теоретическое обучение, недель
         /// </summary>
-        [XmlAttribute("СтрНедТО")]
-        public int TheoreticalTrainingWeeks { get; set; }
+        public int TheoreticalTrainingWeeks
+        {
+            get
+            {
+                return Schedule.Count(x => x == (char)ScheduleAbbreviations.TheoreticalTraining);
+            }
+        }
 
         /// <summary>
         /// Экзаменационные сессии, недель
@@ -105,46 +110,6 @@ namespace AcademicPlan.Parser.Models.Plan.Title
             {
                 return Schedule.Count(x => x == (char)ScheduleAbbreviations.Holidays);
             }
-        }
-
-
-
-        public enum ScheduleAbbreviations
-        {
-            /// <summary>
-            /// Теоретическое обучение
-            /// </summary>
-            TheoreticalTraining = 'Т',
-
-            /// <summary>
-            /// Экзаменационная сессия
-            /// </summary>
-            ExamSession = 'Э',
-
-            /// <summary>
-            /// Учебная практика
-            /// </summary>
-            StudyTraining = 'У',
-
-            /// <summary>
-            /// Произодственная практика
-            /// </summary>
-            PracticalTraining = 'П',
-
-            /// <summary>
-            /// Выпускная квалификационная работа
-            /// </summary>
-            FinalQualifyingWork = 'Д',
-
-            /// <summary>
-            /// Гос. экзамены и/или защита ВКР
-            /// </summary>
-            StateExams = 'Г',
-
-            /// <summary>
-            /// Каникулы
-            /// </summary>
-            Holidays = 'К'
-        }
+        }     
     }
 }

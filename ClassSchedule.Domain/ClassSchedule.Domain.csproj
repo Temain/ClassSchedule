@@ -105,6 +105,26 @@
     <Compile Include="Migrations\201603210845578_AddEducationYearTable.Designer.cs">
       <DependentUpon>201603210845578_AddEducationYearTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603240912331_AddUploadedAtAndFilePathFieldsToPlan.cs" />
+    <Compile Include="Migrations\201603240912331_AddUploadedAtAndFilePathFieldsToPlan.Designer.cs">
+      <DependentUpon>201603240912331_AddUploadedAtAndFilePathFieldsToPlan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603240918110_MakeChairIdNotRequiredInPlan.cs" />
+    <Compile Include="Migrations\201603240918110_MakeChairIdNotRequiredInPlan.Designer.cs">
+      <DependentUpon>201603240918110_MakeChairIdNotRequiredInPlan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603240940468_RemoveNumberOfSemesterFieldFromPlan.cs" />
+    <Compile Include="Migrations\201603240940468_RemoveNumberOfSemesterFieldFromPlan.Designer.cs">
+      <DependentUpon>201603240940468_RemoveNumberOfSemesterFieldFromPlan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603241118373_AddHoursPerWeekFieldsToDisciplineSemesterPlan.cs" />
+    <Compile Include="Migrations\201603241118373_AddHoursPerWeekFieldsToDisciplineSemesterPlan.Designer.cs">
+      <DependentUpon>201603241118373_AddHoursPerWeekFieldsToDisciplineSemesterPlan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603241340086_MakeSemesterControlTypeNotRequiredInDsp.cs" />
+    <Compile Include="Migrations\201603241340086_MakeSemesterControlTypeNotRequiredInDsp.Designer.cs">
+      <DependentUpon>201603241340086_MakeSemesterControlTypeNotRequiredInDsp.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AcademicPlan.cs" />
     <Compile Include="Models\Auditorium.cs" />
@@ -176,6 +196,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603210845578_AddEducationYearTable.resx">
       <DependentUpon>201603210845578_AddEducationYearTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603240912331_AddUploadedAtAndFilePathFieldsToPlan.resx">
+      <DependentUpon>201603240912331_AddUploadedAtAndFilePathFieldsToPlan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603240918110_MakeChairIdNotRequiredInPlan.resx">
+      <DependentUpon>201603240918110_MakeChairIdNotRequiredInPlan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603240940468_RemoveNumberOfSemesterFieldFromPlan.resx">
+      <DependentUpon>201603240940468_RemoveNumberOfSemesterFieldFromPlan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603241118373_AddHoursPerWeekFieldsToDisciplineSemesterPlan.resx">
+      <DependentUpon>201603241118373_AddHoursPerWeekFieldsToDisciplineSemesterPlan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603241340086_MakeSemesterControlTypeNotRequiredInDsp.resx">
+      <DependentUpon>201603241340086_MakeSemesterControlTypeNotRequiredInDsp.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
