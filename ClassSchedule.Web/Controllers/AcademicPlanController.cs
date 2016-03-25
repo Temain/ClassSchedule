@@ -164,36 +164,40 @@ namespace ClassSchedule.Web.Controllers
                         var docDsp =
                             disciplinePlan.DisciplineSemesterPlans.FirstOrDefault(
                                 p => p.SemesterNumber == (courseSchedule.CourseNumber - 1) * 2 + semesterSchedule.SemesterNumber);
-                        if (docDsp != null)
+                        if (docDsp == null) continue;
+                        
+                        var chair = UnitOfWork.Repository<Chair>()
+                            .Get(x => x.IsDeleted != true && x.IsFaculty != true
+                                      && x.DivisionCodeVpo == disciplinePlan.ChairCode)
+                            .SingleOrDefault();
+                        
+                        if (chair == null) continue;
+                        var discipline = UnitOfWork.Repository<Discipline>()
+                            .Get(d => d.DisciplineName == disciplinePlan.DisciplineName && d.ChairId == chair.ChairId)
+                            .FirstOrDefault();
+                        if (discipline == null)
                         {
-                            var discipline = UnitOfWork.Repository<Discipline>()
-                                .Get(d => d.DisciplineName == disciplinePlan.DisciplineName)
-                                .SingleOrDefault();
-                            if (discipline == null)
-                            {
-                                discipline = new Discipline { DisciplineGuid = Guid.NewGuid(), DisciplineName = disciplinePlan.DisciplineName };
-                                UnitOfWork.Repository<Discipline>().Insert(discipline);
-                                UnitOfWork.Save();
-                            }
-
-                            var disciplineSemesterPlan = new DisciplineSemesterPlan
-                            {
-                                DisciplineId = discipline.DisciplineId,
-                                Discipline = discipline,
-                                ChairId = 1,
-                                HoursOfLectures = docDsp.HoursOfLectures,
-                                HoursOfPractice = docDsp.HoursOfPractice,
-                                HoursOfLaboratory = docDsp.HoursOfLaboratory,
-                                LecturesPerWeek = docDsp.LecturesPerWeek,
-                                PracticePerWeek = docDsp.PracticePerWeek,
-                                LaboratoryPerWeek = docDsp.LaboratoryPerWeek
-                            };
-
-                            if (docDsp.Exam != 0) disciplineSemesterPlan.SessionControlTypeId = 1;
-                            if (docDsp.Check != 0) disciplineSemesterPlan.SessionControlTypeId = 2;
-
-                            semesterSchedule.DisciplineSemesterPlans.Add(disciplineSemesterPlan);
+                            discipline = new Discipline { DisciplineName = disciplinePlan.DisciplineName, ChairId = chair.ChairId };
+                            UnitOfWork.Repository<Discipline>().Insert(discipline);
+                            UnitOfWork.Save();
                         }
+
+                        var disciplineSemesterPlan = new DisciplineSemesterPlan
+                        {
+                            DisciplineId = discipline.DisciplineId,
+                            Discipline = discipline,
+                            HoursOfLectures = docDsp.HoursOfLectures,
+                            HoursOfPractice = docDsp.HoursOfPractice,
+                            HoursOfLaboratory = docDsp.HoursOfLaboratory,
+                            LecturesPerWeek = docDsp.LecturesPerWeek,
+                            PracticePerWeek = docDsp.PracticePerWeek,
+                            LaboratoryPerWeek = docDsp.LaboratoryPerWeek
+                        };
+
+                        if (docDsp.Exam != 0) disciplineSemesterPlan.SessionControlTypeId = (int)SessionControlType.Exam;
+                        if (docDsp.Check != 0) disciplineSemesterPlan.SessionControlTypeId = (int)SessionControlType.Check;
+
+                        semesterSchedule.DisciplineSemesterPlans.Add(disciplineSemesterPlan);
                     }
                    
                     courseSchedule.SemesterSchedules.Add(semesterSchedule);

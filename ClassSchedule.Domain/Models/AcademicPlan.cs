@@ -20,8 +20,8 @@ namespace ClassSchedule.Domain.Models
         /// <summary>
         /// Кафедра
         /// </summary>
-        public int? ChairId { get; set; }
-        public virtual Chair Chair { get; set; }
+        //public int? ChairId { get; set; }
+        //public virtual Chair Chair { get; set; }
 
         /// <summary>
         /// Количество семестров

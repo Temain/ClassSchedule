@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,9 @@ namespace ClassSchedule.Domain.Models
     public class Auditorium
     {
         public int AuditoriumId { get; set; }
+
+        public Guid AuditoriumGuid { get; set; }
+
         public string AuditoriumNumber { get; set; }
 
         /// <summary>
@@ -27,6 +31,25 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         public int AuditoriumTypeId { get; set; }
         public virtual AuditoriumType AuditoriumType { get; set; }
+
+        /// <summary>
+        /// Мест в аудитории
+        /// </summary>
+        public int? Places { get; set; }
+
+        /// <summary>
+        /// Кафедра
+        /// </summary>
+        public int? ChairId { get; set; }
+        public virtual Chair Chair { get; set; }
+
+        /// <summary>
+        /// Примечание
+        /// </summary>
+        [StringLength(100)]
+        public string Comment { get; set; }
+
+        public bool IsDeleted { get; set; }
 
         /// <summary>
         /// Занятия в этой аудитории

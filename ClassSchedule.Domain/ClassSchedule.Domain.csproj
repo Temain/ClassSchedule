@@ -61,69 +61,57 @@
     <Compile Include="DataAccess\Interfaces\IUnitOfWork.cs" />
     <Compile Include="DataAccess\Repositories\GenericRepository.cs" />
     <Compile Include="DataAccess\UnitOfWork.cs" />
-    <Compile Include="Migrations\201602081159021_Init.cs" />
-    <Compile Include="Migrations\201602081159021_Init.Designer.cs">
-      <DependentUpon>201602081159021_Init.cs</DependentUpon>
+    <Compile Include="Migrations\201603250653192_Init.cs" />
+    <Compile Include="Migrations\201603250653192_Init.Designer.cs">
+      <DependentUpon>201603250653192_Init.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201602081400142_CreateRelations.cs" />
-    <Compile Include="Migrations\201602081400142_CreateRelations.Designer.cs">
-      <DependentUpon>201602081400142_CreateRelations.cs</DependentUpon>
+    <Compile Include="Migrations\201603250712587_AddChairIdFieldToDspTable.cs" />
+    <Compile Include="Migrations\201603250712587_AddChairIdFieldToDspTable.Designer.cs">
+      <DependentUpon>201603250712587_AddChairIdFieldToDspTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201602081808053_AddRelationLessonToGroup.cs" />
-    <Compile Include="Migrations\201602081808053_AddRelationLessonToGroup.Designer.cs">
-      <DependentUpon>201602081808053_AddRelationLessonToGroup.cs</DependentUpon>
+    <Compile Include="Migrations\201603250720252_AddChairCodeFromVpoToChairTable.cs" />
+    <Compile Include="Migrations\201603250720252_AddChairCodeFromVpoToChairTable.Designer.cs">
+      <DependentUpon>201603250720252_AddChairCodeFromVpoToChairTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201602081822200_AddDisciplineAndChairToLessonTable.cs" />
-    <Compile Include="Migrations\201602081822200_AddDisciplineAndChairToLessonTable.Designer.cs">
-      <DependentUpon>201602081822200_AddDisciplineAndChairToLessonTable.cs</DependentUpon>
+    <Compile Include="Migrations\201603250741101_ChangeDivisionCodeVpoToIntInChairTable.cs" />
+    <Compile Include="Migrations\201603250741101_ChangeDivisionCodeVpoToIntInChairTable.Designer.cs">
+      <DependentUpon>201603250741101_ChangeDivisionCodeVpoToIntInChairTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201602081856577_AddJobFieldToLessonTable.cs" />
-    <Compile Include="Migrations\201602081856577_AddJobFieldToLessonTable.Designer.cs">
-      <DependentUpon>201602081856577_AddJobFieldToLessonTable.cs</DependentUpon>
+    <Compile Include="Migrations\201603250759420_RemoveChairIdFromAcademicPlanTable.cs" />
+    <Compile Include="Migrations\201603250759420_RemoveChairIdFromAcademicPlanTable.Designer.cs">
+      <DependentUpon>201603250759420_RemoveChairIdFromAcademicPlanTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201602081904145_AddManyToManyJobsDisciplineSemesterPlans.cs" />
-    <Compile Include="Migrations\201602081904145_AddManyToManyJobsDisciplineSemesterPlans.Designer.cs">
-      <DependentUpon>201602081904145_AddManyToManyJobsDisciplineSemesterPlans.cs</DependentUpon>
+    <Compile Include="Migrations\201603250949326_AddAbbreviationFieldToHousingTable.cs" />
+    <Compile Include="Migrations\201603250949326_AddAbbreviationFieldToHousingTable.Designer.cs">
+      <DependentUpon>201603250949326_AddAbbreviationFieldToHousingTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201602081936096_RemakeManyToManyDisciplineSemesterPlanJob.cs" />
-    <Compile Include="Migrations\201602081936096_RemakeManyToManyDisciplineSemesterPlanJob.Designer.cs">
-      <DependentUpon>201602081936096_RemakeManyToManyDisciplineSemesterPlanJob.cs</DependentUpon>
+    <Compile Include="Migrations\201603250955114_AddCommentFieldToAuditoriumTable.cs" />
+    <Compile Include="Migrations\201603250955114_AddCommentFieldToAuditoriumTable.Designer.cs">
+      <DependentUpon>201603250955114_AddCommentFieldToAuditoriumTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201603201815070_AddCourseAndGroupFieldToApplicationUser.cs" />
-    <Compile Include="Migrations\201603201815070_AddCourseAndGroupFieldToApplicationUser.Designer.cs">
-      <DependentUpon>201603201815070_AddCourseAndGroupFieldToApplicationUser.cs</DependentUpon>
+    <Compile Include="Migrations\201603251003514_AddChairIdFieldToAuditoriumTable.cs" />
+    <Compile Include="Migrations\201603251003514_AddChairIdFieldToAuditoriumTable.Designer.cs">
+      <DependentUpon>201603251003514_AddChairIdFieldToAuditoriumTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201603210833256_AddWeekNumberFieldToApplicationUser.cs" />
-    <Compile Include="Migrations\201603210833256_AddWeekNumberFieldToApplicationUser.Designer.cs">
-      <DependentUpon>201603210833256_AddWeekNumberFieldToApplicationUser.cs</DependentUpon>
+    <Compile Include="Migrations\201603251005403_AddPlacesFieldToAuditoriumTable.cs" />
+    <Compile Include="Migrations\201603251005403_AddPlacesFieldToAuditoriumTable.Designer.cs">
+      <DependentUpon>201603251005403_AddPlacesFieldToAuditoriumTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201603210835433_MakeWeekNumberFieldRequired.cs" />
-    <Compile Include="Migrations\201603210835433_MakeWeekNumberFieldRequired.Designer.cs">
-      <DependentUpon>201603210835433_MakeWeekNumberFieldRequired.cs</DependentUpon>
+    <Compile Include="Migrations\201603251006185_MakePlacesFieldNotRequiredInAuditoriumTable.cs" />
+    <Compile Include="Migrations\201603251006185_MakePlacesFieldNotRequiredInAuditoriumTable.Designer.cs">
+      <DependentUpon>201603251006185_MakePlacesFieldNotRequiredInAuditoriumTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201603210845578_AddEducationYearTable.cs" />
-    <Compile Include="Migrations\201603210845578_AddEducationYearTable.Designer.cs">
-      <DependentUpon>201603210845578_AddEducationYearTable.cs</DependentUpon>
+    <Compile Include="Migrations\201603251024003_AddGuidToAuditorium.cs" />
+    <Compile Include="Migrations\201603251024003_AddGuidToAuditorium.Designer.cs">
+      <DependentUpon>201603251024003_AddGuidToAuditorium.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201603240912331_AddUploadedAtAndFilePathFieldsToPlan.cs" />
-    <Compile Include="Migrations\201603240912331_AddUploadedAtAndFilePathFieldsToPlan.Designer.cs">
-      <DependentUpon>201603240912331_AddUploadedAtAndFilePathFieldsToPlan.cs</DependentUpon>
+    <Compile Include="Migrations\201603251026195_RemoveChairCodeFieldInAuditoriumTable.cs" />
+    <Compile Include="Migrations\201603251026195_RemoveChairCodeFieldInAuditoriumTable.Designer.cs">
+      <DependentUpon>201603251026195_RemoveChairCodeFieldInAuditoriumTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201603240918110_MakeChairIdNotRequiredInPlan.cs" />
-    <Compile Include="Migrations\201603240918110_MakeChairIdNotRequiredInPlan.Designer.cs">
-      <DependentUpon>201603240918110_MakeChairIdNotRequiredInPlan.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603240940468_RemoveNumberOfSemesterFieldFromPlan.cs" />
-    <Compile Include="Migrations\201603240940468_RemoveNumberOfSemesterFieldFromPlan.Designer.cs">
-      <DependentUpon>201603240940468_RemoveNumberOfSemesterFieldFromPlan.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603241118373_AddHoursPerWeekFieldsToDisciplineSemesterPlan.cs" />
-    <Compile Include="Migrations\201603241118373_AddHoursPerWeekFieldsToDisciplineSemesterPlan.Designer.cs">
-      <DependentUpon>201603241118373_AddHoursPerWeekFieldsToDisciplineSemesterPlan.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603241340086_MakeSemesterControlTypeNotRequiredInDsp.cs" />
-    <Compile Include="Migrations\201603241340086_MakeSemesterControlTypeNotRequiredInDsp.Designer.cs">
-      <DependentUpon>201603241340086_MakeSemesterControlTypeNotRequiredInDsp.cs</DependentUpon>
+    <Compile Include="Migrations\201603251050490_ChangePerWeekFieldsToFloatInDsp.cs" />
+    <Compile Include="Migrations\201603251050490_ChangePerWeekFieldsToFloatInDsp.Designer.cs">
+      <DependentUpon>201603251050490_ChangePerWeekFieldsToFloatInDsp.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AcademicPlan.cs" />
@@ -164,53 +152,44 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201602081159021_Init.resx">
-      <DependentUpon>201602081159021_Init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603250653192_Init.resx">
+      <DependentUpon>201603250653192_Init.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201602081400142_CreateRelations.resx">
-      <DependentUpon>201602081400142_CreateRelations.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603250712587_AddChairIdFieldToDspTable.resx">
+      <DependentUpon>201603250712587_AddChairIdFieldToDspTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201602081808053_AddRelationLessonToGroup.resx">
-      <DependentUpon>201602081808053_AddRelationLessonToGroup.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603250720252_AddChairCodeFromVpoToChairTable.resx">
+      <DependentUpon>201603250720252_AddChairCodeFromVpoToChairTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201602081822200_AddDisciplineAndChairToLessonTable.resx">
-      <DependentUpon>201602081822200_AddDisciplineAndChairToLessonTable.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603250741101_ChangeDivisionCodeVpoToIntInChairTable.resx">
+      <DependentUpon>201603250741101_ChangeDivisionCodeVpoToIntInChairTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201602081856577_AddJobFieldToLessonTable.resx">
-      <DependentUpon>201602081856577_AddJobFieldToLessonTable.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603250759420_RemoveChairIdFromAcademicPlanTable.resx">
+      <DependentUpon>201603250759420_RemoveChairIdFromAcademicPlanTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201602081904145_AddManyToManyJobsDisciplineSemesterPlans.resx">
-      <DependentUpon>201602081904145_AddManyToManyJobsDisciplineSemesterPlans.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603250949326_AddAbbreviationFieldToHousingTable.resx">
+      <DependentUpon>201603250949326_AddAbbreviationFieldToHousingTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201602081936096_RemakeManyToManyDisciplineSemesterPlanJob.resx">
-      <DependentUpon>201602081936096_RemakeManyToManyDisciplineSemesterPlanJob.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603250955114_AddCommentFieldToAuditoriumTable.resx">
+      <DependentUpon>201603250955114_AddCommentFieldToAuditoriumTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603201815070_AddCourseAndGroupFieldToApplicationUser.resx">
-      <DependentUpon>201603201815070_AddCourseAndGroupFieldToApplicationUser.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603251003514_AddChairIdFieldToAuditoriumTable.resx">
+      <DependentUpon>201603251003514_AddChairIdFieldToAuditoriumTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603210833256_AddWeekNumberFieldToApplicationUser.resx">
-      <DependentUpon>201603210833256_AddWeekNumberFieldToApplicationUser.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603251005403_AddPlacesFieldToAuditoriumTable.resx">
+      <DependentUpon>201603251005403_AddPlacesFieldToAuditoriumTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603210835433_MakeWeekNumberFieldRequired.resx">
-      <DependentUpon>201603210835433_MakeWeekNumberFieldRequired.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603251006185_MakePlacesFieldNotRequiredInAuditoriumTable.resx">
+      <DependentUpon>201603251006185_MakePlacesFieldNotRequiredInAuditoriumTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603210845578_AddEducationYearTable.resx">
-      <DependentUpon>201603210845578_AddEducationYearTable.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603251024003_AddGuidToAuditorium.resx">
+      <DependentUpon>201603251024003_AddGuidToAuditorium.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603240912331_AddUploadedAtAndFilePathFieldsToPlan.resx">
-      <DependentUpon>201603240912331_AddUploadedAtAndFilePathFieldsToPlan.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603251026195_RemoveChairCodeFieldInAuditoriumTable.resx">
+      <DependentUpon>201603251026195_RemoveChairCodeFieldInAuditoriumTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603240918110_MakeChairIdNotRequiredInPlan.resx">
-      <DependentUpon>201603240918110_MakeChairIdNotRequiredInPlan.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603240940468_RemoveNumberOfSemesterFieldFromPlan.resx">
-      <DependentUpon>201603240940468_RemoveNumberOfSemesterFieldFromPlan.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603241118373_AddHoursPerWeekFieldsToDisciplineSemesterPlan.resx">
-      <DependentUpon>201603241118373_AddHoursPerWeekFieldsToDisciplineSemesterPlan.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603241340086_MakeSemesterControlTypeNotRequiredInDsp.resx">
-      <DependentUpon>201603241340086_MakeSemesterControlTypeNotRequiredInDsp.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603251050490_ChangePerWeekFieldsToFloatInDsp.resx">
+      <DependentUpon>201603251050490_ChangePerWeekFieldsToFloatInDsp.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -22,12 +22,6 @@ namespace ClassSchedule.Domain.Models
         public virtual Discipline Discipline { get; set; }
 
         /// <summary>
-        /// Кафедра
-        /// </summary>
-        public int ChairId { get; set; }
-        public virtual Chair Chair { get; set; }
-
-        /// <summary>
         /// Часов лекций
         /// </summary>
         public int? HoursOfLectures { get; set; }
@@ -45,17 +39,17 @@ namespace ClassSchedule.Domain.Models
         /// <summary>
         /// Лекций в неделю
         /// </summary>
-        public int LecturesPerWeek { get; set; }
+        public float? LecturesPerWeek { get; set; }
 
         /// <summary>
         /// Практик в неделю
         /// </summary>
-        public int PracticePerWeek { get; set; }
+        public float? PracticePerWeek { get; set; }
 
         /// <summary>
         /// Лабораторных в неделю
         /// </summary>
-        public int LaboratoryPerWeek { get; set; }
+        public float? LaboratoryPerWeek { get; set; }
 
         /// <summary>
         /// График на семестр

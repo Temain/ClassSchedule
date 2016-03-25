@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,18 @@ namespace ClassSchedule.Domain.Models
     public class Housing
     {
         public int HousingId { get; set; }
+
+        /// <summary>
+        /// Наименование корпуса
+        /// </summary>
+        [StringLength(500)]
         public string HousingName { get; set; }
+
+        /// <summary>
+        /// Сокращение
+        /// </summary>
+        [StringLength(20)]
+        public string Abbreviation { get; set; }
 
         /// <summary>
         /// Аудитории

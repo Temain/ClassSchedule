@@ -29,6 +29,12 @@ namespace ClassSchedule.Domain.Models
         public string DisciplineName { get; set; }
 
         /// <summary>
+        /// Кафедра
+        /// </summary>
+        public int ChairId { get; set; }
+        public virtual Chair Chair { get; set; }
+
+        /// <summary>
         /// Отметка об удалении записи
         /// </summary>
         public bool? IsDeleted { get; set; }

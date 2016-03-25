@@ -43,6 +43,11 @@ namespace ClassSchedule.Domain.Models
         public string DivisionName { get; set; }
 
         /// <summary>
+        /// Код подразделения в программе УП ВПО
+        /// </summary>
+        public int? DivisionCodeVpo { get; set; }
+
+        /// <summary>
         /// Вышестоящее подразделение
         /// </summary>
         public Guid? ParentId { get; set; }
@@ -69,5 +74,15 @@ namespace ClassSchedule.Domain.Models
         /// Привязка сотрудников к кафедре
         /// </summary>
         public virtual ICollection<Job> Jobs { get; set; }
+
+        /// <summary>
+        /// Привязка дисциплин к кафедре
+        /// </summary>
+        public virtual ICollection<Discipline> Disciplines { get; set; }
+
+        /// <summary>
+        /// Аудитории
+        /// </summary>
+        public virtual ICollection<Auditorium> Auditoriums { get; set; }
     }
 }
