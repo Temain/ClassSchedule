@@ -35,26 +35,28 @@ namespace ClassSchedule.Web.Controllers
                 {
                     continue;
                 }
-
-                if (programOfEducationId == null)
-                {
-                    return AcademicPlanInfo(hpf);
-                }
-
+               
                 try
                 {
+                    if (programOfEducationId == null)
+                    {
+                        return AcademicPlanInfo(hpf);
+                    }
+
                     string savedFileName = Path.Combine(Server.MapPath("~/App_Data"), Path.GetFileName(hpf.FileName));
                     hpf.SaveAs(savedFileName);
 
                     var academicPlan = Parse(savedFileName);
-                    academicPlan.ProgramOfEducationId = programOfEducationId.Value;
-
-                    UnitOfWork.Repository<Domain.Models.AcademicPlan>().Insert(academicPlan);
-                    UnitOfWork.Save();
+                    if (academicPlan != null)
+                    {
+                        academicPlan.ProgramOfEducationId = programOfEducationId.Value;
+                        UnitOfWork.Repository<Domain.Models.AcademicPlan>().Insert(academicPlan);
+                        UnitOfWork.Save();
+                    }
                 }
                 catch (Exception ex)
                 {
-                    return Content("{\"Status\":\"Error\"}", "application/json");
+                    return Content("{\"Status\":\"Error\", \"ErrorMessage\":\"" + ex.Message + "\"}", "application/json");
                 }       
             }
 
@@ -79,21 +81,31 @@ namespace ClassSchedule.Web.Controllers
                 .Get(x => x.EducationDirectionCode == directionCodePlan || x.EducationDirectionCode.Replace(".", "") == directionCodePlan)
                 .FirstOrDefault();
 
-            int yearStartPlan = Convert.ToInt32(document.Plan.PlanTitle.YearStart);
+            string yearStartPlan = document.Plan.PlanTitle.YearStart;
+            if (yearStartPlan == null)
+            {
+                throw new Exception("В файле не указан или неверно указан год начала обучения.");
+            }
+            int yearStart = Convert.ToInt32(yearStartPlan);  
 
-            var properties = new List<string>();           
-            if (educationForm != null)
+            var properties = new List<string>();
+            if (educationForm == null)
             {
-                properties.Add("\"EducationFormId\":\"" + educationForm.EducationFormId + "\"");
-                properties.Add("\"EducationFormName\":\"" + educationForm.EducationFormName.Replace("ое","ая").ToLower() + "\"");
+                throw new Exception("В файле не указана или неверно указана форма обучения.");
             }
-            if (direction != null)
+
+            properties.Add("\"EducationFormId\":\"" + educationForm.EducationFormId + "\"");
+            properties.Add("\"EducationFormName\":\"" + educationForm.EducationFormName.Replace("ое", "ая").ToLower() + "\"");
+
+            if (direction == null)
             {
-                properties.Add("\"EducationDirectionId\":\"" + direction.EducationDirectionId + "\"");
-                properties.Add("\"EducationDirectionCode\":\"" + direction.EducationDirectionCode + "\"");
-                properties.Add("\"EducationDirectionName\":\"" + direction.EducationDirectionName + "\"");
+                throw new Exception("В файле не указан или указан неверный код направления.");
             }
-            properties.Add("\"YearStart\":\"" + yearStartPlan + "\"");
+
+            properties.Add("\"EducationDirectionId\":\"" + direction.EducationDirectionId + "\"");
+            properties.Add("\"EducationDirectionCode\":\"" + direction.EducationDirectionCode + "\"");
+            properties.Add("\"EducationDirectionName\":\"" + direction.EducationDirectionName + "\"");
+            properties.Add("\"YearStart\":\"" + yearStart + "\"");
             properties.Add("\"Status\":\"Info\"");
             string result = "{" + String.Join(",", properties) + "}";
 
@@ -105,7 +117,23 @@ namespace ClassSchedule.Web.Controllers
             string xml = System.IO.File.ReadAllText(fileName);
             var document = xml.ParseXml<Document>();
 
-             // var dis = document.Plan.Disciplines.Select(x => x.DisciplineName).OrderBy(o => o).Distinct();
+            var discs = document.Plan.Disciplines
+                .Select(x => new TempDiscipline { DisciplineName = x.DisciplineName, ChairCode = x.ChairCode })
+                .OrderBy(o => o.DisciplineName)
+                .Distinct();
+            foreach (var disc in discs)
+            {
+                var discInDb = UnitOfWork.Repository<TempDiscipline>()
+                    .Get(d => d.DisciplineName == disc.DisciplineName && d.ChairCode == disc.ChairCode)
+                    .SingleOrDefault();
+                if (discInDb == null)
+                {
+                    UnitOfWork.Repository<TempDiscipline>().Insert(disc);
+                    UnitOfWork.Save();
+                }
+            }
+
+            return null;
 
             var academicPlan = new Domain.Models.AcademicPlan
             {
@@ -169,9 +197,9 @@ namespace ClassSchedule.Web.Controllers
                         var chair = UnitOfWork.Repository<Chair>()
                             .Get(x => x.IsDeleted != true && x.IsFaculty != true
                                       && x.DivisionCodeVpo == disciplinePlan.ChairCode)
-                            .SingleOrDefault();
-                        
+                            .SingleOrDefault();                      
                         if (chair == null) continue;
+
                         var discipline = UnitOfWork.Repository<Discipline>()
                             .Get(d => d.DisciplineName == disciplinePlan.DisciplineName && d.ChairId == chair.ChairId)
                             .FirstOrDefault();

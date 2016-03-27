@@ -17,6 +17,6 @@ namespace AcademicPlan.Parser.Models.Plan.Title
         public string Position { get; set; }
 
         [XmlAttribute("Активный")]
-        public bool IsActive { get; set; }
+        public int IsActive { get; set; }
     }
 }

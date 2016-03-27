@@ -64,7 +64,7 @@
 
     <script>
         $(document).ready(function() {
-            
+
             /* Настройка плагина загрузки файлов
             ----------------------------------------------*/
             $("#fileuploadBtn").click(function() {
@@ -115,9 +115,21 @@
                              </div>")
                         .appendTo("#files")
                         .find(".upload")
-                        .click(function() {
-                            // data.context = $('<p/>').text('Загрузка...').replaceAll($(this));
-                            data.submit();
+                        .click(function () {
+                            var fileContainer = data.context.closest(".file-container");
+                            var profileSelect = fileContainer.find(".profile");
+                            var programOfEducationId = profileSelect.val();
+
+                            var profiles = profileSelect.find("option");
+                            if (profiles.length > 0 && !programOfEducationId) {
+                                profileSelect.focus();
+                                return false;
+                            }
+
+                            if (programOfEducationId) {
+                                data.context = $('<p/>').text('Загрузка...').replaceAll($(this));
+                                data.submit();
+                            }
                         });
 
                     // Кнопка удаления
@@ -132,10 +144,12 @@
                     // формы обучения, уровня образования, года начала обучения из файлов
                     data.submit();
                 },
-                done: function (e, data) {
+                done: function(e, data) {
                     var fileContainer = data.context.closest(".file-container");
                     var profileSelect = fileContainer.find(".profile");
-                    if (data.result.Status === "Info") {                       
+                    var actions = fileContainer.find(".file-actions");
+
+                    if (data.result.Status === "Info") {
                         fileContainer.find(".form").text(data.result.EducationFormName);
                         fileContainer.find(".year").text(data.result.YearStart);
 
@@ -162,18 +176,27 @@
                         });
                     }
 
+                    if (data.result.Status === "Error") {                                   
+                        actions.html(
+                           "<a href='#' data-toggle='popover' data-placement='left' title='Ошибка' data-content='" + data.result.ErrorMessage + "'> " +
+                           "<span class='bigger'><i class='fa fa-exclamation-triangle bigger text-danger'></i> Ошибка</span>" +
+                           "</a>");
+                        profileSelect.attr('disabled', 'disabled');
+
+                        $('[data-toggle="popover"]').popover();
+                    }
+
                     if (data.result.Status === "Success") {
-                        var actions = fileContainer.find(".file-actions");
                         actions.html("<span class='bigger'><i class='fa fa-check bigger text-success'></i> Загрузка завершена</span>");
                         profileSelect.attr('disabled', 'disabled');
                     }
                 },
-                progress: function (e, data) {
+                progress: function(e, data) {
                     var fileContainer = data.context.closest(".file-container");
                     var programOfEducationId = fileContainer.find(".profile").val();
 
                     if (programOfEducationId) {
-                        var progress = parseInt(data.loaded / data.total * 100, 10);                        
+                        var progress = parseInt(data.loaded / data.total * 100, 10);
                         fileContainer.find(".file-progress .progress-bar").css('width', progress + '%');
                     }
                 }
@@ -186,11 +209,11 @@
 
                 data.formData = { programOfEducationId: programOfEducationId };
 
-                var profiles = profileSelect.find("option");
-                if (profiles.length > 0 && !programOfEducationId) {
-                    profileSelect.focus();
-                    return false;
-                }
+                //var profiles = profileSelect.find("option");
+                //if (profiles.length > 0 && !programOfEducationId) {
+                //    profileSelect.focus();
+                //    return false;
+                //}
             });
         });
     </script>

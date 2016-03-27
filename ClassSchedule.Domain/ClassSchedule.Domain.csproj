@@ -113,6 +113,14 @@
     <Compile Include="Migrations\201603251050490_ChangePerWeekFieldsToFloatInDsp.Designer.cs">
       <DependentUpon>201603251050490_ChangePerWeekFieldsToFloatInDsp.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603251143588_AddTempDisciplineTable.cs" />
+    <Compile Include="Migrations\201603251143588_AddTempDisciplineTable.Designer.cs">
+      <DependentUpon>201603251143588_AddTempDisciplineTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603251149172_ChangeChairCodeInTempDisciplineToInt.cs" />
+    <Compile Include="Migrations\201603251149172_ChangeChairCodeInTempDisciplineToInt.Designer.cs">
+      <DependentUpon>201603251149172_ChangeChairCodeInTempDisciplineToInt.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AcademicPlan.cs" />
     <Compile Include="Models\Auditorium.cs" />
@@ -145,6 +153,7 @@
     <Compile Include="Models\LogEntry.cs" />
     <Compile Include="Models\ProgramOfEducation.cs" />
     <Compile Include="Models\SessionControlType.cs" />
+    <Compile Include="Models\TempDiscipline.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +199,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603251050490_ChangePerWeekFieldsToFloatInDsp.resx">
       <DependentUpon>201603251050490_ChangePerWeekFieldsToFloatInDsp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603251143588_AddTempDisciplineTable.resx">
+      <DependentUpon>201603251143588_AddTempDisciplineTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603251149172_ChangeChairCodeInTempDisciplineToInt.resx">
+      <DependentUpon>201603251149172_ChangeChairCodeInTempDisciplineToInt.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
