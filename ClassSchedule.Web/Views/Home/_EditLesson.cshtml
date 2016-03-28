@@ -1,6 +1,5 @@
-﻿@using ClassSchedule.Domain.Models
-<!-- Modal -->
-<div id="editLesson" class="modal fade" role="dialog">
+﻿<!-- Modal -->
+<div id="edit-lesson" class="modal fade" role="dialog">
     <div class="modal-dialog">
 
         <!-- Modal content-->
@@ -10,8 +9,9 @@
                 <h4 class="modal-title">Редактирование занятия</h4>
             </div>
             <div class="modal-body">
+                
                 <!-- Первая дисциплина -->
-                <div class="row lesson-container">
+                <div id="first-discipline" class="row lesson-container" data-order="1">
                     <div class="col-md-12 lesson-edit">
                         <div class="col-md-12 number">
                             <span class="number-circle">1</span><div class="number-background"></div>
@@ -19,36 +19,45 @@
                         <div class="col-md-12 lesson-content">
                             <div class="col-md-12 form-group">
                                 <label class="control-label">Дисциплина</label>
-                                <input class="form-control"/>
+                                <input type="text" class="discipline form-control" data-provide="typeahead" placeholder="Введите название дисциплины" autocomplete="off" value=""/>
+                                <input type="hidden" class="discipline-id"/>
+                                <div class="text-danger msg-text" style="display: none"> <span class="glyphicon glyphicon glyphicon-exclamation-sign form-control-feedback"></span>Дисциплина не найдена</div>
+
+                                <div class="chair"></div>
+                                <input type="hidden" class="chair-id" />
                             </div>
 
                             <!-- Первый преподаватель -->
-                            <div class="col-md-7 col-md-offset-1 form-group">
-                                <label class="control-label">Преподаватель</label>
-                                <select class="form-control"></select>
-                            </div>
-                            <div class="col-md-2 form-group">
-                                <label class="control-label">Корпус</label>
-                                <select class="form-control"></select>
-                            </div>
-                            <div class="col-md-2 form-group">
-                                <label class="control-label">Аудитория</label>
-                                <select class="form-control"></select>
+                            <div class="first-teacher" data-order="1">
+                                <div class="col-md-7 col-md-offset-1 form-group">
+                                    <label class="control-label">Преподаватель</label>
+                                    <select class="form-control teacher"></select>
+                                </div>
+                                <div class="col-md-2 form-group">
+                                    <label class="control-label">Корпус</label>
+                                    <select class="form-control housing"></select>
+                                </div>
+                                <div class="col-md-2 form-group">
+                                    <label class="control-label">Аудитория</label>
+                                    <select class="form-control auditorium"></select>
+                                </div>
                             </div>
                             <!-- !Первый преподаватель -->
 
                             <!-- Второй преподаватель -->
-                            <div class="col-md-7 col-md-offset-1 form-group">
-                                <label class="control-label">Преподаватель</label>
-                                <select class="form-control"></select>
-                            </div>
-                            <div class="col-md-2 form-group">
-                                <label class="control-label">Корпус</label>
-                                <select class="form-control"></select>
-                            </div>
-                            <div class="col-md-2 form-group">
-                                <label class="control-label">Аудитория</label>
-                                <select class="form-control"></select>
+                            <div class="second-teacher" data-order="2">
+                                <div class="col-md-7 col-md-offset-1 form-group">
+                                    <label class="control-label">Преподаватель</label>
+                                    <select class="form-control teacher"></select>
+                                </div>
+                                <div class="col-md-2 form-group">
+                                    <label class="control-label">Корпус</label>
+                                    <select class="form-control housing"></select>
+                                </div>
+                                <div class="col-md-2 form-group">
+                                    <label class="control-label">Аудитория</label>
+                                    <select class="form-control auditorium"></select>
+                                </div>
                             </div>
                             <!-- !Второй преподаватель -->
                         </div>
@@ -63,7 +72,7 @@
                 <!-- !Первая дисциплина -->
 
                 <!-- Вторая дисциплина -->
-                <div class="row lesson-container">
+                <div id="second-discipline" class="row lesson-container" data-order="2" @*style="display:none"*@>
                     <div class="col-md-12 lesson-edit">
                         <div class="col-md-12 number">
                             <span class="number-circle">2</span><div class="number-background"></div>
@@ -71,36 +80,45 @@
                         <div class="col-md-12 lesson-content">
                             <div class="col-md-12 form-group">
                                 <label class="control-label">Дисциплина</label>
-                                <input class="form-control"/>
+                                <input type="text" class="discipline form-control" data-provide="typeahead" placeholder="Введите название дисциплины" autocomplete="off" value="" />
+                                <input type="hidden" class="discipline-id" />
+                                <div class="text-danger msg-text" style="display: none"> <span class="glyphicon glyphicon glyphicon-exclamation-sign form-control-feedback"></span> Дисциплина не найдена</div>
+
+                                <div class="chair"></div>
+                                <input type="hidden" class="chair-id" />
                             </div>
 
                             <!-- Первый преподаватель -->
-                            <div class="col-md-7 col-md-offset-1 form-group">
-                                <label class="control-label">Преподаватель</label>
-                                <select class="form-control"></select>
-                            </div>
-                            <div class="col-md-2 form-group">
-                                <label class="control-label">Корпус</label>
-                                <select class="form-control"></select>
-                            </div>
-                            <div class="col-md-2 form-group">
-                                <label class="control-label">Аудитория</label>
-                                <select class="form-control"></select>
+                            <div class="first-teacher" data-order="1">
+                                <div class="col-md-7 col-md-offset-1 form-group">
+                                    <label class="control-label">Преподаватель</label>
+                                    <select class="form-control teacher"></select>
+                                </div>
+                                <div class="col-md-2 form-group">
+                                    <label class="control-label">Корпус</label>
+                                    <select class="form-control housing"></select>
+                                </div>
+                                <div class="col-md-2 form-group">
+                                    <label class="control-label">Аудитория</label>
+                                    <select class="form-control auditorium"></select>
+                                </div>
                             </div>
                             <!-- !Первый преподаватель -->
 
                             <!-- Второй преподаватель -->
-                            <div class="col-md-7 col-md-offset-1 form-group">
-                                <label class="control-label">Преподаватель</label>
-                                <select class="form-control"></select>
-                            </div>
-                            <div class="col-md-2 form-group">
-                                <label class="control-label">Корпус</label>
-                                <select class="form-control"></select>
-                            </div>
-                            <div class="col-md-2 form-group">
-                                <label class="control-label">Аудитория</label>
-                                <select class="form-control"></select>
+                            <div class="second-teacher" data-order="2">
+                                <div class="col-md-7 col-md-offset-1 form-group">
+                                    <label class="control-label">Преподаватель</label>
+                                    <select class="form-control teacher"></select>
+                                </div>
+                                <div class="col-md-2 form-group">
+                                    <label class="control-label">Корпус</label>
+                                    <select class="form-control housing"></select>
+                                </div>
+                                <div class="col-md-2 form-group">
+                                    <label class="control-label">Аудитория</label>
+                                    <select class="form-control auditorium"></select>
+                                </div>
                             </div>
                             <!-- !Второй преподаватель -->
                         </div>

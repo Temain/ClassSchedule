@@ -45,6 +45,11 @@ body, h1, h2, h3, h4, h5, h6 { font-family: 'BlissPro', Arial, sans-serif; }
     margin-left: 15px;
 }
 
+.msg-text {
+    margin-top: 0.2em;
+    padding-left: 1em;
+}
+
 .filter {
   -webkit-filter: brightness(0) invert(1);
   filter: brightness(0) invert(1);
@@ -342,10 +347,10 @@ transform: scaleX(-1);
 }
 
 
-/* Кастомное модальное окно
+/* Кастомное модальное окно редактирования занятия
 -------------------------------------------------*/
 @media screen and (min-width: 768px) {	
-	#editLesson .modal-dialog  {width:900px;}
+	#edit-lesson .modal-dialog  {width:900px;}
 }
 
 .custom-modal-content {
@@ -370,7 +375,7 @@ transform: scaleX(-1);
     font-size: 1.1em;
 }
 
-#editLesson .modal-body {
+#edit-lesson .modal-body {
     padding-bottom: 0;
 }
 
@@ -423,6 +428,13 @@ html { overflow-y: auto !important; }
     background: white;
 }
 
+.lesson-container .chair {
+    margin-top: 0.2em;
+    padding-left: 1.2em;
+    font-size: 0.9em;
+    color: #888888;
+}
+
 .lesson-actions {
     position: relative;
     bottom: -0.8em;
@@ -451,6 +463,14 @@ html { overflow-y: auto !important; }
     /*color: red;*/
     color: black;
 }
+
+/* Кастомный шаблон элемента тайпахеда 
+-------------------------------------------------*/
+.typeahead_wrapper { display: block; height: 30px; }
+.typeahead_photo { float: left; max-width: 30px; max-height: 30px; margin-right: 5px; }
+.typeahead_labels { float: left; height: 30px; }
+.typeahead_primary { font-weight: bold; }
+.typeahead_secondary { font-size: .8em; margin-top: -5px; }
 
 
 /* Загрузка файлов 

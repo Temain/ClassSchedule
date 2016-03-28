@@ -71,7 +71,67 @@ namespace ClassSchedule.Domain.Models
 
                 return shortName;
             }
-        } 
+        }
+
+        /// <summary>
+        /// Метод проверяет ситуацию, когда проверяемая дата меньше чем начало учебного года
+        /// </summary>
+        /// <param name="dateCheck">Проверяемая дата</param>
+        /// <returns></returns>
+        private bool DateBeforeEducationYear(DateTime dateCheck)
+        {
+            return dateCheck < EducationYear.DateStart;
+        }
+
+
+        /// <summary>
+        /// Метод проверяет вхождение даты в диапазон выбранного учебного года
+        /// </summary>
+        /// <param name="dateCheck">Проверяемая дата</param>
+        /// <returns></returns>
+        private bool DateInEducationYear(DateTime? dateCheck)
+        {
+            if (dateCheck != null)
+                return (EducationYear.DateStart <= dateCheck && dateCheck <= EducationYear.DateEnd);
+
+            return true;
+        }
+
+
+        /// <summary>
+        /// Метод возвращает ситуацию, когда дата больше чем выбранный учебный год
+        /// </summary>
+        /// <param name="dateCheck">Проверяемая дата</param>
+        /// <returns></returns>
+        private bool DateAfterEducationYear(DateTime? dateCheck)
+        {
+            if (dateCheck != null)
+                return dateCheck > EducationYear.DateEnd;
+
+            return true;
+        }
+
+
+        /// <summary>
+        /// Метод проверяет вхождение диапазона проверяемых дат в выбранный учебный год
+        /// включая ситуации, когда дата окончания диапазона пустая
+        /// </summary>
+        /// <param name="dateStart">Дата начала проверяемого диапазона</param>
+        /// <param name="dateEnd">Дата окончания проверяемого диапазона</param>
+        /// <returns></returns>
+        public bool DatesIsActual(DateTime dateStart, DateTime? dateEnd)
+        {
+            var actual1 = DateBeforeEducationYear(dateStart) || DateInEducationYear(dateStart);
+
+            if (dateEnd.HasValue)
+            {
+                var actual2 = DateInEducationYear(dateEnd) || DateAfterEducationYear(dateEnd);
+
+                return actual1 && actual2;
+            }
+
+            return actual1;
+        }
     }
 
     public class ApplicationRole : IdentityRole

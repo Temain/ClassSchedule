@@ -32,6 +32,12 @@ namespace ClassSchedule.Web
                       "~/Content/bootstrap.css",
                       "~/Content/font-awesome.css",
                       "~/Content/site.css"));
+
+            bundles.Add(new ScriptBundle("~/bundles/typeahead").Include(
+                       "~/Scripts/bootstrap3-typeahead.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/underscore").Include(
+                       "~/Scripts/underscore.js"));
         }
     }
 }

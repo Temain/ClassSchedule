@@ -154,5 +154,83 @@ namespace ClassSchedule.Web.Controllers
 
             return null;
         }
+
+        [HttpPost]
+        public ActionResult Discipline(string query, int? chairId)
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var disciplines = UnitOfWork.Repository<Discipline>()
+                    .GetQ(x => x.DisciplineName.StartsWith(query))
+                    .Take(20);
+
+                if (chairId != null)
+                {
+                    disciplines = disciplines.Where(d => d.ChairId == chairId);
+                }
+
+                var result = disciplines
+                    .Select(x => new
+                    {
+                        x.DisciplineId,
+                        x.DisciplineName,
+                        x.ChairId,
+                        ChairName = x.Chair.DivisionName
+                    })
+                    .ToList();
+
+                return Json(result);
+            }
+
+            return null;
+        }
+
+        [HttpPost]
+        public ActionResult Teacher(int chairId)
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var teachers = UnitOfWork.Repository<Job>()
+                    .Get(filter: x => x.ChairId == chairId && x.IsDeleted != true 
+                            && x.Employee.IsDeleted != true && x.Employee.Person.IsDeleted != true,
+                        orderBy: o => o.OrderBy(n => n.Employee.Person.LastName)
+                            .ThenBy(n => n.Employee.Person.FirstName)
+                            .ThenBy(n => n.Employee.Person.MiddleName))
+                    .Where(x => UserProfile.DatesIsActual(x.JobDateStart, x.JobDateEnd))
+                    .GroupBy(g => g.Employee.PersonId)
+                    .Select(x => new
+                    {
+                        Job = x.OrderByDescending(n => n.JobDateStart).FirstOrDefault()
+                    })
+                    .Select(x => new
+                    {
+                        x.Job.JobId,
+                        x.Job.Employee.Person.FullName
+                    });
+
+                return Json(teachers);
+            }
+
+            return null;
+        }
+
+        [HttpPost]
+        public ActionResult Housing()
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var housings = UnitOfWork.Repository<Housing>()
+                    .GetQ()
+                    .Select(x => new
+                    {
+                        x.HousingId,
+                        HousingName = x.Abbreviation
+                    });
+
+                return Json(housings);
+            }
+
+            return null;
+        }
     }
 }
