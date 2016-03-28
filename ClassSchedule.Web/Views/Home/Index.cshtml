@@ -158,13 +158,19 @@
                 });
             };
 
-            $('.housing').change(function() {
-               // var discipline = $(this).closest('.lesson-container').find('.discipline')
+            $('.housing').change(function () {               
+                var lessonContainer = $(this).closest('.lesson-container');
+
+                var housingId = $(this).val();
+                var chairId = lessonContainer.find('.chair-id').val();
+
+                var auditoriumSelect = $(this).closest('.lesson-teacher').find('.auditorium');
+                loadAuditorium(auditoriumSelect, chairId, housingId);
             });
 
 
             /* Поиск первой дисциплины в модальном окне редактирования занятия
-            ------------------------------------------------------------*/
+            -----------------------------------------------------------------*/
             var disciplinesFirst = {};
             var disciplineLabelsFirst = [];
 
@@ -193,6 +199,8 @@
                         if (labelsCount === 0) {
                             $("#first-discipline .discipline").siblings('.msg-text').slideDown(250);
                             $("#first-discipline .discipline-id").val("-1");
+                            $("#first-discipline .chair-id").val("");
+                            $("#first-discipline .chair").text("");
                         } else {
                             $("#first-discipline .discipline").siblings('.msg-text').slideUp(250);
                         }
@@ -254,6 +262,8 @@
                 if (!this.value) {
                     $('#first-discipline .discipline').siblings('.msg-text').slideUp(0);
                     $('#first-discipline .discipline-id').val('-1');
+                    $("#first-discipline .chair-id").val("");
+                    $("#first-discipline .chair").text("");
                 }
             });
 
@@ -287,6 +297,8 @@
                         if (labelsCount === 0) {
                             $("#second-discipline .discipline").siblings('.msg-text').slideDown(250);
                             $("#second-discipline .discipline-id").val("-1");
+                            $("#second-discipline .chair-id").val("");
+                            $("#second-discipline .chair").text("");
                         } else {
                             $("#second-discipline .discipline").siblings('.msg-text').slideUp(250);
                         }
@@ -348,6 +360,8 @@
                 if (!this.value) {
                     $('#second-discipline .discipline').siblings('.msg-text').slideUp(0);
                     $('#second-discipline .discipline-id').val('-1');
+                    $("#second-discipline .chair-id").val("");
+                    $("#second-discipline .chair").text("");
                 }
             });
 

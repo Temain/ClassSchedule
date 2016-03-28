@@ -232,5 +232,28 @@ namespace ClassSchedule.Web.Controllers
 
             return null;
         }
+
+        [HttpPost]
+        public ActionResult Auditorium(int chairId, int housingId)
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var auditoriums = UnitOfWork.Repository<Auditorium>()
+                    .GetQ(filter: x => (x.ChairId == chairId || x.ChairId == null) && x.HousingId == housingId,
+                        orderBy: o => o.OrderByDescending(n => n.ChairId)
+                            .ThenBy(n => n.AuditoriumNumber))
+                    .Select(x => new
+                    {
+                        x.AuditoriumId,
+                        x.AuditoriumNumber,
+                        x.AuditoriumType.AuditoriumTypeName,
+                        x.Places
+                    }).ToList();
+
+                return Json(auditoriums);
+            }
+
+            return null;
+        }
     }
 }
