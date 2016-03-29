@@ -129,7 +129,6 @@ namespace ClassSchedule.Domain.Models
                 const string initialTerminator = ".";
                 var shortName = FirstName[0] + initialTerminator;
 
-
                 if (String.IsNullOrEmpty(MiddleName))
                     shortName += LastName;
                 else

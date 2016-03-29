@@ -226,6 +226,7 @@
     <Compile Include="Models\Schedule\LessonViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Schedule\ScheduleViewModel.cs" />
+    <Compile Include="Models\Schedule\ShowLessonViewModel.cs" />
     <Compile Include="Models\SelectFlowViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />

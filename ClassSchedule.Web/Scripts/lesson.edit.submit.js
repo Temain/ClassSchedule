@@ -5,36 +5,32 @@
         var lesson1 = new LessonViewModel({
             LessonId: '0',
             LessonTypeId: '1',
-            // ChairId: $('#first-discipline .chair-id').val(),
             TeacherId: $("#first-discipline .lesson-teacher[data-order='1'] .teacher").val(),
-            AuditoriumId : $('#first-discipline .auditorium').val(),
+            AuditoriumId : $("#first-discipline .lesson-teacher[data-order='1'] .auditorium").val(),
             DisciplineId: $('#first-discipline .discipline-id').val(),
             IsNotActive: 'false'
         });
         var lesson2 = new LessonViewModel({
             LessonId: '0',
             LessonTypeId: '1',
-            // ChairId: $('#first-discipline .chair-id').val(),
             TeacherId: $("#first-discipline .lesson-teacher[data-order='2'] .teacher").val(),
-            AuditoriumId: $('#first-discipline .auditorium').val(),
+            AuditoriumId: $("#first-discipline .lesson-teacher[data-order='2'] .auditorium").val(),
             DisciplineId: $('#first-discipline .discipline-id').val(),
             IsNotActive: 'false'
         });
         var lesson3 = new LessonViewModel({
             LessonId: '0',
             LessonTypeId: '1',
-            // ChairId: $('#second-discipline .chair-id').val(),
             TeacherId: $("#second-discipline .lesson-teacher[data-order='1'] .teacher").val(),
-            AuditoriumId: $('#second-discipline .auditorium').val(),
+            AuditoriumId: $("#second-discipline .lesson-teacher[data-order='1'] .auditorium").val(),
             DisciplineId: $('#second-discipline .discipline-id').val(),
             IsNotActive: 'false'
         });
         var lesson4 = new LessonViewModel({
             LessonId: '0',
             LessonTypeId: '1',
-            // ChairId: $('#second-discipline .chair-id').val(),
             TeacherId: $("#second-discipline .lesson-teacher[data-order='2'] .teacher").val(),
-            AuditoriumId: $('#second-discipline .auditorium').val(),
+            AuditoriumId: $("#second-discipline .lesson-teacher[data-order='2'] .auditorium").val(),
             DisciplineId: $('#second-discipline .discipline-id').val(),
             IsNotActive: 'false'
         });
@@ -76,11 +72,12 @@ function LessonViewModel(lessonViewModel) {
     self.LessonId = lessonViewModel.LessonId || '';
     self.LessonTypeId = lessonViewModel.LessonTypeId || '';
     self.LessonTypeName = lessonViewModel.LessonTypeName || '';
-    // self.ChairId = lessonViewModel.ChairId || '';
     self.DisciplineId = lessonViewModel.DisciplineId || '';
     self.DisciplineName = lessonViewModel.DisciplineName || '';
     self.TeacherId = lessonViewModel.TeacherId || '';
-    self.TeacherFullName = lessonViewModel.TeacherFullName || '';
+    self.TeacherLastName = lessonViewModel.TeacherLastName || '';
+    self.TeacherFistName = lessonViewModel.TeacherFirstName || '';
+    self.TeacherMiddleName = lessonViewModel.TeacherMiddleName || '';
     self.AuditoriumId = lessonViewModel.AuditoriumId || '';
     self.AuditoriumName = lessonViewModel.AuditoriumName || '';
     self.IsNotActive = lessonViewModel.IsNotActive || '';

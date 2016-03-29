@@ -218,12 +218,25 @@ textarea {
 }
 
 .lesson-cell:hover {
+    cursor: default;
     /* border: 1px #000000 solid;*/
     box-shadow: 0 0 4px #2E7F3E;
-    /*border: 1px solid #df691a;
-    box-shadow: 0 0 2px rgb(255, 92, 2);
+    /*border: 1px solid #2E7F3E;
+    margin-left: -1px;
+    margin-top: -1px;*/
+    /*box-shadow: 0 0 2px rgb(255, 92, 2);
     -webkit-box-shadow: 0 0 2px rgb(255, 92, 2);
     -moz-box-shadow: 0 0 2px rgb(255, 92, 2);*/
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+  -khtml-user-select: none;    /* Konqueror */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* IE/Edge */
+  user-select: none;           /* non-prefixed version, currently
+                                  not supported by any browser */
 }
 
 

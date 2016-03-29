@@ -1,11 +1,10 @@
 ﻿@using System.Globalization
 @using ClassSchedule.Web.Helpers
 @using ClassSchedule.Web.Models.Schedule
+@using WebGrease.Css.Extensions
 @model ClassSchedule.Web.Models.Schedule.ScheduleViewModel
 @{
     ViewBag.Title = "Расписание занятий";
-
-    // string[] groups = new[] { "ПИ0904", "ПИ0905", "ИТ0904" }; //, "ИТ0905", "УФ0904", "УФ0905"
 
     int numberOfDays = 6;
     int numberOfLessons = 6;
@@ -20,7 +19,7 @@
     @Html.Partial("_Navbar")
 
     <div class="week-panel text-center" data-week="@Model.WeekNumber">
-        @(Model.WeekNumber%2 == 0 ? "Вторая" : "Первая") [@Model.WeekNumber] неделя (@Model.FirstDayOfWeek.ToString("dd.MM") - @Model.LastDayOfWeek.ToString("dd.MM"))
+        @(Model.WeekNumber % 2 == 0 ? "Вторая" : "Первая") [@Model.WeekNumber] неделя (@Model.FirstDayOfWeek.ToString("dd.MM") - @Model.LastDayOfWeek.ToString("dd.MM"))
     </div>
 
     <div class="group-panel">
@@ -66,20 +65,26 @@
             {
                 for (int classNumber = 1; classNumber < 7; classNumber++)
                 {
-                    <div class="bordered-rb lesson-cell" data-group="@group.GroupId" data-day="@dayNumber" data-class-number="@classNumber"
-                         data-class-date="@Model.FirstDayOfWeek.AddDays(dayNumber - 1).ToString("dd.MM.yyyy")" data-toggle="modal" data-target="#edit-lesson">
+                    <div class="bordered-rb lesson-cell noselect" data-group="@group.GroupId" data-day="@dayNumber" data-class-number="@classNumber"
+                         data-class-date="@Model.FirstDayOfWeek.AddDays(dayNumber - 1).ToString("dd.MM.yyyy")">
+                        @{
+                            var day = dayNumber;
+                            var number = classNumber;
+                            var lesson = group.Lessons.Where(x => x.DayNumber == day && x.ClassNumber == number);
 
-                        @foreach(LessonViewModel lessonPart in @Model.GroupLessons)
-
-                        <div class="lesson-cell-part">
-                            <span class="discipline red">Автоматизация систем управления sffgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgfd</span> - <span class="teacher">Потешин И.И.</span><span class="auditorium">(220гл.)</span>,
-                            <span class="teacher">Гормыко Д.В.</span><span class="auditorium">(014зоо.)</span><br/>
-                        </div>
-                        <div class="lesson-cell-part">
-                            <span class="discipline">Автоматизация систем управления</span> - <span class="teacher">Потешин И.И.</span><span class="auditorium">(220гл.)</span>,
-                            <span class="teacher">Гормыко Д.В.</span><span class="auditorium">(014зоо.)</span><br/>
-                        </div>
-
+                            foreach (ShowLessonViewModel discipline in lesson)
+                            {
+                                var isLection = discipline.LessonTypeId == (int) LessonTypes.Lection;
+                                <div class="lesson-cell-part">
+                                    <span class="discipline@(isLection ? " red" : "")" data-discipline="@discipline.DisciplineId">@discipline.DisciplineName @(isLection ? "(лекция)" : "")</span> -
+                                    @foreach (var lessonPart in discipline.LessonParts)
+                                    {
+                                        <span class="teacher" data-teacher="@lessonPart.TeacherId">@ScheduleHelpers.PersonShortName(lessonPart.TeacherLastName, lessonPart.TeacherFirstName, lessonPart.TeacherMiddleName)</span>
+                                        <span class="auditorium" data-auditorium="@lessonPart.AuditoriumId">(@lessonPart.AuditoriumName),</span>
+                                    }
+                                </div>
+                            }
+                        }
                     </div>
                 }
 
@@ -90,26 +95,26 @@
 </div>
 
 @*<div class="bordered-rb lesson-cell" style="height: 50px">
-    <div class="actions">
-            <a href="#">
-                <i class="fa fa-pencil text-success"></i><span> Редактировать</span>
-            </a>
-            <br/>
-            <a href="#">
-                <i class="fa fa-trash text-danger"></i><span> Удалить</span>
-            </a>
-        </div>
-</div>
-<div class="bordered-rb lesson-cell" style="height: 50px">
-    <div class="lesson-cell-part">
-            <span class="discipline red">Автоматизация систем управления sffgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgfd</span> - <span class="teacher">Потешин И.И.</span><span class="auditorium">(220гл.)</span>,
-            <span class="teacher">Гормыко Д.В.</span><span class="auditorium">(014зоо.)</span><br/>
-        </div>
+        <div class="actions">
+                <a href="#">
+                    <i class="fa fa-pencil text-success"></i><span> Редактировать</span>
+                </a>
+                <br/>
+                <a href="#">
+                    <i class="fa fa-trash text-danger"></i><span> Удалить</span>
+                </a>
+            </div>
+    </div>
+    <div class="bordered-rb lesson-cell" style="height: 50px">
         <div class="lesson-cell-part">
-            <span class="discipline">Автоматизация систем управления</span> - <span class="teacher">Потешин И.И.</span><span class="auditorium">(220гл.)</span>,
-            <span class="teacher">Гормыко Д.В.</span><span class="auditorium">(014зоо.)</span><br/>
-        </div>
-</div>*@
+                <span class="discipline red">Автоматизация систем управления sffgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgfd</span> - <span class="teacher">Потешин И.И.</span><span class="auditorium">(220гл.)</span>,
+                <span class="teacher">Гормыко Д.В.</span><span class="auditorium">(014зоо.)</span><br/>
+            </div>
+            <div class="lesson-cell-part">
+                <span class="discipline">Автоматизация систем управления</span> - <span class="teacher">Потешин И.И.</span><span class="auditorium">(220гл.)</span>,
+                <span class="teacher">Гормыко Д.В.</span><span class="auditorium">(014зоо.)</span><br/>
+            </div>
+    </div>*@
 
 @Html.Partial("_EditLesson")
 

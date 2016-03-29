@@ -2,19 +2,11 @@
     /* Настройка модального окна редактирования занятия
     ------------------------------------------------------------*/
     $(".lesson-cell").dblclick(function () {
-        $('#edit-lesson').modal({
-            backdrop: 'static',
-            keyboard: false
-        });       
-    });
-
-    $('#edit-lesson').on('show.bs.modal', function (event) {
-        var relatedTarget = $(event.relatedTarget);
         var weekNumber = $('.week-panel').attr('data-week');
-        var groupId = relatedTarget.attr('data-group');
-        var dayNumber = relatedTarget.attr('data-day');
-        var classNumber = relatedTarget.attr('data-class-number');
-        var classDate = relatedTarget.attr('data-class-date');
+        var groupId = $(this).attr('data-group');
+        var dayNumber = $(this).attr('data-day');
+        var classNumber = $(this).attr('data-class-number');
+        var classDate = $(this).attr('data-class-date');
 
         var parameters = {
             weekNumber: weekNumber,
@@ -27,18 +19,56 @@
             type: "POST",
             url: "/Home/GetLesson",
             data: parameters,
-            success: function(result) {
+            success: function (result) {
                 $('#edit-lesson .group-id').val(groupId);
                 $('#edit-lesson .week-number').val(weekNumber);
                 $('#edit-lesson .day-number').val(dayNumber);
                 $('#edit-lesson .class-number').val(classNumber);
                 $('#edit-lesson .class-date').val(classDate);
+
+                $('#edit-lesson').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
             },
-            error: function() {
+            error: function () {
                 alert("failure");
             }
         });
+             
     });
+
+    //$('#edit-lesson').on('show.bs.modal', function (event) {
+    //    var relatedTarget = $(event.relatedTarget);
+    //    var weekNumber = $('.week-panel').attr('data-week');
+    //    var groupId = relatedTarget.attr('data-group');
+    //    var dayNumber = relatedTarget.attr('data-day');
+    //    var classNumber = relatedTarget.attr('data-class-number');
+    //    var classDate = relatedTarget.attr('data-class-date');
+
+    //    var parameters = {
+    //        weekNumber: weekNumber,
+    //        groupId: groupId,
+    //        dayNumber: dayNumber,
+    //        classNumber: classNumber
+    //    };
+
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "/Home/GetLesson",
+    //        data: parameters,
+    //        success: function(result) {
+    //            $('#edit-lesson .group-id').val(groupId);
+    //            $('#edit-lesson .week-number').val(weekNumber);
+    //            $('#edit-lesson .day-number').val(dayNumber);
+    //            $('#edit-lesson .class-number').val(classNumber);
+    //            $('#edit-lesson .class-date').val(classDate);
+    //        },
+    //        error: function() {
+    //            alert("failure");
+    //        }
+    //    });
+    //});
 
 
     /* Заполнение выпадающих списков

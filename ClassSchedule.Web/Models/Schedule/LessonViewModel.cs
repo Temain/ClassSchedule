@@ -6,6 +6,9 @@ namespace ClassSchedule.Web.Models.Schedule
     {
         public int? LessonId { get; set; }
 
+        public int DayNumber { get; set; }
+        public int ClassNumber { get; set; }
+
         public int LessonTypeId { get; set; }
         public string LessonTypeName { get; set; }
 
@@ -16,7 +19,9 @@ namespace ClassSchedule.Web.Models.Schedule
         public string DisciplineName { get; set; }
 
         public int TeacherId { get; set; }
-        public string TeacherFullName { get; set; }
+        public string TeacherLastName { get; set; }
+        public string TeacherFirstName { get; set; }
+        public string TeacherMiddleName { get; set; }
 
         public int AuditoriumId { get; set; }
         public string AuditoriumName { get; set; }

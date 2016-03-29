@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace ClassSchedule.Web.Models.Schedule
+{
+    public class ShowLessonViewModel
+    {
+        public int DisciplineId { get; set; }
+        public string DisciplineName { get; set; }
+        public int DayNumber { get; set; }
+        public int ClassNumber { get; set; }
+        public int LessonTypeId { get; set; }
+
+        public IEnumerable<LessonViewModel> LessonParts { get; set; } 
+    }
+}

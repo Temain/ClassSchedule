@@ -9,6 +9,9 @@ namespace ClassSchedule.Web
     {
     }
 
+    /// <summary>
+    /// Тип контроля
+    /// </summary>
     public enum SessionControlType
     {
         /// <summary>
@@ -20,5 +23,16 @@ namespace ClassSchedule.Web
         /// Зачёт
         /// </summary>
         Check = 2
+    }
+
+    /// <summary>
+    /// Типы занятий
+    /// </summary>
+    public enum LessonTypes
+    {
+        /// <summary>
+        /// Лекция
+        /// </summary>
+        Lection = 1
     }
 }

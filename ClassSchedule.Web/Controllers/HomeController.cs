@@ -34,7 +34,7 @@ namespace ClassSchedule.Web.Controllers
             {
                 groups = groups.Where(g => g.CourseId == UserProfile.CourseId);
                 viewModel.FacultyName = UserProfile.Course.Faculty.DivisionName;
-            }           
+            }
 
             var groupLessons = groups
                 .Select(x => new GroupLessonsViewModel
@@ -42,21 +42,36 @@ namespace ClassSchedule.Web.Controllers
                     GroupId = x.GroupId,
                     GroupName = x.DivisionName,
                     Lessons = x.Lessons
-                        .Select(y => new LessonViewModel
+                        .Where(g => g.WeekNumber == UserProfile.WeekNumber)
+                        .GroupBy(g => new { g.DayNumber, g.ClassNumber, 
+                            g.DisciplineId, g.Discipline.DisciplineName, g.LessonTypeId })
+                        .Select(s => new ShowLessonViewModel
                         {
-                            LessonId = y.LessonId,
-                            LessonTypeId = y.LessonTypeId ?? 0,
-                            LessonTypeName = y.LessonType.LessonTypeName,
-                            DisciplineId = y.DisciplineId,
-                            DisciplineName = y.Discipline.DisciplineName,
-                            ChairId = y.Discipline.ChairId,
-                            ChairName = y.Discipline.Chair.DivisionName,
-                            AuditoriumId = y.AuditoriumId,
-                            AuditoriumName = y.Auditorium.Housing.HousingName + y.Auditorium.AuditoriumNumber,
-                            TeacherId = y.JobId,
-                            TeacherFullName = y.Job.Employee.Person.LastName,
-                            IsNotActive = y.IsNotActive
-                        })
+                            DisciplineId = s.Key.DisciplineId,
+                            DisciplineName = s.Key.DisciplineName,
+                            LessonTypeId = s.Key.LessonTypeId ?? 0,
+                            DayNumber = s.Key.DayNumber,
+                            ClassNumber = s.Key.ClassNumber,
+                            LessonParts = s.Select(y => new LessonViewModel
+                            {
+                                LessonId = y.LessonId,
+                                LessonTypeId = y.LessonTypeId ?? 0,
+                                LessonTypeName = y.LessonType.LessonTypeName,
+                                DayNumber = y.DayNumber,
+                                ClassNumber = y.ClassNumber,
+                                DisciplineId = y.DisciplineId,
+                                DisciplineName = y.Discipline.DisciplineName,
+                                ChairId = y.Discipline.ChairId,
+                                ChairName = y.Discipline.Chair.DivisionName,
+                                AuditoriumId = y.AuditoriumId,
+                                AuditoriumName = y.Auditorium.AuditoriumNumber + y.Auditorium.Housing.Abbreviation + ".",
+                                TeacherId = y.JobId,
+                                TeacherLastName = y.Job.Employee.Person.LastName,
+                                TeacherFirstName = y.Job.Employee.Person.FirstName,
+                                TeacherMiddleName = y.Job.Employee.Person.MiddleName,
+                                IsNotActive = y.IsNotActive
+                            })
+                        }) 
                 })
                 .ToList();
 
@@ -84,9 +99,10 @@ namespace ClassSchedule.Web.Controllers
                     .Select(x => new LessonViewModel
                     {
                         LessonId = x.LessonId,
-                        LessonTypeId = 1,
+                        LessonTypeId = x.LessonTypeId ?? 0,
                         DisciplineId = x.DisciplineId,
                         DisciplineName = x.Discipline.DisciplineName,
+                        ChairId = x.Discipline.ChairId,
                         ChairName = x.Discipline.Chair.DivisionName,
                         AuditoriumId = x.AuditoriumId,
                         TeacherId = x.JobId,

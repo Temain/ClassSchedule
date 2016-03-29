@@ -9,6 +9,9 @@ namespace ClassSchedule.Web.Helpers
 {    
     public static class ScheduleHelpers
     {
+        /// <summary>
+        /// Возвращает время проведения занятия по номеру дня и номеру занятия
+        /// </summary>
         public static MvcHtmlString TimeOfLesson(int lessonDay, int lessonNumber)
         {
             string[][] weekdaysTime = new[]
@@ -44,6 +47,9 @@ namespace ClassSchedule.Web.Helpers
             return MvcHtmlString.Create(result);
         }
 
+        /// <summary>
+        /// Возвращает сокращение дня недели по его номеру
+        /// </summary>
         public static string DayOfWeek(int dayNumber)
         {
             string[] days = {"Пн","Вт","Ср","Чт","Пт","Сб","Вс"};
@@ -51,11 +57,35 @@ namespace ClassSchedule.Web.Helpers
             return days[dayNumber];
         }
 
+        /// <summary>
+        /// Определение даты занятия по номеру недели, дня и дате начала учебного года
+        /// </summary>
         public static DateTime DateOfLesson(DateTime yearStartDate, int weekNumber, int dayNumber)
         {
             int delta = System.DayOfWeek.Monday - yearStartDate.DayOfWeek;
             DateTime firstMonday = yearStartDate.AddDays(delta);
             return firstMonday.AddDays((weekNumber * 7) + dayNumber - 1);
+        }
+
+        /// <summary>
+        /// Инициалы и фамилия: И.И. Иванов
+        /// </summary>
+        public static string PersonShortName(string lastName, string firstName, string middleName)
+        {
+            const string initialTerminator = ".";
+            var shortName = lastName;
+
+            if (!String.IsNullOrEmpty(firstName))
+            {
+                shortName += " " + firstName[0] + initialTerminator;
+            }
+
+            if (!String.IsNullOrEmpty(middleName))
+            {
+                shortName += middleName[0] + initialTerminator;
+            }
+
+            return shortName;
         }
     }
 }
