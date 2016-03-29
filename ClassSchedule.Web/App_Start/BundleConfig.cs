@@ -38,6 +38,14 @@ namespace ClassSchedule.Web
 
             bundles.Add(new ScriptBundle("~/bundles/underscore").Include(
                        "~/Scripts/underscore.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/knockout").Include(
+                      "~/Scripts/knockout-3.3.0.js",
+                      "~/Scripts/knockout.mapping-latest.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/lesson").Include(
+                       "~/Scripts/lesson.edit.init.js",
+                       "~/Scripts/lesson.edit.submit.js"));
         }
     }
 }

@@ -14,6 +14,7 @@ namespace ClassSchedule.Domain.Models
     public class LessonType
     {
         public int LessonTypeId { get; set; }
+        public Guid LessonTypeGuid { get; set; }
         public string LessonTypeName { get; set; }
 
         /// <summary>

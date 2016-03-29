@@ -7,7 +7,7 @@ using System.Web.Security;
 
 namespace ClassSchedule.Web.Helpers
 {    
-    public static class Helpers
+    public static class ScheduleHelpers
     {
         public static MvcHtmlString TimeOfLesson(int lessonDay, int lessonNumber)
         {
@@ -49,6 +49,13 @@ namespace ClassSchedule.Web.Helpers
             string[] days = {"Пн","Вт","Ср","Чт","Пт","Сб","Вс"};
 
             return days[dayNumber];
+        }
+
+        public static DateTime DateOfLesson(DateTime yearStartDate, int weekNumber, int dayNumber)
+        {
+            int delta = System.DayOfWeek.Monday - yearStartDate.DayOfWeek;
+            DateTime firstMonday = yearStartDate.AddDays(delta);
+            return firstMonday.AddDays((weekNumber * 7) + dayNumber - 1);
         }
     }
 }

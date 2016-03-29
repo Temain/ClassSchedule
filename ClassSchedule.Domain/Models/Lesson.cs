@@ -40,8 +40,8 @@ namespace ClassSchedule.Domain.Models
         /// <summary>
         /// Кафедра
         /// </summary>
-        public int ChairId { get; set; }
-        public virtual Chair Chair { get; set; }
+        //public int ChairId { get; set; }
+        //public virtual Chair Chair { get; set; }
 
         /// <summary>
         /// Преподаватель
@@ -58,7 +58,7 @@ namespace ClassSchedule.Domain.Models
         /// <summary>
         /// Аудитория
         /// </summary>
-        public int? AuditoriumId { get; set; }
+        public int AuditoriumId { get; set; }
         public virtual Auditorium Auditorium { get; set; }
 
         /// <summary>
@@ -74,9 +74,9 @@ namespace ClassSchedule.Domain.Models
         public virtual LessonType LessonType { get; set; }
 
         /// <summary>
-        /// Активно / неактивно
+        /// Неактивно
         /// </summary>
-        public bool IsActive { get; set; }
+        public bool IsNotActive { get; set; }
 
 
         public DateTime CreatedAt { get; set; }

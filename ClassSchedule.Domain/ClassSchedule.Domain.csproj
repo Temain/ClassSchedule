@@ -121,6 +121,22 @@
     <Compile Include="Migrations\201603251149172_ChangeChairCodeInTempDisciplineToInt.Designer.cs">
       <DependentUpon>201603251149172_ChangeChairCodeInTempDisciplineToInt.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603291223330_MakeAuditoriumIdInLessonTableRequired.cs" />
+    <Compile Include="Migrations\201603291223330_MakeAuditoriumIdInLessonTableRequired.Designer.cs">
+      <DependentUpon>201603291223330_MakeAuditoriumIdInLessonTableRequired.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603291338400_AddLessonTypeGuidInLessonTypeTable.cs" />
+    <Compile Include="Migrations\201603291338400_AddLessonTypeGuidInLessonTypeTable.Designer.cs">
+      <DependentUpon>201603291338400_AddLessonTypeGuidInLessonTypeTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603291346098_RenameIsActioveToIsNotActiveInLessonTable.cs" />
+    <Compile Include="Migrations\201603291346098_RenameIsActioveToIsNotActiveInLessonTable.Designer.cs">
+      <DependentUpon>201603291346098_RenameIsActioveToIsNotActiveInLessonTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603291405043_RemoveChairIdFromLessonTable.cs" />
+    <Compile Include="Migrations\201603291405043_RemoveChairIdFromLessonTable.Designer.cs">
+      <DependentUpon>201603291405043_RemoveChairIdFromLessonTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AcademicPlan.cs" />
     <Compile Include="Models\Auditorium.cs" />
@@ -205,6 +221,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603251149172_ChangeChairCodeInTempDisciplineToInt.resx">
       <DependentUpon>201603251149172_ChangeChairCodeInTempDisciplineToInt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603291223330_MakeAuditoriumIdInLessonTableRequired.resx">
+      <DependentUpon>201603291223330_MakeAuditoriumIdInLessonTableRequired.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603291338400_AddLessonTypeGuidInLessonTypeTable.resx">
+      <DependentUpon>201603291338400_AddLessonTypeGuidInLessonTypeTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603291346098_RenameIsActioveToIsNotActiveInLessonTable.resx">
+      <DependentUpon>201603291346098_RenameIsActioveToIsNotActiveInLessonTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603291405043_RemoveChairIdFromLessonTable.resx">
+      <DependentUpon>201603291405043_RemoveChairIdFromLessonTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

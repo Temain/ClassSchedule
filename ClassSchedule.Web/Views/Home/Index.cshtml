@@ -1,5 +1,6 @@
 ﻿@using System.Globalization
 @using ClassSchedule.Web.Helpers
+@using ClassSchedule.Web.Models.Schedule
 @model ClassSchedule.Web.Models.Schedule.ScheduleViewModel
 @{
     ViewBag.Title = "Расписание занятий";
@@ -18,7 +19,7 @@
 <div class="schedule-container">
     @Html.Partial("_Navbar")
 
-    <div class="week-panel text-center">
+    <div class="week-panel text-center" data-week="@Model.WeekNumber">
         @(Model.WeekNumber%2 == 0 ? "Вторая" : "Первая") [@Model.WeekNumber] неделя (@Model.FirstDayOfWeek.ToString("dd.MM") - @Model.LastDayOfWeek.ToString("dd.MM"))
     </div>
 
@@ -27,7 +28,7 @@
         <div class="bordered-rb text-center" style="width: 3%; float: left">Пара</div>
         @foreach (var group in Model.GroupLessons)
         {
-            <div class="bordered-rb text-center" style="width: @widthOfGroupColumn%; float: left">
+            <div class="bordered-rb text-center" data-group-id="@group.GroupId" style="width: @widthOfGroupColumn%; float: left">
                 @group.GroupName
             </div>
         }
@@ -37,7 +38,7 @@
         @for (int i = 0; i < 6; i++)
         {
             <div class="bordered-rb text-center" style="height: 300px;">
-                <span>@Helpers.DayOfWeek(i) <br><small>@Model.FirstDayOfWeek.AddDays(i).ToString("dd.MM")</small></span>
+                <span>@ScheduleHelpers.DayOfWeek(i) <br><small>@Model.FirstDayOfWeek.AddDays(i).ToString("dd.MM")</small></span>
             </div>
             <div class="day-separator"></div>
         }
@@ -50,7 +51,7 @@
             {
                 <div class="bordered-rb text-center" style="height: 50px;">
                     <span>@(j + 1)</span> <br>
-                    <p>@Helpers.TimeOfLesson(i, j)</p>
+                    <p>@ScheduleHelpers.TimeOfLesson(i, j)</p>
                 </div>
             }
 
@@ -58,313 +59,63 @@
         }
     </div>
 
-    @for (int i = 0; i < numberOfGroups; i++)
+    @foreach (var group in Model.GroupLessons)
     {
         <div style="width: @widthOfGroupColumn%; float: left">
-            @for (int j = 0; j < numberOfDays; j++)
+            @for (int dayNumber = 1; dayNumber < numberOfDays + 1; dayNumber++)
             {
-                <div class="bordered-rb lesson-cell" style="height: 50px"></div>
-                <div class="bordered-rb lesson-cell" style="height: 50px">
-                    @*<div class="actions">
-                            <a href="#">
-                                <i class="fa fa-pencil text-success"></i><span> Редактировать</span>
-                            </a>
-                            <br/>
-                            <a href="#">
-                                <i class="fa fa-trash text-danger"></i><span> Удалить</span>
-                            </a>
-                        </div>*@
-                </div>
-                <div class="bordered-rb lesson-cell" style="height: 50px">
-                    @*<div class="lesson-cell-part">
+                for (int classNumber = 1; classNumber < 7; classNumber++)
+                {
+                    <div class="bordered-rb lesson-cell" data-group="@group.GroupId" data-day="@dayNumber" data-class-number="@classNumber"
+                         data-class-date="@Model.FirstDayOfWeek.AddDays(dayNumber - 1).ToString("dd.MM.yyyy")" data-toggle="modal" data-target="#edit-lesson">
+
+                        @foreach(LessonViewModel lessonPart in @Model.GroupLessons)
+
+                        <div class="lesson-cell-part">
                             <span class="discipline red">Автоматизация систем управления sffgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgfd</span> - <span class="teacher">Потешин И.И.</span><span class="auditorium">(220гл.)</span>,
                             <span class="teacher">Гормыко Д.В.</span><span class="auditorium">(014зоо.)</span><br/>
                         </div>
                         <div class="lesson-cell-part">
                             <span class="discipline">Автоматизация систем управления</span> - <span class="teacher">Потешин И.И.</span><span class="auditorium">(220гл.)</span>,
                             <span class="teacher">Гормыко Д.В.</span><span class="auditorium">(014зоо.)</span><br/>
-                        </div>*@
-                </div>
-                <div class="bordered-rb lesson-cell" style="height: 50px"></div>
-                <div class="bordered-rb lesson-cell" style="height: 50px"></div>
-                <div class="bordered-rb lesson-cell" style="height: 50px"></div>
+                        </div>
+
+                    </div>
+                }
+
                 <div class="day-separator"></div>
             }
         </div>
     }
 </div>
 
+@*<div class="bordered-rb lesson-cell" style="height: 50px">
+    <div class="actions">
+            <a href="#">
+                <i class="fa fa-pencil text-success"></i><span> Редактировать</span>
+            </a>
+            <br/>
+            <a href="#">
+                <i class="fa fa-trash text-danger"></i><span> Удалить</span>
+            </a>
+        </div>
+</div>
+<div class="bordered-rb lesson-cell" style="height: 50px">
+    <div class="lesson-cell-part">
+            <span class="discipline red">Автоматизация систем управления sffgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgfd</span> - <span class="teacher">Потешин И.И.</span><span class="auditorium">(220гл.)</span>,
+            <span class="teacher">Гормыко Д.В.</span><span class="auditorium">(014зоо.)</span><br/>
+        </div>
+        <div class="lesson-cell-part">
+            <span class="discipline">Автоматизация систем управления</span> - <span class="teacher">Потешин И.И.</span><span class="auditorium">(220гл.)</span>,
+            <span class="teacher">Гормыко Д.В.</span><span class="auditorium">(014зоо.)</span><br/>
+        </div>
+</div>*@
+
 @Html.Partial("_EditLesson")
 
 @section Scripts {
     @Scripts.Render("~/bundles/underscore")
+    @Scripts.Render("~/bundles/knockout")
     @Scripts.Render("~/bundles/typeahead")
-
-    <script>
-        $(function() {
-            /* Настройка модального окна редактирования занятия
-            ------------------------------------------------------------*/
-            $(".lesson-cell").dblclick(function() {
-                $('#edit-lesson').modal({
-                    backdrop: 'static',
-                    keyboard: false
-                });
-            });
-
-            /* Заполнение выпадающих списков
-            ------------------------------------------------------------*/
-            var loadTeachers = function (select, chairId) {
-                $.post('/Dictionary/Teacher', { chairId: chairId }, function (data) {
-                    select.html('');
-                    if (!data.length) return;
-
-                    var option = "<option></option>";
-                    select.append(option);
-
-                    _.each(data, function (item, ix, list) {
-                        option = "<option value='" + item.JobId + "'>" + item.FullName + "</option>";
-                        select.append(option);
-                    });
-                });
-            };
-
-            var loadHousings = function (select) {
-                $.post('/Dictionary/Housing', {}, function (data) {
-                    select.html('');
-                    if (!data.length) return;
-
-                    var option = "<option></option>";
-                    select.append(option);
-
-                    _.each(data, function (item, ix, list) {
-                        option = "<option value='" + item.HousingId + "'>" + item.HousingName + "</option>";
-                        select.append(option);
-                    });
-                });
-            };
-
-            var loadAuditorium = function (select, chairId, housingId) {
-                $.post('/Dictionary/Auditorium', { chairId: chairId, housingId: housingId }, function (data) {
-                    select.html('');
-                    if (!data.length) return;
-
-                    var option = "<option></option>";
-                    select.append(option);
-
-                    _.each(data, function (item, ix, list) {
-                        option = "<option value='" + item.AuditoriumId + "'>" + item.AuditoriumNumber + "</option>";
-                        select.append(option);
-                    });
-                });
-            };
-
-            $('.housing').change(function () {               
-                var lessonContainer = $(this).closest('.lesson-container');
-
-                var housingId = $(this).val();
-                var chairId = lessonContainer.find('.chair-id').val();
-
-                var auditoriumSelect = $(this).closest('.lesson-teacher').find('.auditorium');
-                loadAuditorium(auditoriumSelect, chairId, housingId);
-            });
-
-
-            /* Поиск первой дисциплины в модальном окне редактирования занятия
-            -----------------------------------------------------------------*/
-            var disciplinesFirst = {};
-            var disciplineLabelsFirst = [];
-
-            var searchFirstDiscipline = _.debounce(function(query, process) {
-                $.post('/Dictionary/Discipline', { query: query }, function(data) {
-
-                    disciplinesFirst = {};
-                    disciplineLabelsFirst = [];
-
-                    if (query.length > 2) {
-
-                        _.each(data, function(item, ix, list) {
-                            if (_.contains(disciplinesFirst, item.DisciplineName)) {
-                                item.DisciplineName = item.DisciplineName + ' #' + item.DisciplineId;
-                            }
-                            disciplineLabelsFirst.push(item.DisciplineName);
-                            disciplinesFirst[item.DisciplineName] = {
-                                DisciplineId: item.DisciplineId,
-                                DisciplineName: item.DisciplineName,
-                                ChairId: item.ChairId,
-                                ChairName: item.ChairName
-                            };
-                        });
-
-                        var labelsCount = Object.keys(disciplineLabelsFirst).length;
-                        if (labelsCount === 0) {
-                            $("#first-discipline .discipline").siblings('.msg-text').slideDown(250);
-                            $("#first-discipline .discipline-id").val("-1");
-                            $("#first-discipline .chair-id").val("");
-                            $("#first-discipline .chair").text("");
-                        } else {
-                            $("#first-discipline .discipline").siblings('.msg-text').slideUp(250);
-                        }
-
-                        process(disciplineLabelsFirst);
-                    }
-
-                    if (query.length === 0) $("#first-discipline .discipline").siblings('.msg-text').slideUp(250);
-                });
-            }, 300);
-           
-            $("#first-discipline .discipline").typeahead({
-                source: function(query, process) {
-                    searchFirstDiscipline(query, process);
-                },
-                updater: function(item) {
-                    $("#first-discipline .discipline-id").val(disciplinesFirst[item].DisciplineId);
-                    $("#first-discipline .chair-id").val(disciplinesFirst[item].ChairId);
-                    $("#first-discipline .chair").text("Кафедра " + disciplinesFirst[item].ChairName);
-
-                    var teacherSelects = $("#first-discipline .teacher");
-                    loadTeachers(teacherSelects, disciplinesFirst[item].ChairId);
-
-                    var housingSelects = $("#first-discipline .housing");
-                    loadHousings(housingSelects);
-
-                    return item;
-                },
-                matcher: function(item) {
-                    if (item.toLowerCase().indexOf(this.query.trim().toLowerCase()) !== -1) {
-                        $("#first-discipline .discipline-id").val(disciplinesFirst[item].DisciplineId);
-
-                        return item;
-                    }
-
-                    $("#first-discipline .discipline-id").val('-1');
-                    return query;
-                },
-                highlighter: function(item) {
-                    var discipline = disciplinesFirst[item];
-                    var template = ''
-                        + "<div class='typeahead_wrapper'>"
-                        + "<div class='typeahead_labels'>"
-                        + "<div class='typeahead_primary'>" + discipline.DisciplineName + "</div>"
-                        + "<div class='typeahead_secondary'>" + discipline.ChairName + "</div>"
-                        + "</div>"
-                        + "</div>";
-                    return template;
-                }
-            });
-
-            var disciplineNameFirst = $('#first-discipline .discipline').val();
-            if (disciplineNameFirst == null || disciplineNameFirst === "") {
-                $('#first-discipline .discipline').siblings('.msg-text').slideUp(0);
-                $('#first-discipline .discipline-id').val('-1');
-            }
-
-            $("#first-discipline .discipline").keyup(function () {
-                if (!this.value) {
-                    $('#first-discipline .discipline').siblings('.msg-text').slideUp(0);
-                    $('#first-discipline .discipline-id').val('-1');
-                    $("#first-discipline .chair-id").val("");
-                    $("#first-discipline .chair").text("");
-                }
-            });
-
-            /* Поиск второй дисциплины в модальном окне редактирования занятия
-            ------------------------------------------------------------------*/
-            var disciplinesSecond = {};
-            var disciplineLabelsSecond = [];
-
-            var searchSecondDiscipline = _.debounce(function (query, process) {
-                $.post('/Dictionary/Discipline', { query: query }, function (data) {
-
-                    disciplinesSecond = {};
-                    disciplineLabelsSecond = [];
-
-                    if (query.length > 2) {
-
-                        _.each(data, function (item, ix, list) {
-                            if (_.contains(disciplinesSecond, item.DisciplineName)) {
-                                item.DisciplineName = item.DisciplineName + ' #' + item.DisciplineId;
-                            }
-                            disciplineLabelsSecond.push(item.DisciplineName);
-                            disciplinesSecond[item.DisciplineName] = {
-                                DisciplineId: item.DisciplineId,
-                                DisciplineName: item.DisciplineName,
-                                ChairId: item.ChairId,
-                                ChairName: item.ChairName
-                            };
-                        });
-
-                        var labelsCount = Object.keys(disciplineLabelsSecond).length;
-                        if (labelsCount === 0) {
-                            $("#second-discipline .discipline").siblings('.msg-text').slideDown(250);
-                            $("#second-discipline .discipline-id").val("-1");
-                            $("#second-discipline .chair-id").val("");
-                            $("#second-discipline .chair").text("");
-                        } else {
-                            $("#second-discipline .discipline").siblings('.msg-text').slideUp(250);
-                        }
-
-                        process(disciplineLabelsSecond);
-                    }
-
-                    if (query.length === 0) $("#second-discipline .discipline").siblings('.msg-text').slideUp(250);
-                });
-            }, 300);
-
-            $("#second-discipline .discipline").typeahead({
-                source: function (query, process) {
-                    searchSecondDiscipline(query, process);
-                },
-                updater: function (item) {
-                    $("#second-discipline .discipline-id").val(disciplinesSecond[item].DisciplineId);
-                    $("#second-discipline .chair-id").val(disciplinesSecond[item].ChairId);
-                    $("#second-discipline .chair").text("Кафедра " + disciplinesSecond[item].ChairName);
-
-                    var teacherSelects = $("#second-discipline .teacher");
-                    loadTeachers(teacherSelects, disciplinesSecond[item].ChairId);
-
-                    var housingSelects = $("#second-discipline .housing");
-                    loadHousings(housingSelects);
-
-                    return item;
-                },
-                matcher: function (item) {
-                    if (item.toLowerCase().indexOf(this.query.trim().toLowerCase()) !== -1) {
-                        $("#second-discipline .discipline-id").val(disciplinesSecond[item].DisciplineId);
-
-                        return item;
-                    }
-
-                    $("#second-discipline .discipline-id").val('-1');
-                    return query;
-                },
-                highlighter: function (item) {
-                    var discipline = disciplinesSecond[item];
-                    var template = ''
-                        + "<div class='typeahead_wrapper'>"
-                        + "<div class='typeahead_labels'>"
-                        + "<div class='typeahead_primary'>" + discipline.DisciplineName + "</div>"
-                        + "<div class='typeahead_secondary'>" + discipline.ChairName + "</div>"
-                        + "</div>"
-                        + "</div>";
-                    return template;
-                }
-            });
-
-            var disciplineNameSecond = $('#second-discipline .discipline').val();
-            if (disciplineNameSecond == null || disciplineNameSecond === "") {
-                $('#second-discipline .discipline').siblings('.msg-text').slideUp(0);
-                $('#second-discipline .discipline-id').val('-1');
-            }
-
-            $("#second-discipline .discipline").keyup(function () {
-                if (!this.value) {
-                    $('#second-discipline .discipline').siblings('.msg-text').slideUp(0);
-                    $('#second-discipline .discipline-id').val('-1');
-                    $("#second-discipline .chair-id").val("");
-                    $("#second-discipline .chair").text("");
-                }
-            });
-
-        });
-    </script>
+    @Scripts.Render("~/bundles/lesson")
 }

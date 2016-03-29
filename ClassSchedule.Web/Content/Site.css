@@ -50,6 +50,10 @@ body, h1, h2, h3, h4, h5, h6 { font-family: 'BlissPro', Arial, sans-serif; }
     padding-left: 1em;
 }
 
+.no-paddings {
+    padding: 0;
+}
+
 .filter {
   -webkit-filter: brightness(0) invert(1);
   filter: brightness(0) invert(1);
@@ -171,6 +175,7 @@ textarea {
 }
 
 .lesson-cell {
+    height: 50px;
     padding: 0 5px;
 }
 
@@ -456,12 +461,29 @@ html { overflow-y: auto !important; }
 
 .lesson-btn.add:hover {
     /*color: #2E7F3E;*/
-    color: black;
+    /*color: black;*/
 }
 
 .lesson-btn.remove:hover {
     /*color: red;*/
-    color: black;
+    /*color: black;*/
+}
+
+.teacher-btn {
+    /*background: white;*/
+    color: #ccc;
+    font-size: 1.1em;
+    text-decoration: none;
+    padding-bottom: 0;
+    padding-left: 0;
+}
+
+.teacher-btn:hover {
+    text-decoration: none;
+}
+
+.teacher-btn.add:hover {
+    /*color: black;*/
 }
 
 /* Кастомный шаблон элемента тайпахеда 

@@ -8,6 +8,6 @@ namespace ClassSchedule.Web.Models.Schedule
 
         public string GroupName { get; set; }
 
-        public List<LessonViewModel> Lessons { get; set; } 
+        public IEnumerable<LessonViewModel> Lessons { get; set; } 
     }
 }
