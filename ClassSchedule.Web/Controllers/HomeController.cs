@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using ClassSchedule.Domain.DataAccess.Interfaces;
+using ClassSchedule.Domain.DataAccess.Repositories;
 using ClassSchedule.Domain.Models;
 using ClassSchedule.Web.Helpers;
 using ClassSchedule.Web.Models;
@@ -45,14 +47,14 @@ namespace ClassSchedule.Web.Controllers
                         .Where(g => g.WeekNumber == UserProfile.WeekNumber)
                         .GroupBy(g => new { g.DayNumber, g.ClassNumber, 
                             g.DisciplineId, g.Discipline.DisciplineName, g.LessonTypeId })
-                        .Select(s => new ShowLessonViewModel
+                        .Select(s => new LessonViewModel
                         {
                             DisciplineId = s.Key.DisciplineId,
                             DisciplineName = s.Key.DisciplineName,
                             LessonTypeId = s.Key.LessonTypeId ?? 0,
                             DayNumber = s.Key.DayNumber,
                             ClassNumber = s.Key.ClassNumber,
-                            LessonParts = s.Select(y => new LessonViewModel
+                            LessonParts = s.Select(y => new LessonPartViewModel
                             {
                                 LessonId = y.LessonId,
                                 LessonTypeId = y.LessonTypeId ?? 0,
@@ -93,6 +95,8 @@ namespace ClassSchedule.Web.Controllers
         {
             if (Request.IsAjaxRequest())
             {
+                // var watch = System.Diagnostics.Stopwatch.StartNew();
+
                 var lessons = UnitOfWork.Repository<Lesson>()
                     .GetQ(x => x.GroupId == groupId && x.WeekNumber == weekNumber
                                && x.DayNumber == dayNumber && x.ClassNumber == classNumber)
@@ -103,14 +107,14 @@ namespace ClassSchedule.Web.Controllers
                         x.Discipline.ChairId,
                         x.Discipline.Chair.DivisionName
                     })
-                    .Select(x => new 
+                    .Select(x => new LessonViewModel
                     {
                         DisciplineId = x.Key.DisciplineId,
                         DisciplineName = x.Key.DisciplineName,
                         ChairId = x.Key.ChairId,
                         ChairName = x.Key.DivisionName,
                         LessonParts = x
-                            .Select(y => new LessonViewModel
+                            .Select(y => new LessonPartViewModel
                             {
                                 LessonId = y.LessonId,
                                 LessonTypeId = y.LessonTypeId ?? 0,
@@ -122,7 +126,39 @@ namespace ClassSchedule.Web.Controllers
                                 TeacherId = y.JobId,
                                 IsNotActive = y.IsNotActive
                             })
-                    });
+                    })
+                    .ToList();
+
+                //foreach (var lesson in lessons)
+                //{
+                    //var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
+                    //if (jobRepository != null)
+                    //{
+                    //    var chairTeachers = jobRepository.ActualTeachers(UserProfile.EducationYear, lesson.ChairId);
+                    //    lesson.ChairTeachers = chairTeachers
+                    //        .Select(
+                    //            x =>
+                    //                new TeacherViewModel
+                    //                {
+                    //                    TeacherId = x.JobId,
+                    //                    TeacherFullName = x.Employee.Person.FullName
+                    //                }).ToList();
+                    //}
+
+                    //lesson.ChairTeachers = UnitOfWork.Repository<Job>()
+                    //    .Get(x => x.ChairId == lesson.ChairId)
+                    //    .Select(x =>
+                    //        new TeacherViewModel
+                    //        {
+                    //            TeacherId = x.JobId,
+                    //            TeacherFullName = x.Employee.Person.LastName
+                    //        })
+                    //    .ToList();
+
+                //}
+
+                // watch.Stop();
+                // var elapsedMs = watch.ElapsedMilliseconds;
 
                 return Json(lessons);
             }
@@ -145,7 +181,7 @@ namespace ClassSchedule.Web.Controllers
                 return null;
             }
 
-            foreach (var lessonViewModel in viewModel.Lessons)
+            foreach (var lessonViewModel in viewModel.LessonParts)
             {
                 // Обновление занятия
                 if (lessonViewModel.LessonId != 0 && lessonViewModel.LessonId != null)

@@ -72,7 +72,7 @@
                             var number = classNumber;
                             var lesson = group.Lessons.Where(x => x.DayNumber == day && x.ClassNumber == number);
 
-                            foreach (ShowLessonViewModel discipline in lesson)
+                            foreach (LessonViewModel discipline in lesson)
                             {
                                 var isLection = discipline.LessonTypeId == (int) LessonTypes.Lection;
                                 <div class="lesson-cell-part">

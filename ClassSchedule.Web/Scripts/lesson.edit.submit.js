@@ -2,7 +2,7 @@
 
     /* Отправка формы */
     $("#modal-submit").click(function () {
-        var lesson1 = new LessonViewModel({
+        var lessonPart1 = new LessonPartViewModel({
             LessonId: '0',
             LessonTypeId: '1',
             TeacherId: $("#first-discipline .lesson-teacher[data-order='1'] .teacher").val(),
@@ -10,7 +10,7 @@
             DisciplineId: $('#first-discipline .discipline-id').val(),
             IsNotActive: 'false'
         });
-        var lesson2 = new LessonViewModel({
+        var lessonPart2 = new LessonPartViewModel({
             LessonId: '0',
             LessonTypeId: '1',
             TeacherId: $("#first-discipline .lesson-teacher[data-order='2'] .teacher").val(),
@@ -18,7 +18,7 @@
             DisciplineId: $('#first-discipline .discipline-id').val(),
             IsNotActive: 'false'
         });
-        var lesson3 = new LessonViewModel({
+        var lessonPart3 = new LessonPartViewModel({
             LessonId: '0',
             LessonTypeId: '1',
             TeacherId: $("#second-discipline .lesson-teacher[data-order='1'] .teacher").val(),
@@ -26,7 +26,7 @@
             DisciplineId: $('#second-discipline .discipline-id').val(),
             IsNotActive: 'false'
         });
-        var lesson4 = new LessonViewModel({
+        var lessonPart4 = new LessonPartViewModel({
             LessonId: '0',
             LessonTypeId: '1',
             TeacherId: $("#second-discipline .lesson-teacher[data-order='2'] .teacher").val(),
@@ -40,7 +40,7 @@
             WeekNumber: $('#edit-lesson .week-number').val(),
             DayNumber: $('#edit-lesson .day-number').val(),
             ClassNumber: $('#edit-lesson .class-number').val(),
-            Lessons: [lesson1, lesson2, lesson3, lesson4]
+            Lessons: [lessonPart1, lessonPart2, lessonPart3, lessonPart4]
         });
 
         $.ajax({
@@ -67,18 +67,18 @@ function EditLessonViewModel(editLessonViewModel) {
     self.Lessons = editLessonViewModel.Lessons || [];
 }
 
-function LessonViewModel(lessonViewModel) {
+function LessonPartViewModel(lessonPartViewModel) {
     var self = this;
-    self.LessonId = lessonViewModel.LessonId || '';
-    self.LessonTypeId = lessonViewModel.LessonTypeId || '';
-    self.LessonTypeName = lessonViewModel.LessonTypeName || '';
-    self.DisciplineId = lessonViewModel.DisciplineId || '';
-    self.DisciplineName = lessonViewModel.DisciplineName || '';
-    self.TeacherId = lessonViewModel.TeacherId || '';
-    self.TeacherLastName = lessonViewModel.TeacherLastName || '';
-    self.TeacherFistName = lessonViewModel.TeacherFirstName || '';
-    self.TeacherMiddleName = lessonViewModel.TeacherMiddleName || '';
-    self.AuditoriumId = lessonViewModel.AuditoriumId || '';
-    self.AuditoriumName = lessonViewModel.AuditoriumName || '';
-    self.IsNotActive = lessonViewModel.IsNotActive || '';
+    self.LessonId = lessonPartViewModel.LessonId || '';
+    self.LessonTypeId = lessonPartViewModel.LessonTypeId || '';
+    self.LessonTypeName = lessonPartViewModel.LessonTypeName || '';
+    self.DisciplineId = lessonPartViewModel.DisciplineId || '';
+    self.DisciplineName = lessonPartViewModel.DisciplineName || '';
+    self.TeacherId = lessonPartViewModel.TeacherId || '';
+    self.TeacherLastName = lessonPartViewModel.TeacherLastName || '';
+    self.TeacherFistName = lessonPartViewModel.TeacherFirstName || '';
+    self.TeacherMiddleName = lessonPartViewModel.TeacherMiddleName || '';
+    self.AuditoriumId = lessonPartViewModel.AuditoriumId || '';
+    self.AuditoriumName = lessonPartViewModel.AuditoriumName || '';
+    self.IsNotActive = lessonPartViewModel.IsNotActive || '';
 }

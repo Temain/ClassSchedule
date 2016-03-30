@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using ClassSchedule.Domain.DataAccess.Interfaces;
+using ClassSchedule.Domain.DataAccess.Repositories;
+using ClassSchedule.Domain.Helpers;
 using ClassSchedule.Domain.Models;
+using ClassSchedule.Web.Models.Schedule;
 
 namespace ClassSchedule.Web.Controllers
 {
@@ -194,27 +198,30 @@ namespace ClassSchedule.Web.Controllers
         [HttpPost]
         public ActionResult Teacher(int chairId)
         {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+
             if (Request.IsAjaxRequest())
             {
-                var teachers = UnitOfWork.Repository<Job>()
-                    .Get(filter: x => x.ChairId == chairId && x.IsDeleted != true 
-                            && x.Employee.IsDeleted != true && x.Employee.Person.IsDeleted != true,
-                        orderBy: o => o.OrderBy(n => n.Employee.Person.LastName)
-                            .ThenBy(n => n.Employee.Person.FirstName)
-                            .ThenBy(n => n.Employee.Person.MiddleName))
-                    .Where(x => UserProfile.DatesIsActual(x.JobDateStart, x.JobDateEnd))
-                    .GroupBy(g => g.Employee.PersonId)
-                    .Select(x => new
-                    {
-                        Job = x.OrderByDescending(n => n.JobDateStart).FirstOrDefault()
-                    })
-                    .Select(x => new
-                    {
-                        x.Job.JobId,
-                        x.Job.Employee.Person.FullName
-                    });
+                var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
+                if (jobRepository != null)
+                {
+                    var chairTeachers = jobRepository.ActualTeachers(UserProfile.EducationYear, chairId);
+                    var result = chairTeachers
+                        .Select(
+                            x =>
+                                new 
+                                {
+                                    TeacherId = x.JobId,
+                                    TeacherFullName = x.Employee.Person.FullName
+                                })
+                        .OrderBy(n => n.TeacherFullName)
+                        .ToList();
 
-                return Json(teachers);
+                    watch.Stop();
+                    var elapsedMs = watch.ElapsedMilliseconds;
+
+                    return Json(result);
+                }              
             }
 
             return null;

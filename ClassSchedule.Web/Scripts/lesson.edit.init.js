@@ -1,23 +1,30 @@
 ﻿$(function () {
-    var fd = $('#first-discipline');
-    var sd = $('#second-discipline');
-    
+ 
     /* Заполнение выпадающих списков
     ------------------------------------------------------------*/
+    var fillTeacherSelect = function (data, select, chairId, selectedId) {
+        select.html('');
+        if (!data.length) return;
+
+        var option = "<option></option>";
+        select.append(option);
+
+        var options = $.map(data, function (item, a) {
+            return "<option value='" + item.TeacherId + "'>" + item.TeacherFullName + "</option>";
+        });
+        select.append(options.join(""));
+
+        //_.each(data, function (item, ix, list) {
+        //    option = "<option value='" + item.TeacherId + "'>" + item.TeacherFullName + "</option>";
+        //    select.append(option);
+        //});
+
+        if (selectedId) select.val(selectedId);
+    };
+
     var loadTeachers = function (select, chairId, selectedId) {
         $.post('/Dictionary/Teacher', { chairId: chairId }, function (data) {
-            select.html('');
-            if (!data.length) return;
-
-            var option = "<option></option>";
-            select.append(option);
-
-            _.each(data, function (item, ix, list) {
-                option = "<option value='" + item.JobId + "'>" + item.FullName + "</option>";
-                select.append(option);
-            });
-
-            if (selectedId) select.val(selectedId);
+            fillTeacherSelect(data, select, chairId, selectedId);
         });
     };
 
@@ -74,7 +81,7 @@
             $('#first-discipline .chair-id').val(lesson[0].ChairId);
             $('#first-discipline .chair').text(lesson[0].ChairName);
 
-            // Первый преподаватель первой дисциплины
+            // Первый преподаватель первой дисциплины           
             loadTeachers($("#first-discipline .lesson-teacher[data-order='1'] .teacher"), lesson[0].ChairId, lesson[0].LessonParts[0].TeacherId);
 
             if (lesson[0].LessonParts.length < 2) {
@@ -85,6 +92,9 @@
                 $("#first-discipline .lesson-teacher[data-order='2']").show();
                 $("#first-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").hide();
                 $("#first-discipline .lesson-teacher[data-order='2'] .teacher-btn.remove").show();
+
+                // Второй преподаватель первой дисциплины
+                loadTeachers($("#first-discipline .lesson-teacher[data-order='2'] .teacher"), lesson[0].ChairId, lesson[0].LessonParts[1].TeacherId);
             }
 
             if (lesson.length === 1) {
@@ -98,6 +108,9 @@
                 $('#second-discipline .chair-id').val(lesson[1].ChairId);
                 $('#second-discipline .chair').text(lesson[1].ChairName);
 
+                // Первый преподаватель второй дисциплины           
+                loadTeachers($("#second-discipline .lesson-teacher[data-order='1'] .teacher"), lesson[1].ChairId, lesson[1].LessonParts[0].TeacherId);
+
                 if (lesson[1].LessonParts.length < 2) {
                     $("#second-discipline .lesson-teacher[data-order='2']").hide();
                     $("#second-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").show();
@@ -106,6 +119,9 @@
                     $("#second-discipline .lesson-teacher[data-order='2']").show();
                     $("#second-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").hide();
                     $("#second-discipline .lesson-teacher[data-order='2'] .teacher-btn.remove").show();
+
+                    // Первый преподаватель второй дисциплины           
+                    loadTeachers($("#second-discipline .lesson-teacher[data-order='2'] .teacher"), lesson[1].ChairId, lesson[1].LessonParts[1].TeacherId);
                 }
             }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ClassSchedule.Domain.Context;
 using ClassSchedule.Domain.DataAccess.Interfaces;
 using ClassSchedule.Domain.DataAccess.Repositories;
+using ClassSchedule.Domain.Models;
 
 namespace ClassSchedule.Domain.DataAccess
 {
@@ -10,7 +11,13 @@ namespace ClassSchedule.Domain.DataAccess
     {
         private readonly ApplicationDbContext _context = new ApplicationDbContext();
 
-        private Dictionary<string, object> _repositories;      
+        private Dictionary<string, object> _repositories;
+        private Dictionary<string, object> _extendedRepositories;
+
+        private Dictionary<string, Type> _extendedTypes = new Dictionary<string, Type>
+        {
+            {typeof(Job).Name, typeof(JobRepository)}
+        }; 
 
         public GenericRepository<TEntity> Repository<TEntity>() where TEntity : class 
         {
@@ -19,15 +26,33 @@ namespace ClassSchedule.Domain.DataAccess
                 _repositories = new Dictionary<string, object>();
             }
 
-            var type = typeof(TEntity).Name;
+            if (_extendedRepositories == null)
+            {
+                _extendedRepositories = new Dictionary<string, object>();
+            }
 
-            if (!_repositories.ContainsKey(type))
+            var type = typeof (TEntity);
+            var typeName = type.Name;
+
+            if (_extendedTypes.ContainsKey(typeName))
+            {
+                if (!_extendedRepositories.ContainsKey(typeName))
+                {
+                    var extendedType = _extendedTypes[typeName];
+                    var repositoryInstance = Activator.CreateInstance(extendedType, _context);
+                    _extendedRepositories.Add(typeName, repositoryInstance);
+                }
+
+                return (GenericRepository<TEntity>)_extendedRepositories[typeName];
+            }
+
+            if (!_repositories.ContainsKey(typeName))
             {
                 var repositoryType = typeof(GenericRepository<>);
-                var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(TEntity)), _context);
-                _repositories.Add(type, repositoryInstance);
+                var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(type), _context);
+                _repositories.Add(typeName, repositoryInstance);
             }
-            return (GenericRepository<TEntity>)_repositories[type];
+            return (GenericRepository<TEntity>)_repositories[typeName];
         }
 
         public void Save()

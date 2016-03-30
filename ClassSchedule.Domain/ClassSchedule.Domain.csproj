@@ -57,10 +57,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context\ApplicationDbContext.cs" />
+    <Compile Include="DataAccess\Interfaces\IJobRepository.cs" />
     <Compile Include="DataAccess\Interfaces\IGenericRepository.cs" />
     <Compile Include="DataAccess\Interfaces\IUnitOfWork.cs" />
+    <Compile Include="DataAccess\Repositories\JobRepository.cs" />
     <Compile Include="DataAccess\Repositories\GenericRepository.cs" />
     <Compile Include="DataAccess\UnitOfWork.cs" />
+    <Compile Include="Helpers\DateHelpers.cs" />
     <Compile Include="Migrations\201603250653192_Init.cs" />
     <Compile Include="Migrations\201603250653192_Init.Designer.cs">
       <DependentUpon>201603250653192_Init.cs</DependentUpon>

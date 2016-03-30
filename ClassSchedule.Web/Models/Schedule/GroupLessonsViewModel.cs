@@ -7,6 +7,6 @@ namespace ClassSchedule.Web.Models.Schedule
         public int GroupId { get; set; }
         public string GroupName { get; set; }
 
-        public IEnumerable<ShowLessonViewModel> Lessons { get; set; } 
+        public IEnumerable<LessonViewModel> Lessons { get; set; } 
     }
 }
