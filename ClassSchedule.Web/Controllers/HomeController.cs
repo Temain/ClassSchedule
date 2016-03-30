@@ -95,18 +95,33 @@ namespace ClassSchedule.Web.Controllers
             {
                 var lessons = UnitOfWork.Repository<Lesson>()
                     .GetQ(x => x.GroupId == groupId && x.WeekNumber == weekNumber
-                        && x.DayNumber == dayNumber && x.ClassNumber == classNumber)
-                    .Select(x => new LessonViewModel
+                               && x.DayNumber == dayNumber && x.ClassNumber == classNumber)
+                    .GroupBy(x => new
                     {
-                        LessonId = x.LessonId,
-                        LessonTypeId = x.LessonTypeId ?? 0,
-                        DisciplineId = x.DisciplineId,
-                        DisciplineName = x.Discipline.DisciplineName,
-                        ChairId = x.Discipline.ChairId,
-                        ChairName = x.Discipline.Chair.DivisionName,
-                        AuditoriumId = x.AuditoriumId,
-                        TeacherId = x.JobId,
-                        IsNotActive = x.IsNotActive
+                        x.DisciplineId,
+                        x.Discipline.DisciplineName,
+                        x.Discipline.ChairId,
+                        x.Discipline.Chair.DivisionName
+                    })
+                    .Select(x => new 
+                    {
+                        DisciplineId = x.Key.DisciplineId,
+                        DisciplineName = x.Key.DisciplineName,
+                        ChairId = x.Key.ChairId,
+                        ChairName = x.Key.DivisionName,
+                        LessonParts = x
+                            .Select(y => new LessonViewModel
+                            {
+                                LessonId = y.LessonId,
+                                LessonTypeId = y.LessonTypeId ?? 0,
+                                DisciplineId = y.DisciplineId,
+                                DisciplineName = y.Discipline.DisciplineName,
+                                ChairId = y.Discipline.ChairId,
+                                ChairName = y.Discipline.Chair.DivisionName,
+                                AuditoriumId = y.AuditoriumId,
+                                TeacherId = y.JobId,
+                                IsNotActive = y.IsNotActive
+                            })
                     });
 
                 return Json(lessons);

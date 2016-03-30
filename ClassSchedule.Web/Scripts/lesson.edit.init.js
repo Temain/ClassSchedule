@@ -1,79 +1,10 @@
 ﻿$(function () {
-    /* Настройка модального окна редактирования занятия
-    ------------------------------------------------------------*/
-    $(".lesson-cell").dblclick(function () {
-        var weekNumber = $('.week-panel').attr('data-week');
-        var groupId = $(this).attr('data-group');
-        var dayNumber = $(this).attr('data-day');
-        var classNumber = $(this).attr('data-class-number');
-        var classDate = $(this).attr('data-class-date');
-
-        var parameters = {
-            weekNumber: weekNumber,
-            groupId: groupId,
-            dayNumber: dayNumber,
-            classNumber: classNumber
-        };
-
-        $.ajax({
-            type: "POST",
-            url: "/Home/GetLesson",
-            data: parameters,
-            success: function (result) {
-                $('#edit-lesson .group-id').val(groupId);
-                $('#edit-lesson .week-number').val(weekNumber);
-                $('#edit-lesson .day-number').val(dayNumber);
-                $('#edit-lesson .class-number').val(classNumber);
-                $('#edit-lesson .class-date').val(classDate);
-
-                $('#edit-lesson').modal({
-                    backdrop: 'static',
-                    keyboard: false
-                });
-            },
-            error: function () {
-                alert("failure");
-            }
-        });
-             
-    });
-
-    //$('#edit-lesson').on('show.bs.modal', function (event) {
-    //    var relatedTarget = $(event.relatedTarget);
-    //    var weekNumber = $('.week-panel').attr('data-week');
-    //    var groupId = relatedTarget.attr('data-group');
-    //    var dayNumber = relatedTarget.attr('data-day');
-    //    var classNumber = relatedTarget.attr('data-class-number');
-    //    var classDate = relatedTarget.attr('data-class-date');
-
-    //    var parameters = {
-    //        weekNumber: weekNumber,
-    //        groupId: groupId,
-    //        dayNumber: dayNumber,
-    //        classNumber: classNumber
-    //    };
-
-    //    $.ajax({
-    //        type: "POST",
-    //        url: "/Home/GetLesson",
-    //        data: parameters,
-    //        success: function(result) {
-    //            $('#edit-lesson .group-id').val(groupId);
-    //            $('#edit-lesson .week-number').val(weekNumber);
-    //            $('#edit-lesson .day-number').val(dayNumber);
-    //            $('#edit-lesson .class-number').val(classNumber);
-    //            $('#edit-lesson .class-date').val(classDate);
-    //        },
-    //        error: function() {
-    //            alert("failure");
-    //        }
-    //    });
-    //});
-
-
+    var fd = $('#first-discipline');
+    var sd = $('#second-discipline');
+    
     /* Заполнение выпадающих списков
     ------------------------------------------------------------*/
-    var loadTeachers = function (select, chairId) {
+    var loadTeachers = function (select, chairId, selectedId) {
         $.post('/Dictionary/Teacher', { chairId: chairId }, function (data) {
             select.html('');
             if (!data.length) return;
@@ -85,6 +16,8 @@
                 option = "<option value='" + item.JobId + "'>" + item.FullName + "</option>";
                 select.append(option);
             });
+
+            if (selectedId) select.val(selectedId);
         });
     };
 
@@ -128,6 +61,101 @@
         loadAuditorium(auditoriumSelect, chairId, housingId);
     });
 
+    /* Подготовка модального окна редактирования занятия
+     --------------------------------------------------------------*/
+    var prepareEditLessonModal = function (lesson) {
+        if (lesson.length === 0) {
+            $('#second-discipline').hide();
+
+        } else {
+            // Первая дисциплина
+            $('#first-discipline .discipline-id').val(lesson[0].DisciplineId);
+            $('#first-discipline .discipline').val(lesson[0].DisciplineName);
+            $('#first-discipline .chair-id').val(lesson[0].ChairId);
+            $('#first-discipline .chair').text(lesson[0].ChairName);
+
+            // Первый преподаватель первой дисциплины
+            loadTeachers($("#first-discipline .lesson-teacher[data-order='1'] .teacher"), lesson[0].ChairId, lesson[0].LessonParts[0].TeacherId);
+
+            if (lesson[0].LessonParts.length < 2) {
+                $("#first-discipline .lesson-teacher[data-order='2']").hide();
+                $("#first-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").show();
+                $("#first-discipline .lesson-teacher[data-order='2'] .teacher-btn.remove").hide();
+            } else {
+                $("#first-discipline .lesson-teacher[data-order='2']").show();
+                $("#first-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").hide();
+                $("#first-discipline .lesson-teacher[data-order='2'] .teacher-btn.remove").show();
+            }
+
+            if (lesson.length === 1) {
+                $('#second-discipline').hide();
+            } else {
+                $('#second-discipline').show();
+
+                // Вторая дисциплина
+                $('#second-discipline .discipline-id').val(lesson[1].DisciplineId);
+                $('#second-discipline .discipline').val(lesson[1].DisciplineName);
+                $('#second-discipline .chair-id').val(lesson[1].ChairId);
+                $('#second-discipline .chair').text(lesson[1].ChairName);
+
+                if (lesson[1].LessonParts.length < 2) {
+                    $("#second-discipline .lesson-teacher[data-order='2']").hide();
+                    $("#second-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").show();
+                    $("#second-discipline .lesson-teacher[data-order='2'] .teacher-btn.remove").hide();
+                } else {
+                    $("#second-discipline .lesson-teacher[data-order='2']").show();
+                    $("#second-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").hide();
+                    $("#second-discipline .lesson-teacher[data-order='2'] .teacher-btn.remove").show();
+                }
+            }
+
+        }
+
+        /*$('#first-discipline .discipline-id').val();
+        $("#first-discipline .lesson-teacher[data-order='1'] .auditorium").val();
+        $("#first-discipline .lesson-teacher[data-order='1'] .teacher").val();*/
+    };
+
+    /* Показ модального окна редактирования занятия
+    ------------------------------------------------------------*/
+    $(".lesson-cell").dblclick(function () {
+        var weekNumber = $('.week-panel').attr('data-week');
+        var groupId = $(this).attr('data-group');
+        var dayNumber = $(this).attr('data-day');
+        var classNumber = $(this).attr('data-class-number');
+        var classDate = $(this).attr('data-class-date');
+
+        var parameters = {
+            weekNumber: weekNumber,
+            groupId: groupId,
+            dayNumber: dayNumber,
+            classNumber: classNumber
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/Home/GetLesson",
+            data: parameters,
+            success: function (lesson) {
+                $('#edit-lesson .group-id').val(groupId);
+                $('#edit-lesson .week-number').val(weekNumber);
+                $('#edit-lesson .day-number').val(dayNumber);
+                $('#edit-lesson .class-number').val(classNumber);
+                $('#edit-lesson .class-date').val(classDate);
+
+                prepareEditLessonModal(lesson);
+
+                $('#edit-lesson').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+            },
+            error: function () {
+                alert("failure");
+            }
+        });
+
+    });
 
     /* Поиск первой дисциплины в модальном окне редактирования занятия
     -----------------------------------------------------------------*/

@@ -15,6 +15,12 @@ namespace ClassSchedule.Web.Controllers
         {
         }
 
+        public enum ResultType
+        {
+            Dictionary,
+            Json
+        }
+
         [HttpPost]
         public ActionResult Course(int facultyId)
         {
