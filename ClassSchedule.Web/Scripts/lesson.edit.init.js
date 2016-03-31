@@ -155,41 +155,43 @@
     /* Показ модального окна редактирования занятия
     ------------------------------------------------------------*/
     $(".lesson-cell").dblclick(function () {
-        var weekNumber = $('.week-panel').attr('data-week');
-        var groupId = $(this).attr('data-group');
-        var dayNumber = $(this).attr('data-day');
-        var classNumber = $(this).attr('data-class-number');
-        var classDate = $(this).attr('data-class-date');
+        //var weekNumber = $('.week-panel').attr('data-week');
+        //var groupId = $(this).attr('data-group');
+        //var dayNumber = $(this).attr('data-day');
+        //var classNumber = $(this).attr('data-class-number');
+        //var classDate = $(this).attr('data-class-date');
 
-        var parameters = {
-            weekNumber: weekNumber,
-            groupId: groupId,
-            dayNumber: dayNumber,
-            classNumber: classNumber
-        };
+        //var parameters = {
+        //    weekNumber: weekNumber,
+        //    groupId: groupId,
+        //    dayNumber: dayNumber,
+        //    classNumber: classNumber
+        //};
 
-        $.ajax({
-            type: "POST",
-            url: "/Home/GetLesson",
-            data: parameters,
-            success: function (lesson) {
-                $('#edit-lesson .group-id').val(groupId);
-                $('#edit-lesson .week-number').val(weekNumber);
-                $('#edit-lesson .day-number').val(dayNumber);
-                $('#edit-lesson .class-number').val(classNumber);
-                $('#edit-lesson .class-date').val(classDate);
+        viewModel.loadLesson(this);
 
-                // prepareEditLessonModal(lesson);
+        //$.ajax({
+        //    type: "POST",
+        //    url: "/Home/GetLesson",
+        //    data: parameters,
+        //    success: function (lesson) {
+        //        $('#edit-lesson .group-id').val(groupId);
+        //        $('#edit-lesson .week-number').val(weekNumber);
+        //        $('#edit-lesson .day-number').val(dayNumber);
+        //        $('#edit-lesson .class-number').val(classNumber);
+        //        $('#edit-lesson .class-date').val(classDate);
 
-                $('#edit-lesson').modal({
-                    backdrop: 'static',
-                    keyboard: false
-                });
-            },
-            error: function () {
-                alert("failure");
-            }
-        });
+        //        // prepareEditLessonModal(lesson);
+
+        //        $('#edit-lesson').modal({
+        //            backdrop: 'static',
+        //            keyboard: false
+        //        });
+        //    },
+        //    error: function () {
+        //        alert("failure");
+        //    }
+        //});
 
     });
 
@@ -421,21 +423,21 @@
     //    $("#second-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").show();
     //    $("#second-discipline .lesson-teacher[data-order='2']").hide();
     //});
+    ko.applyBindings(viewModel);
 });
 
+var viewModel = new MainViewModel();
 function MainViewModel() {
     var self = this;
 
+    self.EditLessonViewModel = ko.observable();
 
-    //self.Faculties = ko.observableArray([]);
-    //self.SelectedFaculty = ko.observable();
-
-    self.loadLesson = function () {
+    self.loadLesson = function (lessonCell) {
         var weekNumber = $('.week-panel').attr('data-week');
-        var groupId = $(this).attr('data-group');
-        var dayNumber = $(this).attr('data-day');
-        var classNumber = $(this).attr('data-class-number');
-        var classDate = $(this).attr('data-class-date');
+        var groupId = $(lessonCell).attr('data-group');
+        var dayNumber = $(lessonCell).attr('data-day');
+        var classNumber = $(lessonCell).attr('data-class-number');
+        var classDate = $(lessonCell).attr('data-class-date');
 
         var parameters = {
             weekNumber: weekNumber,
@@ -448,18 +450,8 @@ function MainViewModel() {
             type: "POST",
             url: "/Home/GetLesson",
             data: parameters,
-            success: function (lesson) {
-
-                ko.mapping.fromJS(response,
-                {
-                    key: function (data) {
-                        return ko.utils.unwrapObservable(data.LessonId);
-                    },
-                    create: function (options) {
-                        return new LessonViewModel(options.data);
-                    }
-                },
-                self.Students);
+            success: function (result) {
+                self.EditLessonViewModel(new EditLessonViewModel(result));
 
                 $('#edit-lesson .group-id').val(groupId);
                 $('#edit-lesson .week-number').val(weekNumber);
@@ -478,38 +470,7 @@ function MainViewModel() {
                 alert("failure");
             }
         });
-
-
-        $.post('/Home/GetLesson', {
-            page: self.SelectedPage(),
-            pageSize: self.SelectedPageSize(),
-            facultyId: self.SelectedFaculty(),
-            courseId: self.SelectedCourse(),
-            groupId: self.SelectedGroup(),
-            educationLevelId: self.SelectedEducationLevel(),
-            educationFormId: self.SelectedEducationForm(),
-            educationSourceId: self.SelectedEducationSource(),
-            countryId: self.SelectedCountry(),
-            budgetTypeId: self.SelectedBudgetType(),
-            Accommodation: self.SelectedAccommodation(),
-            searchLastName: self.SearchLastName(),
-            StudentStatusId: self.SelectedStudentStatus(),
-            DormitoryNumber: self.SelectedDormitory()
-        }, function (response) {
-            ko.mapping.fromJS(response,
-                {
-                    key: function (data) {
-                        return ko.utils.unwrapObservable(data.LessonId);
-                    },
-                    create: function (options) {
-                        return new LessonViewModel(options.data);
-                    }
-                },
-                self.Students
-            );
-            self.PagesCount(response.PagesCount);
-            self.StudentsCount(response.StudentsCount);
-        });
+       
     };
 };
 
@@ -519,7 +480,7 @@ function EditLessonViewModel(editLessonViewModel) {
     self.WeekNumber = ko.observable(editLessonViewModel.WeekNumber || '');
     self.DayNumber = ko.observable(editLessonViewModel.DayNumber || '');
     self.ClassNumber = ko.observable(editLessonViewModel.ClassNumber || '');
-    self.LessonParts = ko.observableArray(editLessonViewModel.LessonParts || []);
+    self.Lessons = ko.observableArray(editLessonViewModel.Lessons || []);
 }
 
 function LessonViewModel(lessonViewModel) {
@@ -538,7 +499,7 @@ function LessonViewModel(lessonViewModel) {
 
 function LessonPartViewModel(lessonPartViewModel) {
     var self = this;
-    self.LessonId = ko.observableArray(lessonPartViewModel.LessonId || []);
+    self.LessonId = ko.observable(lessonPartViewModel.LessonId || '');
     self.DayNumber = ko.observable(lessonPartViewModel.DayNumber || '');
     self.ClassNumber = ko.observable(lessonPartViewModel.ClassNumber || '');
     self.LessonTypeId = ko.observable(lessonPartViewModel.LessonTypeId || '');
@@ -557,6 +518,22 @@ function LessonPartViewModel(lessonPartViewModel) {
     self.Auditoriums = ko.observableArray(lessonPartViewModel.Auditoriums || []);
     self.IsNotActive = ko.observable(lessonPartViewModel.IsNotActive || '');
 }
+
+function HousingViewModel(housingViewModel) {
+    var self = this;
+    self.HousingId = ko.observable(housingViewModel.HousingId || '');
+    self.HousingName = ko.observable(housingViewModel.HousingName || '');
+    self.Abbreviation = ko.observable(housingViewModel.Abbreviation || '');
+}
+
+function AuditoriumViewModel(auditoriumViewModel) {
+    var self = this;
+    self.AuditoriumId = ko.observable(auditoriumViewModel.AuditoriumId || '');
+    self.AuditoriumName = ko.observable(auditoriumViewModel.AuditoriumName || '');
+    self.AuditoriumTypeName = ko.observable(auditoriumViewModel.AuditoriumTypeName || '');
+    self.Places = ko.observable(auditoriumViewModel.Places || '');
+}
+
 
 
 

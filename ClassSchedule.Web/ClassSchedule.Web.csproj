@@ -386,6 +386,7 @@
     <Content Include="Views\Home\_EditLesson.cshtml" />
     <Content Include="Views\AcademicPlan\Index.cshtml" />
     <Content Include="Scripts\underscore.min.map" />
+    <Content Include="Views\Home\_EditLesson_v1.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

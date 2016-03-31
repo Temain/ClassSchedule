@@ -94,7 +94,15 @@ namespace ClassSchedule.Web.Controllers
         public ActionResult GetLesson(int groupId, int weekNumber, int dayNumber, int classNumber)
         {
             if (Request.IsAjaxRequest())
-            {               
+            {
+                var viewModel = new EditLessonViewModel
+                {
+                    GroupId = groupId,
+                    WeekNumber = weekNumber,
+                    DayNumber = dayNumber,
+                    ClassNumber = classNumber
+                };
+
                 var lessons = UnitOfWork.Repository<Lesson>()
                     .GetQ(x => x.GroupId == groupId && x.WeekNumber == weekNumber
                                && x.DayNumber == dayNumber && x.ClassNumber == classNumber)
@@ -178,10 +186,12 @@ namespace ClassSchedule.Web.Controllers
                     
                 }
 
+                viewModel.Lessons = lessons;
+
                 watch.Stop();
                 var elapsedMs = watch.ElapsedMilliseconds;
 
-                return Json(lessons);
+                return Json(viewModel);
             }
 
             return null;
@@ -202,54 +212,54 @@ namespace ClassSchedule.Web.Controllers
                 return null;
             }
 
-            foreach (var lessonViewModel in viewModel.LessonParts)
-            {
-                // Обновление занятия
-                if (lessonViewModel.LessonId != 0 && lessonViewModel.LessonId != null)
-                {
-                    var lessonId = lessonViewModel.LessonId;
-                    var lesson = UnitOfWork.Repository<Lesson>()
-                        .Get(x => x.LessonId == lessonId)
-                        .SingleOrDefault();
+            //foreach (var lessonViewModel in viewModel.LessonParts)
+            //{
+            //    // Обновление занятия
+            //    if (lessonViewModel.LessonId != 0 && lessonViewModel.LessonId != null)
+            //    {
+            //        var lessonId = lessonViewModel.LessonId;
+            //        var lesson = UnitOfWork.Repository<Lesson>()
+            //            .Get(x => x.LessonId == lessonId)
+            //            .SingleOrDefault();
 
-                    if (lesson != null)
-                    {
-                        lesson.LessonTypeId = lessonViewModel.LessonTypeId;
-                        lesson.DisciplineId = lessonViewModel.DisciplineId;
-                        lesson.AuditoriumId = lessonViewModel.AuditoriumId;
-                        lesson.JobId = lessonViewModel.TeacherId;
-                        lesson.IsNotActive = lessonViewModel.IsNotActive;
-                        lesson.UpdatedAt = DateTime.Now;
+            //        if (lesson != null)
+            //        {
+            //            lesson.LessonTypeId = lessonViewModel.LessonTypeId;
+            //            lesson.DisciplineId = lessonViewModel.DisciplineId;
+            //            lesson.AuditoriumId = lessonViewModel.AuditoriumId;
+            //            lesson.JobId = lessonViewModel.TeacherId;
+            //            lesson.IsNotActive = lessonViewModel.IsNotActive;
+            //            lesson.UpdatedAt = DateTime.Now;
 
-                        UnitOfWork.Repository<Lesson>().Update(lesson);
-                        UnitOfWork.Save();
-                    }                   
-                }
-                // Создание нового занятия
-                else
-                {
-                    var classDate = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart, 
-                        viewModel.WeekNumber, viewModel.DayNumber);
-                    var lesson = new Lesson
-                    {
-                        LessonGuid = Guid.NewGuid(),
-                        LessonTypeId = lessonViewModel.LessonTypeId,
-                        WeekNumber = viewModel.WeekNumber,
-                        DayNumber = viewModel.DayNumber,
-                        ClassNumber = viewModel.ClassNumber,
-                        ClassDate = classDate,
-                        GroupId = viewModel.GroupId,
-                        DisciplineId = lessonViewModel.DisciplineId,
-                        AuditoriumId = lessonViewModel.AuditoriumId,
-                        JobId = lessonViewModel.TeacherId,
-                        IsNotActive = lessonViewModel.IsNotActive,
-                        CreatedAt = DateTime.Now,
-                    };
+            //            UnitOfWork.Repository<Lesson>().Update(lesson);
+            //            UnitOfWork.Save();
+            //        }                   
+            //    }
+            //    // Создание нового занятия
+            //    else
+            //    {
+            //        var classDate = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart, 
+            //            viewModel.WeekNumber, viewModel.DayNumber);
+            //        var lesson = new Lesson
+            //        {
+            //            LessonGuid = Guid.NewGuid(),
+            //            LessonTypeId = lessonViewModel.LessonTypeId,
+            //            WeekNumber = viewModel.WeekNumber,
+            //            DayNumber = viewModel.DayNumber,
+            //            ClassNumber = viewModel.ClassNumber,
+            //            ClassDate = classDate,
+            //            GroupId = viewModel.GroupId,
+            //            DisciplineId = lessonViewModel.DisciplineId,
+            //            AuditoriumId = lessonViewModel.AuditoriumId,
+            //            JobId = lessonViewModel.TeacherId,
+            //            IsNotActive = lessonViewModel.IsNotActive,
+            //            CreatedAt = DateTime.Now,
+            //        };
 
-                    UnitOfWork.Repository<Lesson>().Insert(lesson);
-                    UnitOfWork.Save();
-                }
-            }
+            //        UnitOfWork.Repository<Lesson>().Insert(lesson);
+            //        UnitOfWork.Save();
+            //    }
+            //}
 
             return Json("Success");
         }

@@ -12,6 +12,6 @@ namespace ClassSchedule.Web.Models.Schedule
         public int DayNumber { get; set; }
         public int ClassNumber { get; set; }
 
-        public List<LessonPartViewModel> LessonParts { get; set; } 
+        public List<LessonViewModel> Lessons { get; set; } 
     }
 }

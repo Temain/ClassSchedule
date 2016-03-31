@@ -1,5 +1,5 @@
 ﻿<!-- Modal -->
-<div id="edit-lesson" class="modal fade" role="dialog">
+<div id="edit-lesson" data-bind="with: EditLessonViewModel" class="modal fade" role="dialog">
     <div class="modal-dialog">
 
         <!-- Modal content-->
@@ -13,184 +13,259 @@
                 <input type="hidden" class="class-number">
                 <input type="hidden" class="class-date">
             </div>
-            <div class="modal-body">
-                <form role="form">
-
-                    <!-- Первая дисциплина -->
-                    <div id="first-discipline" class="row lesson-container" data-order="1">
-                        <div class="col-md-12 lesson-edit">
-                            <div class="col-md-12 number">
-                                <span class="number-circle">1</span><div class="number-background"></div>
+        <div class="modal-body" data-bind="foreach: Lessons">       
+            <div class="row lesson-container">
+                <div class="col-md-12 lesson-edit">
+                    <div class="col-md-12 number">
+                        <span class="number-circle" data-bind="text: $index() + 1">1</span><div class="number-background"></div>
+                    </div>
+                    <div class="col-md-12 lesson-content">
+                        <div class="col-md-12 form-group">
+                            <label class="control-label">Дисциплина</label>
+                            <input type="text" class="discipline form-control" data-provide="typeahead" placeholder="Введите название дисциплины" autocomplete="off" value=""/>
+                            <input type="hidden" class="discipline-id"/>
+                            <div class="text-danger msg-text" style="display: none"> <span class="glyphicon glyphicon glyphicon-exclamation-sign form-control-feedback"></span>Дисциплина не найдена
                             </div>
-                            <div class="col-md-12 lesson-content">
-                                <div class="col-md-12 form-group">
-                                    <label class="control-label">Дисциплина</label>
-                                    <input type="text" class="discipline form-control" data-provide="typeahead" placeholder="Введите название дисциплины" autocomplete="off" value="" />
-                                    <input type="hidden" class="discipline-id" />
-                                    <div class="text-danger msg-text" style="display: none"> <span class="glyphicon glyphicon glyphicon-exclamation-sign form-control-feedback"></span>Дисциплина не найдена</div>
 
-                                    <div class="chair"></div>
-                                    <input type="hidden" class="chair-id" />
+                            <div class="chair"></div>
+                            <input type="hidden" class="chair-id"/>
+                        </div>
+
+                        <!-- ko foreach: LessonParts -->
+                        <div class="lesson-teacher">
+                            <input type="hidden" class="lesson-id" data-bind="value: LessonId"/>
+                            @*<pre data-bind="text: JSON.stringify(ko.toJS($parent.LessonParts.length), null, 2)"></pre>*@
+
+                            <div class="col-md-7 col-md-offset-1 form-group">
+                                <div class="col-md-12 no-paddings">
+                                    <label class="control-label">Преподаватель</label>
+                                    <select class="form-control teacher" data-bind="value: TeacherId, options: $parent.ChairTeachers, optionsValue: 'TeacherId', optionsText: 'TeacherFullName', optionsCaption: ''"></select>
                                 </div>
 
-                                <!-- Первый преподаватель -->
-                                <div class="lesson-teacher" data-order="1">
-                                    <input type="hidden" class="lesson-id"/>
-
-                                    <div class="col-md-7 col-md-offset-1 form-group">
-                                        <div class="col-md-12 no-paddings">
-                                            <label class="control-label">Преподаватель</label>
-                                            <select class="form-control teacher"></select>
-                                        </div>
-
-                                        <div class="col-md-4 no-paddings">
-                                            <a class="btn btn-link teacher-btn add">
-                                                <span class="fa fa-user-plus"></span>
-                                                Добавить
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2 form-group">
-                                        <label class="control-label">Корпус</label>
-                                        <select class="form-control housing"></select>
-                                    </div>
-                                    <div class="col-md-2 form-group">
-                                        <label class="control-label">Аудитория</label>
-                                        <select class="form-control auditorium"></select>
-                                    </div>
+                                <!-- ko if: $parent.LessonParts.length !== 2 && ($index() === ($parent.LessonParts.length - 1)) -->
+                                <div class="col-md-4 no-paddings">
+                                    <a class="btn btn-link teacher-btn add">
+                                        <span class="fa fa-user-plus"></span>
+                                        Добавить
+                                    </a>
                                 </div>
-                                <!-- !Первый преподаватель -->
+                                <!-- /ko -->
 
-                                <!-- Второй преподаватель -->
-                                <div class="lesson-teacher" data-order="2" style="display: none">
-                                    <input type="hidden" class="lesson-id" />
-
-                                    <div class="col-md-7 col-md-offset-1 form-group">
-                                        <div class="col-md-12 no-paddings">
-                                            <label class="control-label">Преподаватель</label>
-                                            <select class="form-control teacher"></select>
-                                        </div>
-
-                                        <div class="col-md-4 no-paddings">
-                                            <a class="btn btn-link teacher-btn remove">
-                                                <span class="fa fa-user-times"></span>
-                                                Удалить
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-2 form-group">
-                                        <label class="control-label">Корпус</label>
-                                        <select class="form-control housing"></select>
-                                    </div>
-                                    <div class="col-md-2 form-group">
-                                        <label class="control-label">Аудитория</label>
-                                        <select class="form-control auditorium"></select>
-                                    </div>
+                                <!-- ko if: $parent.LessonParts.length === 2 && ($index() === ($parent.LessonParts.length - 1)) -->
+                                <div class="col-md-4 no-paddings">
+                                    <a class="btn btn-link teacher-btn remove">
+                                        <span class="fa fa-user-times"></span>
+                                        Удалить
+                                    </a>
                                 </div>
-                                <!-- !Второй преподаватель -->
+                                <!-- /ko -->
                             </div>
-                            <div class="col-md-4 col-md-offset-4 lesson-actions text-center">
-                                <a class="btn btn-link lesson-btn add">
-                                    <span class="glyphicon glyphicon-plus"></span>
-                                    Добавить дисциплину
-                                </a>
+                            <div class="col-md-2 form-group">
+                                <label class="control-label">Корпус</label>
+                                <select class="form-control housing"></select>
+                            </div>
+                            <div class="col-md-2 form-group">
+                                <label class="control-label">Аудитория</label>
+                                <select class="form-control auditorium"></select>
                             </div>
                         </div>
+                        <!-- /ko -->
                     </div>
-                    <!-- !Первая дисциплина -->
 
-                    <!-- Вторая дисциплина -->
-                    <div id="second-discipline" class="row lesson-container" data-order="2" style="display:none">
-                        <div class="col-md-12 lesson-edit">
-                            <div class="col-md-12 number">
-                                <span class="number-circle">2</span><div class="number-background"></div>
-                            </div>
-                            <div class="col-md-12 lesson-content">
-                                <div class="col-md-12 form-group">
-                                    <label class="control-label">Дисциплина</label>
-                                    <input type="text" class="discipline form-control" data-provide="typeahead" placeholder="Введите название дисциплины" autocomplete="off" value="" />
-                                    <input type="hidden" name="d" class="discipline-id" />
-                                    <div class="text-danger msg-text" style="display: none"> <span class="glyphicon glyphicon glyphicon-exclamation-sign form-control-feedback"></span> Дисциплина не найдена</div>
-
-                                    <div class="chair"></div>
-                                    <input type="hidden" class="chair-id" />
-                                </div>
-
-                                <!-- Первый преподаватель -->
-                                <div class="lesson-teacher" data-order="1">
-                                    <input type="hidden" class="lesson-id" />
-
-                                    <div class="col-md-7 col-md-offset-1 form-group">
-                                        <div class="col-md-12 no-paddings">
-                                            <label class="control-label">Преподаватель</label>
-                                            <select class="form-control teacher"></select>
-                                        </div>
-
-                                        <div class="col-md-4 no-paddings">
-                                            <a class="btn btn-link teacher-btn add">
-                                                <span class="fa fa-user-plus"></span>
-                                                Добавить
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-2 form-group">
-                                        <label class="control-label">Корпус</label>
-                                        <select class="form-control housing"></select>
-                                    </div>
-                                    <div class="col-md-2 form-group">
-                                        <label class="control-label">Аудитория</label>
-                                        <select class="form-control auditorium"></select>
-                                    </div>
-                                </div>
-                                <!-- !Первый преподаватель -->
-
-                                <!-- Второй преподаватель -->
-                                <div class="lesson-teacher" data-order="2" style="display: none">
-                                    <input type="hidden" class="lesson-id" />
-
-                                    <div class="col-md-7 col-md-offset-1 form-group">
-                                        <div class="col-md-12 no-paddings">
-                                            <label class="control-label">Преподаватель</label>
-                                            <select class="form-control teacher"></select>
-                                        </div>
-
-                                        <div class="col-md-4 no-paddings">
-                                            <a class="btn btn-link teacher-btn remove">
-                                                <span class="fa fa-user-times"></span>
-                                                Удалить
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-2 form-group">
-                                        <label class="control-label">Корпус</label>
-                                        <select class="form-control housing"></select>
-                                    </div>
-                                    <div class="col-md-2 form-group">
-                                        <label class="control-label">Аудитория</label>
-                                        <select class="form-control auditorium"></select>
-                                    </div>
-                                </div>
-                                <!-- !Второй преподаватель -->
-                            </div>
-                            <div class="col-md-4 col-md-offset-4 lesson-actions text-center">
-                                <a class="btn btn-link lesson-btn remove">
-                                    <span class="glyphicon glyphicon-remove"></span>
-                                    Удалить дисциплину
-                                </a>
-                            </div>
-                        </div>
+                    <!-- ko if: ($index() !== ($parent.Lessons().length - 1)) -->
+                    <div class="col-md-4 col-md-offset-4 lesson-actions text-center">
+                        <a class="btn btn-link lesson-btn add">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Добавить дисциплину
+                        </a>
                     </div>
-                    <!-- !Вторая дисциплина -->
+                    <!-- /ko -->
 
-                </form>
+                    <!-- ko if: ($index() === ($parent.Lessons().length - 1)) -->
+                    <div class="col-md-4 col-md-offset-4 lesson-actions text-center">
+                        <a class="btn btn-link lesson-btn remove">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            Удалить дисциплину
+                        </a>
+                    </div>
+                    <!-- /ko -->
+                </div>
             </div>
+
+
+        <!-- Первая дисциплина -->
+        @*<div id="first-discipline" class="row lesson-container" data-order="1">
+                <div class="col-md-12 lesson-edit">
+                    <div class="col-md-12 number">
+                        <span class="number-circle">1</span><div class="number-background"></div>
+                    </div>
+                    <div class="col-md-12 lesson-content">
+                        <div class="col-md-12 form-group">
+                            <label class="control-label">Дисциплина</label>
+                            <input type="text" class="discipline form-control" data-provide="typeahead" placeholder="Введите название дисциплины" autocomplete="off" value="" />
+                            <input type="hidden" class="discipline-id" />
+                            <div class="text-danger msg-text" style="display: none"> <span class="glyphicon glyphicon glyphicon-exclamation-sign form-control-feedback"></span>Дисциплина не найдена</div>
+
+                            <div class="chair"></div>
+                            <input type="hidden" class="chair-id" />
+                        </div>
+
+                        <!-- Первый преподаватель -->
+                        <div class="lesson-teacher" data-order="1">
+                            <input type="hidden" class="lesson-id"/>
+
+                            <div class="col-md-7 col-md-offset-1 form-group">
+                                <div class="col-md-12 no-paddings">
+                                    <label class="control-label">Преподаватель</label>
+                                    <select class="form-control teacher"></select>
+                                </div>
+
+                                <div class="col-md-4 no-paddings">
+                                    <a class="btn btn-link teacher-btn add">
+                                        <span class="fa fa-user-plus"></span>
+                                        Добавить
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-2 form-group">
+                                <label class="control-label">Корпус</label>
+                                <select class="form-control housing"></select>
+                            </div>
+                            <div class="col-md-2 form-group">
+                                <label class="control-label">Аудитория</label>
+                                <select class="form-control auditorium"></select>
+                            </div>
+                        </div>
+                        <!-- !Первый преподаватель -->
+
+                        <!-- Второй преподаватель -->
+                        <div class="lesson-teacher" data-order="2" style="display: none">
+                            <input type="hidden" class="lesson-id" />
+
+                            <div class="col-md-7 col-md-offset-1 form-group">
+                                <div class="col-md-12 no-paddings">
+                                    <label class="control-label">Преподаватель</label>
+                                    <select class="form-control teacher"></select>
+                                </div>
+
+                                <div class="col-md-4 no-paddings">
+                                    <a class="btn btn-link teacher-btn remove">
+                                        <span class="fa fa-user-times"></span>
+                                        Удалить
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 form-group">
+                                <label class="control-label">Корпус</label>
+                                <select class="form-control housing"></select>
+                            </div>
+                            <div class="col-md-2 form-group">
+                                <label class="control-label">Аудитория</label>
+                                <select class="form-control auditorium"></select>
+                            </div>
+                        </div>
+                        <!-- !Второй преподаватель -->
+                    </div>
+                    <div class="col-md-4 col-md-offset-4 lesson-actions text-center">
+                        <a class="btn btn-link lesson-btn add">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Добавить дисциплину
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- !Первая дисциплина -->
+
+            <!-- Вторая дисциплина -->
+            <div id="second-discipline" class="row lesson-container" data-order="2" style="display:none">
+                <div class="col-md-12 lesson-edit">
+                    <div class="col-md-12 number">
+                        <span class="number-circle">2</span><div class="number-background"></div>
+                    </div>
+                    <div class="col-md-12 lesson-content">
+                        <div class="col-md-12 form-group">
+                            <label class="control-label">Дисциплина</label>
+                            <input type="text" class="discipline form-control" data-provide="typeahead" placeholder="Введите название дисциплины" autocomplete="off" value="" />
+                            <input type="hidden" name="d" class="discipline-id" />
+                            <div class="text-danger msg-text" style="display: none"> <span class="glyphicon glyphicon glyphicon-exclamation-sign form-control-feedback"></span> Дисциплина не найдена</div>
+
+                            <div class="chair"></div>
+                            <input type="hidden" class="chair-id" />
+                        </div>
+
+                        <!-- Первый преподаватель -->
+                        <div class="lesson-teacher" data-order="1">
+                            <input type="hidden" class="lesson-id" />
+
+                            <div class="col-md-7 col-md-offset-1 form-group">
+                                <div class="col-md-12 no-paddings">
+                                    <label class="control-label">Преподаватель</label>
+                                    <select class="form-control teacher"></select>
+                                </div>
+
+                                <div class="col-md-4 no-paddings">
+                                    <a class="btn btn-link teacher-btn add">
+                                        <span class="fa fa-user-plus"></span>
+                                        Добавить
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 form-group">
+                                <label class="control-label">Корпус</label>
+                                <select class="form-control housing"></select>
+                            </div>
+                            <div class="col-md-2 form-group">
+                                <label class="control-label">Аудитория</label>
+                                <select class="form-control auditorium"></select>
+                            </div>
+                        </div>
+                        <!-- !Первый преподаватель -->
+
+                        <!-- Второй преподаватель -->
+                        <div class="lesson-teacher" data-order="2" style="display: none">
+                            <input type="hidden" class="lesson-id" />
+
+                            <div class="col-md-7 col-md-offset-1 form-group">
+                                <div class="col-md-12 no-paddings">
+                                    <label class="control-label">Преподаватель</label>
+                                    <select class="form-control teacher"></select>
+                                </div>
+
+                                <div class="col-md-4 no-paddings">
+                                    <a class="btn btn-link teacher-btn remove">
+                                        <span class="fa fa-user-times"></span>
+                                        Удалить
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 form-group">
+                                <label class="control-label">Корпус</label>
+                                <select class="form-control housing"></select>
+                            </div>
+                            <div class="col-md-2 form-group">
+                                <label class="control-label">Аудитория</label>
+                                <select class="form-control auditorium"></select>
+                            </div>
+                        </div>
+                        <!-- !Второй преподаватель -->
+                    </div>
+                    <div class="col-md-4 col-md-offset-4 lesson-actions text-center">
+                        <a class="btn btn-link lesson-btn remove">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            Удалить дисциплину
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- !Вторая дисциплина -->*@
+        </div>
             <div class="custom-modal-footer modal-footer">
                 <div class="btn-group" role="group" aria-label="...">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
-                    <button type="submit" id="modal-submit" class="btn btn-success">Сохранить</button>
+                    <button type="button" id="modal-submit" class="btn btn-success">Сохранить</button>
                 </div>
             </div>
         </div>
