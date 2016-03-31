@@ -242,6 +242,8 @@
     </Compile>
     <Compile Include="Helpers\Helpers.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Schedule\AuditoriumViewModel.cs" />
+    <Compile Include="Models\Schedule\HousingViewModel.cs" />
     <Compile Include="Models\Schedule\EditLessonViewModel.cs" />
     <Compile Include="Models\Schedule\GroupLessonsViewModel.cs" />
     <Compile Include="Models\Schedule\LessonPartViewModel.cs" />
@@ -326,6 +328,8 @@
     <Content Include="Scripts\knockout-3.3.0.js" />
     <Content Include="Scripts\knockout.mapping-latest.debug.js" />
     <Content Include="Scripts\knockout.mapping-latest.js" />
+    <Content Include="Scripts\lesson.edit.init_v1.js" />
+    <Content Include="Scripts\lesson.edit.submit_v1.js" />
     <Content Include="Scripts\lesson.edit.submit.js" />
     <Content Include="Scripts\lesson.edit.init.js" />
     <Content Include="Scripts\logging.js" />

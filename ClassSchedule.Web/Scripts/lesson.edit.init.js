@@ -2,135 +2,155 @@
  
     /* Заполнение выпадающих списков
     ------------------------------------------------------------*/
-    var fillTeacherSelect = function (data, select, chairId, selectedId) {
-        select.html('');
-        if (!data.length) return;
+    //var fillTeacherSelect = function (data, select, selectedId) {
+    //    select.html('');
+    //    if (!data.length) return;
 
-        var option = "<option></option>";
-        select.append(option);
+    //    var option = "<option></option>";
+    //    select.append(option);
 
-        var options = $.map(data, function (item, a) {
-            return "<option value='" + item.TeacherId + "'>" + item.TeacherFullName + "</option>";
-        });
-        select.append(options.join(""));
+    //    _.each(data, function (item, ix, list) {
+    //        option = "<option value='" + item.TeacherId + "'>" + item.TeacherFullName + "</option>";
+    //        select.append(option);                  
+    //    });
 
-        //_.each(data, function (item, ix, list) {
-        //    option = "<option value='" + item.TeacherId + "'>" + item.TeacherFullName + "</option>";
-        //    select.append(option);
-        //});
+    //    if (selectedId) select.val(selectedId);
+    //};
 
-        if (selectedId) select.val(selectedId);
-    };
+    //var loadTeachers = function (select, chairId, selectedId) {
+    //    $.post('/Dictionary/Teacher', { chairId: chairId }, function (data) {
+    //        fillTeacherSelect(data, select, selectedId);
+    //    });
+    //};
 
-    var loadTeachers = function (select, chairId, selectedId) {
-        $.post('/Dictionary/Teacher', { chairId: chairId }, function (data) {
-            fillTeacherSelect(data, select, chairId, selectedId);
-        });
-    };
+    //var fillHousingSelect = function (data, select, selectedId) {
+    //    select.html('');
+    //    if (!data.length) return;
 
-    var loadHousings = function (select) {
-        $.post('/Dictionary/Housing', {}, function (data) {
-            select.html('');
-            if (!data.length) return;
+    //    var option = "<option></option>";
+    //    select.append(option);
 
-            var option = "<option></option>";
-            select.append(option);
+    //    _.each(data, function (item, ix, list) {
+    //        option = "<option value='" + item.HousingId + "'>" + item.HousingName + "</option>";
+    //        select.append(option);
+    //    });
 
-            _.each(data, function (item, ix, list) {
-                option = "<option value='" + item.HousingId + "'>" + item.HousingName + "</option>";
-                select.append(option);
-            });
-        });
-    };
+    //    if (selectedId) select.val(selectedId);
+    //};
 
-    var loadAuditorium = function (select, chairId, housingId) {
-        $.post('/Dictionary/Auditorium', { chairId: chairId, housingId: housingId }, function (data) {
-            select.html('');
-            if (!data.length) return;
+    //var loadHousings = function (select, selectedId) {
+    //    $.post('/Dictionary/Housing', {}, function (data) {
+    //        fillHousingSelect(data, select, selectedId);
+    //    });
+    //};
 
-            var option = "<option></option>";
-            select.append(option);
+    //var fillAuditoriumSelect = function (data, select, selectedId) {
+    //    select.html('');
+    //    if (!data.length) return;
 
-            _.each(data, function (item, ix, list) {
-                option = "<option value='" + item.AuditoriumId + "'>" + item.AuditoriumNumber + "</option>";
-                select.append(option);
-            });
-        });
-    };
+    //    var option = "<option></option>";
+    //    select.append(option);
 
-    $('.housing').change(function () {
-        var lessonContainer = $(this).closest('.lesson-container');
+    //    _.each(data, function (item, ix, list) {
+    //        option = "<option value='" + item.AuditoriumId + "'>" + item.AuditoriumName + "</option>";
+    //        select.append(option);
+    //    });
 
-        var housingId = $(this).val();
-        var chairId = lessonContainer.find('.chair-id').val();
+    //    if (selectedId) select.val(selectedId);
+    //};
 
-        var auditoriumSelect = $(this).closest('.lesson-teacher').find('.auditorium');
-        loadAuditorium(auditoriumSelect, chairId, housingId);
-    });
+    //var loadAuditorium = function (select, chairId, housingId, selectedId) {
+    //    $.post('/Dictionary/Auditorium', { chairId: chairId, housingId: housingId }, function (data) {
+    //        fillAuditoriumSelect(data, select, selectedId);
+    //    });
+    //};
+
+    //$('.housing').change(function () {
+    //    var lessonContainer = $(this).closest('.lesson-container');
+
+    //    var housingId = $(this).val();
+    //    var chairId = lessonContainer.find('.chair-id').val();
+
+    //    var auditoriumSelect = $(this).closest('.lesson-teacher').find('.auditorium');
+    //    loadAuditorium(auditoriumSelect, chairId, housingId);
+    //});
 
     /* Подготовка модального окна редактирования занятия
      --------------------------------------------------------------*/
-    var prepareEditLessonModal = function (lesson) {
-        if (lesson.length === 0) {
-            $('#second-discipline').hide();
+    //var prepareEditLessonModal = function (lesson) {
+    //    if (lesson.length === 0) {
+    //        $('#second-discipline').hide();
 
-        } else {
-            // Первая дисциплина
-            $('#first-discipline .discipline-id').val(lesson[0].DisciplineId);
-            $('#first-discipline .discipline').val(lesson[0].DisciplineName);
-            $('#first-discipline .chair-id').val(lesson[0].ChairId);
-            $('#first-discipline .chair').text(lesson[0].ChairName);
+    //    } else {
+    //        // Первая дисциплина
+    //        $('#first-discipline .discipline-id').val(lesson[0].DisciplineId);
+    //        $('#first-discipline .discipline').val(lesson[0].DisciplineName);
+    //        $('#first-discipline .chair-id').val(lesson[0].ChairId);
+    //        $('#first-discipline .chair').text(lesson[0].ChairName);
 
-            // Первый преподаватель первой дисциплины           
-            loadTeachers($("#first-discipline .lesson-teacher[data-order='1'] .teacher"), lesson[0].ChairId, lesson[0].LessonParts[0].TeacherId);
+    //        var d1Lt1 = $("#first-discipline .lesson-teacher");
+    //        var r = d1Lt1.find("[data-order='1'] .lesson-id");
+    //        d1Lt1.find("[data-order='1'] .lesson-id").val(lesson[0].LessonParts[0].LessonId);
 
-            if (lesson[0].LessonParts.length < 2) {
-                $("#first-discipline .lesson-teacher[data-order='2']").hide();
-                $("#first-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").show();
-                $("#first-discipline .lesson-teacher[data-order='2'] .teacher-btn.remove").hide();
-            } else {
-                $("#first-discipline .lesson-teacher[data-order='2']").show();
-                $("#first-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").hide();
-                $("#first-discipline .lesson-teacher[data-order='2'] .teacher-btn.remove").show();
+    //        // Первый преподаватель первой дисциплины           
+    //        fillTeacherSelect(lesson[0].ChairTeachers, $("#first-discipline .lesson-teacher[data-order='1'] .teacher"), lesson[0].LessonParts[0].TeacherId);
+    //        fillHousingSelect(lesson[0].Housings, $("#first-discipline .lesson-teacher[data-order='1'] .housing"), lesson[0].LessonParts[0].HousingId);
+    //        fillAuditoriumSelect(lesson[0].LessonParts[0].Auditoriums, $("#first-discipline .lesson-teacher[data-order='1'] .auditorium"), lesson[0].LessonParts[0].AuditoriumId);
 
-                // Второй преподаватель первой дисциплины
-                loadTeachers($("#first-discipline .lesson-teacher[data-order='2'] .teacher"), lesson[0].ChairId, lesson[0].LessonParts[1].TeacherId);
-            }
+    //        if (lesson[0].LessonParts.length < 2) {
+    //            $("#first-discipline .lesson-teacher[data-order='2']").hide();
+    //            $("#first-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").show();
+    //            $("#first-discipline .lesson-teacher[data-order='2'] .teacher-btn.remove").hide();
+    //        } else {
+    //            $("#first-discipline .lesson-teacher[data-order='2']").show();
+    //            $("#first-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").hide();
+    //            $("#first-discipline .lesson-teacher[data-order='2'] .teacher-btn.remove").show();
 
-            if (lesson.length === 1) {
-                $('#second-discipline').hide();
-            } else {
-                $('#second-discipline').show();
+    //            $("#first-discipline .lesson-teacher[data-order='2'] .lesson-id").val(lesson[0].LessonParts[1].LessonId);
 
-                // Вторая дисциплина
-                $('#second-discipline .discipline-id').val(lesson[1].DisciplineId);
-                $('#second-discipline .discipline').val(lesson[1].DisciplineName);
-                $('#second-discipline .chair-id').val(lesson[1].ChairId);
-                $('#second-discipline .chair').text(lesson[1].ChairName);
+    //            // Второй преподаватель первой дисциплины               
+    //            fillTeacherSelect(lesson[0].ChairTeachers, $("#first-discipline .lesson-teacher[data-order='2'] .teacher"), lesson[0].LessonParts[1].TeacherId);
+    //            fillHousingSelect(lesson[0].Housings, $("#first-discipline .lesson-teacher[data-order='2'] .housing"), lesson[0].LessonParts[1].HousingId);
+    //            fillAuditoriumSelect(lesson[0].LessonParts[1].Auditoriums, $("#first-discipline .lesson-teacher[data-order='2'] .auditorium"), lesson[0].LessonParts[1].AuditoriumId);
+    //        }
 
-                // Первый преподаватель второй дисциплины           
-                loadTeachers($("#second-discipline .lesson-teacher[data-order='1'] .teacher"), lesson[1].ChairId, lesson[1].LessonParts[0].TeacherId);
+    //        if (lesson.length === 1) {
+    //            $('#second-discipline').hide();
+    //        } else {
+    //            $('#second-discipline').show();
 
-                if (lesson[1].LessonParts.length < 2) {
-                    $("#second-discipline .lesson-teacher[data-order='2']").hide();
-                    $("#second-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").show();
-                    $("#second-discipline .lesson-teacher[data-order='2'] .teacher-btn.remove").hide();
-                } else {
-                    $("#second-discipline .lesson-teacher[data-order='2']").show();
-                    $("#second-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").hide();
-                    $("#second-discipline .lesson-teacher[data-order='2'] .teacher-btn.remove").show();
+    //            // Вторая дисциплина
+    //            $('#second-discipline .discipline-id').val(lesson[1].DisciplineId);
+    //            $('#second-discipline .discipline').val(lesson[1].DisciplineName);
+    //            $('#second-discipline .chair-id').val(lesson[1].ChairId);
+    //            $('#second-discipline .chair').text(lesson[1].ChairName);
 
-                    // Первый преподаватель второй дисциплины           
-                    loadTeachers($("#second-discipline .lesson-teacher[data-order='2'] .teacher"), lesson[1].ChairId, lesson[1].LessonParts[1].TeacherId);
-                }
-            }
+    //            $("#second-discipline .lesson-teacher[data-order='1'] .lesson-id").val(lesson[1].LessonParts[0].LessonId);
 
-        }
+    //            // Первый преподаватель второй дисциплины           
+    //            fillTeacherSelect(lesson[1].ChairTeachers, $("#second-discipline .lesson-teacher[data-order='1'] .teacher"), lesson[1].LessonParts[0].TeacherId);
+    //            fillHousingSelect(lesson[1].Housings, $("#second-discipline .lesson-teacher[data-order='1'] .housing"), lesson[1].LessonParts[0].HousingId);
+    //            fillAuditoriumSelect(lesson[1].LessonParts[0].Auditoriums, $("#second-discipline .lesson-teacher[data-order='1'] .auditorium"), lesson[1].LessonParts[0].AuditoriumId);
 
-        /*$('#first-discipline .discipline-id').val();
-        $("#first-discipline .lesson-teacher[data-order='1'] .auditorium").val();
-        $("#first-discipline .lesson-teacher[data-order='1'] .teacher").val();*/
-    };
+    //            if (lesson[1].LessonParts.length < 2) {
+    //                $("#second-discipline .lesson-teacher[data-order='2']").hide();
+    //                $("#second-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").show();
+    //                $("#second-discipline .lesson-teacher[data-order='2'] .teacher-btn.remove").hide();
+    //            } else {
+    //                $("#second-discipline .lesson-teacher[data-order='2']").show();
+    //                $("#second-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").hide();
+    //                $("#second-discipline .lesson-teacher[data-order='2'] .teacher-btn.remove").show();
+
+    //                $("#second-discipline .lesson-teacher[data-order='2'] .lesson-id").val(lesson[1].LessonParts[1].LessonId);
+
+    //                // Второй преподаватель второй дисциплины           
+    //                fillTeacherSelect(lesson[1].ChairTeachers, $("#second-discipline .lesson-teacher[data-order='2'] .teacher"), lesson[1].LessonParts[1].TeacherId);
+    //                fillHousingSelect(lesson[1].Housings, $("#second-discipline .lesson-teacher[data-order='2'] .housing"), lesson[1].LessonParts[1].HousingId);
+    //                fillAuditoriumSelect(lesson[1].LessonParts[1].Auditoriums, $("#second-discipline .lesson-teacher[data-order='2'] .auditorium"), lesson[1].LessonParts[1].AuditoriumId);
+    //            }
+    //        }
+    //    }
+    //};
 
     /* Показ модального окна редактирования занятия
     ------------------------------------------------------------*/
@@ -159,7 +179,7 @@
                 $('#edit-lesson .class-number').val(classNumber);
                 $('#edit-lesson .class-date').val(classDate);
 
-                prepareEditLessonModal(lesson);
+                // prepareEditLessonModal(lesson);
 
                 $('#edit-lesson').modal({
                     backdrop: 'static',
@@ -226,10 +246,10 @@
             $("#first-discipline .chair").text("Кафедра " + disciplinesFirst[item].ChairName);
 
             var teacherSelects = $("#first-discipline .teacher");
-            loadTeachers(teacherSelects, disciplinesFirst[item].ChairId);
+            //loadTeachers(teacherSelects, disciplinesFirst[item].ChairId);
 
             var housingSelects = $("#first-discipline .housing");
-            loadHousings(housingSelects);
+            //loadHousings(housingSelects);
 
             return item;
         },
@@ -324,10 +344,10 @@
             $("#second-discipline .chair").text("Кафедра " + disciplinesSecond[item].ChairName);
 
             var teacherSelects = $("#second-discipline .teacher");
-            loadTeachers(teacherSelects, disciplinesSecond[item].ChairId);
+            //loadTeachers(teacherSelects, disciplinesSecond[item].ChairId);
 
             var housingSelects = $("#second-discipline .housing");
-            loadHousings(housingSelects);
+            //loadHousings(housingSelects);
 
             return item;
         },
@@ -371,34 +391,196 @@
 
     /* Скрытие/показ второй дисциплины/преподавателей 
      -------------------------------------------------------*/
-    $('#first-discipline .lesson-btn.add').click(function() {
-        $('#second-discipline').show();
-        $('#second-discipline .discipline').focus();
-    });
+    //$('#first-discipline .lesson-btn.add').click(function() {
+    //    $('#second-discipline').show();
+    //    $('#second-discipline .discipline').focus();
+    //});
 
-    $('#second-discipline .lesson-btn.remove').click(function () {
-        $('#second-discipline').hide();
-    });
+    //$('#second-discipline .lesson-btn.remove').click(function () {
+    //    $('#second-discipline').hide();
+    //});
 
-    $("#first-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").click(function () {
-        $(this).hide();
-        $("#first-discipline .lesson-teacher[data-order='2']").show();
-        $("#first-discipline .lesson-teacher[data-order='2'] .teacher").focus();
-    });
+    //$("#first-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").click(function () {
+    //    $(this).hide();
+    //    $("#first-discipline .lesson-teacher[data-order='2']").show();
+    //    $("#first-discipline .lesson-teacher[data-order='2'] .teacher").focus();
+    //});
 
-    $("#first-discipline .lesson-teacher[data-order='2'] .teacher-btn.remove").click(function () {
-        $("#first-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").show();
-        $("#first-discipline .lesson-teacher[data-order='2']").hide();
-    });
+    //$("#first-discipline .lesson-teacher[data-order='2'] .teacher-btn.remove").click(function () {
+    //    $("#first-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").show();
+    //    $("#first-discipline .lesson-teacher[data-order='2']").hide();
+    //});
 
-    $("#second-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").click(function () {
-        $(this).hide();
-        $("#second-discipline .lesson-teacher[data-order='2']").show();
-        $("#second-discipline .lesson-teacher[data-order='2'] .teacher").focus();
-    });
+    //$("#second-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").click(function () {
+    //    $(this).hide();
+    //    $("#second-discipline .lesson-teacher[data-order='2']").show();
+    //    $("#second-discipline .lesson-teacher[data-order='2'] .teacher").focus();
+    //});
 
-    $("#second-discipline .lesson-teacher[data-order='2'] .teacher-btn.remove").click(function () {
-        $("#second-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").show();
-        $("#second-discipline .lesson-teacher[data-order='2']").hide();
-    });
+    //$("#second-discipline .lesson-teacher[data-order='2'] .teacher-btn.remove").click(function () {
+    //    $("#second-discipline .lesson-teacher[data-order='1'] .teacher-btn.add").show();
+    //    $("#second-discipline .lesson-teacher[data-order='2']").hide();
+    //});
 });
+
+function MainViewModel() {
+    var self = this;
+
+
+    //self.Faculties = ko.observableArray([]);
+    //self.SelectedFaculty = ko.observable();
+
+    self.loadLesson = function () {
+        var weekNumber = $('.week-panel').attr('data-week');
+        var groupId = $(this).attr('data-group');
+        var dayNumber = $(this).attr('data-day');
+        var classNumber = $(this).attr('data-class-number');
+        var classDate = $(this).attr('data-class-date');
+
+        var parameters = {
+            weekNumber: weekNumber,
+            groupId: groupId,
+            dayNumber: dayNumber,
+            classNumber: classNumber
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/Home/GetLesson",
+            data: parameters,
+            success: function (lesson) {
+
+                ko.mapping.fromJS(response,
+                {
+                    key: function (data) {
+                        return ko.utils.unwrapObservable(data.LessonId);
+                    },
+                    create: function (options) {
+                        return new LessonViewModel(options.data);
+                    }
+                },
+                self.Students);
+
+                $('#edit-lesson .group-id').val(groupId);
+                $('#edit-lesson .week-number').val(weekNumber);
+                $('#edit-lesson .day-number').val(dayNumber);
+                $('#edit-lesson .class-number').val(classNumber);
+                $('#edit-lesson .class-date').val(classDate);
+
+                // prepareEditLessonModal(lesson);
+
+                $('#edit-lesson').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+            },
+            error: function () {
+                alert("failure");
+            }
+        });
+
+
+        $.post('/Home/GetLesson', {
+            page: self.SelectedPage(),
+            pageSize: self.SelectedPageSize(),
+            facultyId: self.SelectedFaculty(),
+            courseId: self.SelectedCourse(),
+            groupId: self.SelectedGroup(),
+            educationLevelId: self.SelectedEducationLevel(),
+            educationFormId: self.SelectedEducationForm(),
+            educationSourceId: self.SelectedEducationSource(),
+            countryId: self.SelectedCountry(),
+            budgetTypeId: self.SelectedBudgetType(),
+            Accommodation: self.SelectedAccommodation(),
+            searchLastName: self.SearchLastName(),
+            StudentStatusId: self.SelectedStudentStatus(),
+            DormitoryNumber: self.SelectedDormitory()
+        }, function (response) {
+            ko.mapping.fromJS(response,
+                {
+                    key: function (data) {
+                        return ko.utils.unwrapObservable(data.LessonId);
+                    },
+                    create: function (options) {
+                        return new LessonViewModel(options.data);
+                    }
+                },
+                self.Students
+            );
+            self.PagesCount(response.PagesCount);
+            self.StudentsCount(response.StudentsCount);
+        });
+    };
+};
+
+function EditLessonViewModel(editLessonViewModel) {
+    var self = this;
+    self.GroupId = ko.observable(editLessonViewModel.GroupId || '');
+    self.WeekNumber = ko.observable(editLessonViewModel.WeekNumber || '');
+    self.DayNumber = ko.observable(editLessonViewModel.DayNumber || '');
+    self.ClassNumber = ko.observable(editLessonViewModel.ClassNumber || '');
+    self.LessonParts = ko.observableArray(editLessonViewModel.LessonParts || []);
+}
+
+function LessonViewModel(lessonViewModel) {
+    var self = this;
+    self.DisciplineId = ko.observable(lessonViewModel.DisciplineId || '');
+    self.DisciplineName = ko.observable(lessonViewModel.DisciplineName || '');
+    self.ChairId = ko.observable(lessonViewModel.ChairId || '');
+    self.ChairName = ko.observable(lessonViewModel.ChairName || '');
+    self.ChairTeachers = ko.observableArray(lessonViewModel.ChairTeachers || []);
+    self.DayNumber = ko.observable(lessonViewModel.DayNumber || '');
+    self.ClassNumber = ko.observable(lessonViewModel.ClassNumber || '');
+    self.LessonTypeId = ko.observable(lessonViewModel.LessonTypeId || '');
+    self.Housings = ko.observableArray(lessonViewModel.Housings || []);
+    self.LessonParts = ko.observableArray(lessonViewModel.LessonParts || []);
+}
+
+function LessonPartViewModel(lessonPartViewModel) {
+    var self = this;
+    self.LessonId = ko.observableArray(lessonPartViewModel.LessonId || []);
+    self.DayNumber = ko.observable(lessonPartViewModel.DayNumber || '');
+    self.ClassNumber = ko.observable(lessonPartViewModel.ClassNumber || '');
+    self.LessonTypeId = ko.observable(lessonPartViewModel.LessonTypeId || '');
+    self.LessonTypeName = ko.observable(lessonPartViewModel.LessonTypeName || '');
+    self.ChairId = ko.observable(lessonPartViewModel.ChairId || '');
+    self.ChairName = ko.observable(lessonPartViewModel.ChairName || '');
+    self.DisciplineId = ko.observable(lessonPartViewModel.DisciplineId || '');
+    self.DisciplineName = ko.observable(lessonPartViewModel.DisciplineName || '');
+    self.TeacherId = ko.observable(lessonPartViewModel.TeacherId || '');
+    self.TeacherLastName = ko.observable(lessonPartViewModel.TeacherLastName || '');
+    self.TeacherFirstName = ko.observable(lessonPartViewModel.TeacherFirstName || '');
+    self.TeacherMiddleName = ko.observable(lessonPartViewModel.TeacherMiddleName || '');
+    self.HousingId = ko.observable(lessonPartViewModel.HousingId || '');
+    self.AuditoriumId = ko.observable(lessonPartViewModel.AuditoriumId || '');
+    self.AuditoriumName = ko.observable(lessonPartViewModel.AuditoriumName || '');
+    self.Auditoriums = ko.observableArray(lessonPartViewModel.Auditoriums || []);
+    self.IsNotActive = ko.observable(lessonPartViewModel.IsNotActive || '');
+}
+
+
+
+//function EditLessonViewModel(editLessonViewModel) {
+//    var self = this;
+//    self.GroupId = editLessonViewModel.GroupId || '';
+//    self.WeekNumber = editLessonViewModel.WeekNumber || '';
+//    self.DayNumber = editLessonViewModel.DayNumber || '';
+//    self.ClassNumber = editLessonViewModel.ClassNumber || '';
+//    self.Lessons = editLessonViewModel.Lessons || [];
+//}
+
+//function LessonPartViewModel(lessonPartViewModel) {
+//    var self = this;
+//    self.LessonId = lessonPartViewModel.LessonId || '';
+//    self.LessonTypeId = lessonPartViewModel.LessonTypeId || '';
+//    self.LessonTypeName = lessonPartViewModel.LessonTypeName || '';
+//    self.DisciplineId = lessonPartViewModel.DisciplineId || '';
+//    self.DisciplineName = lessonPartViewModel.DisciplineName || '';
+//    self.TeacherId = lessonPartViewModel.TeacherId || '';
+//    self.TeacherLastName = lessonPartViewModel.TeacherLastName || '';
+//    self.TeacherFistName = lessonPartViewModel.TeacherFirstName || '';
+//    self.TeacherMiddleName = lessonPartViewModel.TeacherMiddleName || '';
+//    self.AuditoriumId = lessonPartViewModel.AuditoriumId || '';
+//    self.AuditoriumName = lessonPartViewModel.AuditoriumName || '';
+//    self.IsNotActive = lessonPartViewModel.IsNotActive || '';
+//}

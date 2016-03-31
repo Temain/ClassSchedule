@@ -58,27 +58,27 @@
     });
 });
 
-//function EditLessonViewModel(editLessonViewModel) {
-//    var self = this;
-//    self.GroupId = editLessonViewModel.GroupId || '';
-//    self.WeekNumber = editLessonViewModel.WeekNumber || '';
-//    self.DayNumber = editLessonViewModel.DayNumber || '';
-//    self.ClassNumber = editLessonViewModel.ClassNumber || '';
-//    self.Lessons = editLessonViewModel.Lessons || [];
-//}
+function EditLessonViewModel(editLessonViewModel) {
+    var self = this;
+    self.GroupId = editLessonViewModel.GroupId || '';
+    self.WeekNumber = editLessonViewModel.WeekNumber || '';
+    self.DayNumber = editLessonViewModel.DayNumber || '';
+    self.ClassNumber = editLessonViewModel.ClassNumber || '';
+    self.Lessons = editLessonViewModel.Lessons || [];
+}
 
-//function LessonPartViewModel(lessonPartViewModel) {
-//    var self = this;
-//    self.LessonId = lessonPartViewModel.LessonId || '';
-//    self.LessonTypeId = lessonPartViewModel.LessonTypeId || '';
-//    self.LessonTypeName = lessonPartViewModel.LessonTypeName || '';
-//    self.DisciplineId = lessonPartViewModel.DisciplineId || '';
-//    self.DisciplineName = lessonPartViewModel.DisciplineName || '';
-//    self.TeacherId = lessonPartViewModel.TeacherId || '';
-//    self.TeacherLastName = lessonPartViewModel.TeacherLastName || '';
-//    self.TeacherFistName = lessonPartViewModel.TeacherFirstName || '';
-//    self.TeacherMiddleName = lessonPartViewModel.TeacherMiddleName || '';
-//    self.AuditoriumId = lessonPartViewModel.AuditoriumId || '';
-//    self.AuditoriumName = lessonPartViewModel.AuditoriumName || '';
-//    self.IsNotActive = lessonPartViewModel.IsNotActive || '';
-//}
+function LessonPartViewModel(lessonPartViewModel) {
+    var self = this;
+    self.LessonId = lessonPartViewModel.LessonId || '';
+    self.LessonTypeId = lessonPartViewModel.LessonTypeId || '';
+    self.LessonTypeName = lessonPartViewModel.LessonTypeName || '';
+    self.DisciplineId = lessonPartViewModel.DisciplineId || '';
+    self.DisciplineName = lessonPartViewModel.DisciplineName || '';
+    self.TeacherId = lessonPartViewModel.TeacherId || '';
+    self.TeacherLastName = lessonPartViewModel.TeacherLastName || '';
+    self.TeacherFistName = lessonPartViewModel.TeacherFirstName || '';
+    self.TeacherMiddleName = lessonPartViewModel.TeacherMiddleName || '';
+    self.AuditoriumId = lessonPartViewModel.AuditoriumId || '';
+    self.AuditoriumName = lessonPartViewModel.AuditoriumName || '';
+    self.IsNotActive = lessonPartViewModel.IsNotActive || '';
+}

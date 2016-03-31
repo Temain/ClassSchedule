@@ -94,9 +94,7 @@ namespace ClassSchedule.Web.Controllers
         public ActionResult GetLesson(int groupId, int weekNumber, int dayNumber, int classNumber)
         {
             if (Request.IsAjaxRequest())
-            {
-                // var watch = System.Diagnostics.Stopwatch.StartNew();
-
+            {               
                 var lessons = UnitOfWork.Repository<Lesson>()
                     .GetQ(x => x.GroupId == groupId && x.WeekNumber == weekNumber
                                && x.DayNumber == dayNumber && x.ClassNumber == classNumber)
@@ -122,6 +120,7 @@ namespace ClassSchedule.Web.Controllers
                                 DisciplineName = y.Discipline.DisciplineName,
                                 ChairId = y.Discipline.ChairId,
                                 ChairName = y.Discipline.Chair.DivisionName,
+                                HousingId = y.Auditorium.HousingId,
                                 AuditoriumId = y.AuditoriumId,
                                 TeacherId = y.JobId,
                                 IsNotActive = y.IsNotActive
@@ -129,36 +128,58 @@ namespace ClassSchedule.Web.Controllers
                     })
                     .ToList();
 
-                //foreach (var lesson in lessons)
-                //{
-                    //var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
-                    //if (jobRepository != null)
-                    //{
-                    //    var chairTeachers = jobRepository.ActualTeachers(UserProfile.EducationYear, lesson.ChairId);
-                    //    lesson.ChairTeachers = chairTeachers
-                    //        .Select(
-                    //            x =>
-                    //                new TeacherViewModel
-                    //                {
-                    //                    TeacherId = x.JobId,
-                    //                    TeacherFullName = x.Employee.Person.FullName
-                    //                }).ToList();
-                    //}
+                var watch = System.Diagnostics.Stopwatch.StartNew();
 
-                    //lesson.ChairTeachers = UnitOfWork.Repository<Job>()
-                    //    .Get(x => x.ChairId == lesson.ChairId)
-                    //    .Select(x =>
-                    //        new TeacherViewModel
-                    //        {
-                    //            TeacherId = x.JobId,
-                    //            TeacherFullName = x.Employee.Person.LastName
-                    //        })
-                    //    .ToList();
+                foreach (var lesson in lessons)
+                {
+                    // Преподаватели
+                    var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
+                    if (jobRepository != null)
+                    {
+                        var chairTeachers = jobRepository.ActualTeachers(UserProfile.EducationYear, lesson.ChairId);
+                        lesson.ChairTeachers = chairTeachers
+                            .Select(
+                                x =>
+                                    new TeacherViewModel
+                                    {
+                                        TeacherId = x.Key,
+                                        TeacherFullName = x.Value
+                                    })
+                            .ToList();
+                    }
 
-                //}
+                    // Корпуса
+                    lesson.Housings = UnitOfWork.Repository<Housing>()
+                        .GetQ()
+                        .Select(x => new HousingViewModel
+                        {
+                            HousingId = x.HousingId,
+                            HousingName = x.Abbreviation
+                        })
+                        .ToList();
 
-                // watch.Stop();
-                // var elapsedMs = watch.ElapsedMilliseconds;
+                    // Аудитории
+                    foreach (var lessonPart in lesson.LessonParts)
+                    {
+                        var chairId = lesson.ChairId;
+                        var housingId = lessonPart.HousingId;
+                        lessonPart.Auditoriums = UnitOfWork.Repository<Auditorium>()
+                        .GetQ(filter: x => (x.ChairId == chairId || x.ChairId == null) && x.HousingId == housingId,
+                            orderBy: o => o.OrderByDescending(n => n.ChairId)
+                                .ThenBy(n => n.AuditoriumNumber))
+                        .Select(x => new AuditoriumViewModel
+                        {
+                            AuditoriumId = x.AuditoriumId,
+                            AuditoriumName = x.AuditoriumNumber,
+                            AuditoriumTypeName = x.AuditoriumType.AuditoriumTypeName,
+                            Places = x.Places ?? 0
+                        }).ToList();
+                    }
+                    
+                }
+
+                watch.Stop();
+                var elapsedMs = watch.ElapsedMilliseconds;
 
                 return Json(lessons);
             }

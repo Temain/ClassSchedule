@@ -5,21 +5,21 @@ using ClassSchedule.Domain.Context;
 using ClassSchedule.Domain.DataAccess.Interfaces;
 using ClassSchedule.Domain.Helpers;
 using ClassSchedule.Domain.Models;
+using ClassSchedule.Domain.Models.QueryResults;
 
 namespace ClassSchedule.Domain.DataAccess.Repositories
 {
     public class JobRepository : GenericRepository<Job>, IJobRepository
     {
         private readonly ApplicationDbContext _context;
+
         public JobRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
         }
 
-        public IEnumerable<Job> ActualTeachers(EducationYear educationYear, int? chairId)
+        public List<KeyValueDictionary> ActualTeachers(EducationYear educationYear, int? chairId)
         {
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-
             var parameters = new object[]
             {
                 new SqlParameter("@chairId", chairId),
@@ -30,7 +30,8 @@ namespace ClassSchedule.Domain.DataAccess.Repositories
             var query = @"
                 SELECT * 
                 FROM (
-                  SELECT j.*, ROW_NUMBER() OVER(PARTITION BY e.PersonId ORDER BY j.JobDateStart DESC) as Rn 
+                  SELECT j.JobId AS [Key], p.LastName + COALESCE(' ' + p.FirstName, '') + COALESCE(' ' + p.MiddleName, '') AS [Value], 
+                    ROW_NUMBER() OVER(PARTITION BY e.PersonId ORDER BY j.JobDateStart DESC) as Rn 
                   FROM Job j 
                   LEFT JOIN Employee e ON j.EmployeeId = e.EmployeeId
                   LEFT JOIN Person p ON e.PersonId = p.PersonId
@@ -48,24 +49,7 @@ namespace ClassSchedule.Domain.DataAccess.Repositories
                     )
                 ) AS t0
                 WHERE t0.Rn = 1;";
-            var teachers = _context.Jobs.SqlQuery(query, parameters).ToList();
-
-
-            //var teachers = _context.Jobs
-            //    .Where(x => x.ChairId == chairId && x.IsDeleted != true
-            //                && x.Employee.IsDeleted != true && x.Employee.Person.IsDeleted != true)
-            //    .ToList()
-            //    .Where(x => DateHelpers.DatesIsActual(educationYear, x.JobDateStart, x.JobDateEnd))
-            //    .GroupBy(g => g.Employee.PersonId)
-            //    .Select(x => new
-            //    {
-            //        Job = x.OrderByDescending(n => n.JobDateStart).FirstOrDefault()
-            //    })
-            //    .Select(x => x.Job)
-            //    .ToList();
-
-            watch.Stop();
-            var elapsedMs = watch.ElapsedMilliseconds;
+            var teachers = _context.Database.SqlQuery<KeyValueDictionary>(query, parameters).ToList();
 
             return teachers;
         }

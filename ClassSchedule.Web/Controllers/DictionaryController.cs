@@ -198,8 +198,6 @@ namespace ClassSchedule.Web.Controllers
         [HttpPost]
         public ActionResult Teacher(int chairId)
         {
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-
             if (Request.IsAjaxRequest())
             {
                 var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
@@ -209,16 +207,11 @@ namespace ClassSchedule.Web.Controllers
                     var result = chairTeachers
                         .Select(
                             x =>
-                                new 
+                                new
                                 {
-                                    TeacherId = x.JobId,
-                                    TeacherFullName = x.Employee.Person.FullName
-                                })
-                        .OrderBy(n => n.TeacherFullName)
-                        .ToList();
-
-                    watch.Stop();
-                    var elapsedMs = watch.ElapsedMilliseconds;
+                                    TeacherId = x.Key,
+                                    TeacherFullName = x.Value
+                                });
 
                     return Json(result);
                 }              
