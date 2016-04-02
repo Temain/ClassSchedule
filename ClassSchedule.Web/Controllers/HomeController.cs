@@ -90,103 +90,103 @@ namespace ClassSchedule.Web.Controllers
             return View(viewModel);
         }
 
-        [HttpPost]
-        public ActionResult GetLesson(int groupId, int weekNumber, int dayNumber, int classNumber)
+        [HttpGet]
+        public ActionResult EditLesson(int groupId, int weekNumber, int dayNumber, int classNumber)
         {
-            if (Request.IsAjaxRequest())
+            if (!Request.IsAjaxRequest()) return null;
+            
+            var viewModel = new EditLessonViewModel
             {
-                var viewModel = new EditLessonViewModel
+                GroupId = groupId,
+                WeekNumber = weekNumber,
+                DayNumber = dayNumber,
+                ClassNumber = classNumber
+            };
+
+            var lessons = UnitOfWork.Repository<Lesson>()
+                .GetQ(x => x.GroupId == groupId && x.WeekNumber == weekNumber
+                           && x.DayNumber == dayNumber && x.ClassNumber == classNumber)
+                .GroupBy(x => new
                 {
-                    GroupId = groupId,
-                    WeekNumber = weekNumber,
-                    DayNumber = dayNumber,
-                    ClassNumber = classNumber
-                };
+                    x.DisciplineId,
+                    x.Discipline.DisciplineName,
+                    x.Discipline.ChairId,
+                    x.Discipline.Chair.DivisionName,
+                    x.LessonTypeId
+                })
+                .Select(x => new LessonViewModel
+                {
+                    DisciplineId = x.Key.DisciplineId,
+                    DisciplineName = x.Key.DisciplineName,
+                    ChairId = x.Key.ChairId,
+                    ChairName = x.Key.DivisionName,
+                    LessonTypeId = x.Key.LessonTypeId ?? 0,
+                    LessonParts = x
+                        .Select(y => new LessonPartViewModel
+                        {
+                            LessonId = y.LessonId,
+                            // LessonTypeId = y.LessonTypeId ?? 0,
+                            // DisciplineId = y.DisciplineId,
+                            // DisciplineName = y.Discipline.DisciplineName,
+                            // ChairId = y.Discipline.ChairId,
+                            // ChairName = y.Discipline.Chair.DivisionName,
+                            HousingId = y.Auditorium.HousingId,
+                            AuditoriumId = y.AuditoriumId,
+                            TeacherId = y.JobId,
+                            IsNotActive = y.IsNotActive
+                        })
+                })
+                .ToList();
 
-                var lessons = UnitOfWork.Repository<Lesson>()
-                    .GetQ(x => x.GroupId == groupId && x.WeekNumber == weekNumber
-                               && x.DayNumber == dayNumber && x.ClassNumber == classNumber)
-                    .GroupBy(x => new
-                    {
-                        x.DisciplineId,
-                        x.Discipline.DisciplineName,
-                        x.Discipline.ChairId,
-                        x.Discipline.Chair.DivisionName,
-                        x.LessonTypeId
-                    })
-                    .Select(x => new LessonViewModel
-                    {
-                        DisciplineId = x.Key.DisciplineId,
-                        DisciplineName = x.Key.DisciplineName,
-                        ChairId = x.Key.ChairId,
-                        ChairName = x.Key.DivisionName,
-                        LessonTypeId = x.Key.LessonTypeId ?? 0,
-                        LessonParts = x
-                            .Select(y => new LessonPartViewModel
-                            {
-                                LessonId = y.LessonId,
-                                // LessonTypeId = y.LessonTypeId ?? 0,
-                                // DisciplineId = y.DisciplineId,
-                                // DisciplineName = y.Discipline.DisciplineName,
-                                // ChairId = y.Discipline.ChairId,
-                                // ChairName = y.Discipline.Chair.DivisionName,
-                                HousingId = y.Auditorium.HousingId,
-                                AuditoriumId = y.AuditoriumId,
-                                TeacherId = y.JobId,
-                                IsNotActive = y.IsNotActive
-                            })
-                    })
-                    .ToList();
+            // var watch = System.Diagnostics.Stopwatch.StartNew();
 
-                // var watch = System.Diagnostics.Stopwatch.StartNew();
+            // Типы занятий
+            viewModel.LessonTypes = UnitOfWork.Repository<LessonType>()
+                .GetQ()
+                .Select(
+                    x =>
+                        new LessonTypeViewModel
+                        {
+                            LessonTypeId = x.LessonTypeId,
+                            LessonTypeName = x.LessonTypeName
+                        })
+                .OrderBy(n => n.LessonTypeName)
+                .ToList();
 
-                // Типы занятий
-                viewModel.LessonTypes = UnitOfWork.Repository<LessonType>()
-                    .GetQ()
-                    .Select(
-                        x =>
-                            new LessonTypeViewModel
-                            {
-                                LessonTypeId = x.LessonTypeId,
-                                LessonTypeName = x.LessonTypeName
-                            })
-                    .OrderBy(n => n.LessonTypeName)
-                    .ToList();
+            // Корпуса
+            viewModel.Housings = UnitOfWork.Repository<Housing>()
+                .GetQ()
+                .Select(x => new HousingViewModel
+                {
+                    HousingId = x.HousingId,
+                    HousingName = x.Abbreviation
+                })
+                .ToList();
 
-                // Корпуса
-                viewModel.Housings = UnitOfWork.Repository<Housing>()
-                    .GetQ()
-                    .Select(x => new HousingViewModel
-                    {
-                        HousingId = x.HousingId,
-                        HousingName = x.Abbreviation
-                    })
-                    .ToList();
+            foreach (var lesson in lessons)
+            {                   
+                // Преподаватели
+                var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
+                if (jobRepository != null)
+                {
+                    var chairTeachers = jobRepository.ActualTeachers(UserProfile.EducationYear, lesson.ChairId);
+                    lesson.ChairTeachers = chairTeachers
+                        .Select(
+                            x =>
+                                new TeacherViewModel
+                                {
+                                    TeacherId = x.Key,
+                                    TeacherFullName = x.Value
+                                })
+                        .ToList();
+                }                   
 
-                foreach (var lesson in lessons)
-                {                   
-                    // Преподаватели
-                    var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
-                    if (jobRepository != null)
-                    {
-                        var chairTeachers = jobRepository.ActualTeachers(UserProfile.EducationYear, lesson.ChairId);
-                        lesson.ChairTeachers = chairTeachers
-                            .Select(
-                                x =>
-                                    new TeacherViewModel
-                                    {
-                                        TeacherId = x.Key,
-                                        TeacherFullName = x.Value
-                                    })
-                            .ToList();
-                    }                   
-
-                    // Аудитории
-                    foreach (var lessonPart in lesson.LessonParts)
-                    {
-                        var chairId = lesson.ChairId;
-                        var housingId = lessonPart.HousingId;
-                        lessonPart.Auditoriums = UnitOfWork.Repository<Auditorium>()
+                // Аудитории
+                foreach (var lessonPart in lesson.LessonParts)
+                {
+                    var chairId = lesson.ChairId;
+                    var housingId = lessonPart.HousingId;
+                    lessonPart.Auditoriums = UnitOfWork.Repository<Auditorium>()
                         .GetQ(filter: x => (x.ChairId == chairId || x.ChairId == null) && x.HousingId == housingId,
                             orderBy: o => o.OrderByDescending(n => n.ChairId)
                                 .ThenBy(n => n.AuditoriumNumber))
@@ -197,23 +197,20 @@ namespace ClassSchedule.Web.Controllers
                             AuditoriumTypeName = x.AuditoriumType.AuditoriumTypeName,
                             Places = x.Places ?? 0
                         }).ToList();
-                    }
-                    
                 }
-
-                viewModel.Lessons = lessons;
-
-                // watch.Stop();
-                // var elapsedMs = watch.ElapsedMilliseconds;
-
-                return Json(viewModel);
+                    
             }
 
-            return null;
+            viewModel.Lessons = lessons;
+
+            // watch.Stop();
+            // var elapsedMs = watch.ElapsedMilliseconds;
+
+            return Json(viewModel, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public ActionResult Edit(EditLessonViewModel viewModel)
+        public ActionResult EditLesson(EditLessonViewModel viewModel)
         {
             if (!Request.IsAjaxRequest())
             {

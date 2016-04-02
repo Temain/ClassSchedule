@@ -1,60 +1,41 @@
-﻿$(function () {
-    /* Показ модального окна редактирования занятия
-    ------------------------------------------------------------*/
-    $(".lesson-cell").dblclick(function () {
-        viewModel.loadLesson(this);
-    });
-
-    ko.applyBindings(viewModel);
-});
-
-var viewModel = new MainViewModel();
-function MainViewModel() {
+﻿function EditLessonViewModel(data) {
     var self = this;
+    if (!data) {
+        self.GroupId = ko.observable('');
+        self.WeekNumber = ko.observable('');
+        self.DayNumber = ko.observable('');
+        self.ClassNumber = ko.observable('');
+        self.Housings = ko.observableArray([]);
+        self.LessonTypes = ko.observableArray([]);
+        self.Lessons = ko.observableArray([]);
+    }
 
-    self.EditLessonViewModel = ko.observable();
-
-    self.loadLesson = function (lessonCell) {
-        var weekNumber = $('.week-panel').attr('data-week');
-        var groupId = $(lessonCell).attr('data-group');
-        var dayNumber = $(lessonCell).attr('data-day');
-        var classNumber = $(lessonCell).attr('data-class-number');
-        var classDate = $(lessonCell).attr('data-class-date');
-
-        var parameters = {
-            weekNumber: weekNumber,
-            groupId: groupId,
-            dayNumber: dayNumber,
-            classNumber: classNumber
-        };
-
-        $.ajax({
-            type: "POST",
-            url: "/Home/GetLesson",
-            data: parameters,
-            success: function (data) {
-                self.EditLessonViewModel(new EditLessonViewModel(data));
-                if (self.EditLessonViewModel().Lessons().length === 0) {
-                    self.addDiscipline();
-                }
-
-                $('#edit-lesson').modal({
-                    backdrop: 'static',
-                    keyboard: false
-                });
-            },
-            error: function () {
-                alert("failure");
+    var editLessonMapping = {
+        'Lessons': {
+            create: function (options) {
+                return new LessonViewModel(options.data);
             }
-        });     
+        },
+        'LessonTypes': {
+            create: function (options) {
+                return new LessonTypeViewModel(options.data);
+            }
+        },
+        'Housings': {
+            create: function (options) {
+                return new HousingViewModel(options.data);
+            }
+        }
     };
 
+    ko.mapping.fromJS(data, editLessonMapping, self);
+
     self.saveLesson = function () {
-        var editLessonViewModel = ko.toJS(self.EditLessonViewModel());
+        var editLessonViewModel = ko.toJS(self);
 
         $.ajax({
             type: "POST",
-            url: "/Home/Edit",
+            url: "/Home/EditLesson",
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify({ viewModel: editLessonViewModel }),
             dataType: 'json',
@@ -68,11 +49,11 @@ function MainViewModel() {
     };
 
     self.removeDiscipline = function (discipline) {
-        self.EditLessonViewModel().Lessons.remove(discipline);
+        self.Lessons.remove(discipline);
     };
 
     self.addDiscipline = function () {
-        self.EditLessonViewModel().Lessons.push(new LessonViewModel());
+        self.Lessons.push(new LessonViewModel());
     };
 
     self.addTeacher = function (lesson) {
@@ -97,19 +78,28 @@ function MainViewModel() {
         });
     };
 
-    self.housingChanged = function (lessonPart, event) {
-        var housingSelect = $(event.target);
+    self.loadAuditoriums = function (lessonPart, chairId) {
+        var housingId = lessonPart.HousingId();
+        if (!housingId) {
+            lessonPart.Auditoriums([]);
+            return;
+        }
 
-        var chairId = housingSelect.closest('.lesson-content').find('.chair-id').val();
         $.post('/Dictionary/Auditorium', { chairId: chairId, housingId: lessonPart.HousingId() }, function (data) {
             ko.mapping.fromJS(data, {}, lessonPart.Auditoriums);
         });
     };
 
+    self.housingChanged = function (lessonPart, event) {
+        var housingSelect = $(event.target);
+        var chairId = housingSelect.closest('.lesson-content').find('.chair-id').val();
+        self.loadAuditoriums(lessonPart, chairId);
+    };
+
     /* Биндинги
     ------------------------------------------------------------*/
     ko.bindingHandlers.typeahead = {
-        init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var $element = $(element);
             // var allBindings = allBindingsAccessor();          
             var elementData = ko.utils.unwrapObservable(valueAccessor());
@@ -129,30 +119,30 @@ function MainViewModel() {
 
                     // if (query.length > 2) {
 
-                        _.each(data, function (item, ix, list) {
-                            if (_.contains(disciplines, item.DisciplineName)) {
-                                item.DisciplineName = item.DisciplineName + ' #' + item.DisciplineId;
-                            }
-                            disciplineLabels.push(item.DisciplineName);
-                            disciplines[item.DisciplineName] = {
-                                DisciplineId: item.DisciplineId,
-                                DisciplineName: item.DisciplineName,
-                                ChairId: item.ChairId,
-                                ChairName: item.ChairName
-                            };
-                        });
-
-                        var labelsCount = Object.keys(disciplineLabels).length;
-                        if (labelsCount === 0) {
-                            $element.closest(".discipline").siblings('.msg-text').slideDown(250);
-                            elementData.DisciplineId("-1");
-                            elementData.ChairId("");
-                            elementData.ChairName("");
-                        } else {
-                            $element.closest(".discipline").siblings('.msg-text').slideUp(250);
+                    _.each(data, function (item, ix, list) {
+                        if (_.contains(disciplines, item.DisciplineName)) {
+                            item.DisciplineName = item.DisciplineName + ' #' + item.DisciplineId;
                         }
+                        disciplineLabels.push(item.DisciplineName);
+                        disciplines[item.DisciplineName] = {
+                            DisciplineId: item.DisciplineId,
+                            DisciplineName: item.DisciplineName,
+                            ChairId: item.ChairId,
+                            ChairName: item.ChairName
+                        };
+                    });
 
-                        process(disciplineLabels);
+                    var labelsCount = Object.keys(disciplineLabels).length;
+                    if (labelsCount === 0) {
+                        $element.closest(".discipline").siblings('.msg-text').slideDown(250);
+                        elementData.DisciplineId("-1");
+                        elementData.ChairId("");
+                        elementData.ChairName("");
+                    } else {
+                        $element.closest(".discipline").siblings('.msg-text').slideUp(250);
+                    }
+
+                    process(disciplineLabels);
                     // }
 
                     if (query.length === 0) $element.closest(".discipline").siblings('.msg-text').slideUp(250);
@@ -169,7 +159,11 @@ function MainViewModel() {
                     elementData.ChairName("Кафедра " + disciplines[item].ChairName);
 
                     self.loadTeachers(elementData, disciplines[item].ChairId);
-                    self.loadHousings(elementData);
+                    // self.loadHousings(elementData);
+                    $.each(elementData.LessonParts(), function (index, lessonPart) {
+                        lessonPart.HousingId('');
+                        // self.loadAuditoriums(lessonPart, disciplines[item].ChairId);
+                    });
 
                     return item;
                 },
@@ -201,34 +195,6 @@ function MainViewModel() {
                 .typeahead(options);
         }
     };
-};
-
-/* Модели
-------------------------------------------------------------*/
-function EditLessonViewModel(data) {
-    var self = this;
-    self.foo = function() {
-        alert('!!!');
-    };
-
-    var editLessonMapping = {
-        'Lessons': {
-            create: function (options) {
-                return new LessonViewModel(options.data);
-            }
-        },
-        'LessonTypes': {
-            create: function (options) {
-                return new LessonTypeViewModel(options.data);
-            }
-        },
-        'Housings': {
-            create: function (options) {
-                return new HousingViewModel(options.data);
-            }
-        }
-    };
-    ko.mapping.fromJS(data, editLessonMapping, this);
 }
 
 function LessonViewModel(data) {
@@ -259,7 +225,7 @@ function LessonViewModel(data) {
             }
         }
     };
-    ko.mapping.fromJS(data, lessonMapping, this);
+    ko.mapping.fromJS(data, lessonMapping, self);
 }
 
 function LessonPartViewModel(data) {
@@ -294,7 +260,7 @@ function LessonPartViewModel(data) {
             }
         }
     };
-    ko.mapping.fromJS(data, lessonPartMapping, this);
+    ko.mapping.fromJS(data, lessonPartMapping, self);
 }
 
 function LessonTypeViewModel(data) {

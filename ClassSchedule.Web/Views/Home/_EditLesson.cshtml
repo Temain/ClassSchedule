@@ -1,5 +1,5 @@
 ﻿<!-- Modal -->
-<div id="edit-lesson" data-bind="with: EditLessonViewModel" class="modal fade" role="dialog">
+<div id="edit-lesson" data-bind="with: $root.EditLessonViewModel" class="modal fade" role="dialog">
     <div class="modal-dialog">
 
         <!-- Modal content-->
@@ -34,7 +34,7 @@
 
                         <div class="col-md-4 form-group">
                             <label class="control-label">Тип занятия</label>
-                            <select class="form-control col-md-2" data-bind="value: LessonTypeId, options: $parent.LessonTypes, optionsValue: 'LessonTypeId', optionsText: 'LessonTypeName', optionsCaption: ''"></select>
+                            <select class="form-control col-md-2" data-bind="value: LessonTypeId, options: $root.EditLessonViewModel().LessonTypes, optionsValue: 'LessonTypeId', optionsText: 'LessonTypeName', optionsCaption: ''"></select>
                         </div>
 
                         <!-- ko foreach: LessonParts -->
@@ -50,7 +50,7 @@
 
                                 <!-- ko if: $parent.LessonParts().length !== 2 && ($index() === ($parent.LessonParts().length - 1)) -->
                                 <div class="col-md-4 no-paddings">
-                                    <a class="btn btn-link teacher-btn add" data-bind="click: function() { return viewModel.addTeacher($parent, $data); }">
+                                    <a class="btn btn-link teacher-btn add" data-bind="click: function() { return $root.EditLessonViewModel().addTeacher($parent, $data); }">
                                         <span class="fa fa-user-plus"></span>
                                         Добавить
                                     </a>
@@ -58,7 +58,7 @@
                                 <!-- /ko -->
                                 <!-- ko if: $parent.LessonParts().length === 2 && ($index() === ($parent.LessonParts().length - 1)) -->
                                 <div class="col-md-4 no-paddings">
-                                    <a class="btn btn-link teacher-btn remove" data-bind="click: function() { return viewModel.removeTeacher($parent, $data); }">
+                                    <a class="btn btn-link teacher-btn remove" data-bind="click: function() { return $root.EditLessonViewModel().removeTeacher($parent, $data); }">
                                         <span class="fa fa-user-times"></span>
                                         Удалить
                                     </a>
@@ -67,7 +67,7 @@
                             </div>
                             <div class="col-md-2 form-group">
                                 <label class="control-label">Корпус</label>
-                                <select class="form-control housing" data-bind="value: HousingId, options: viewModel.EditLessonViewModel.Housings, optionsValue: 'HousingId', optionsText: 'HousingName', optionsCaption: '', event: { change: viewModel.housingChanged}"></select>
+                                <select class="form-control housing" data-bind="value: HousingId, options: $root.EditLessonViewModel().Housings, optionsValue: 'HousingId', optionsText: 'HousingName', optionsCaption: '', event: { change: $root.EditLessonViewModel().housingChanged}"></select>
                             </div>
                             <div class="col-md-2 form-group">
                                 <label class="control-label">Аудитория</label>
@@ -79,7 +79,7 @@
 
                     <!-- ko if: $parent.Lessons().length != 2 && ($index() === ($parent.Lessons().length - 1)) -->
                     <div class="col-md-4 col-md-offset-4 lesson-actions text-center">
-                        <a class="btn btn-link lesson-btn add" data-bind="click: $root.EditLessonViewModel().foo">
+                        <a class="btn btn-link lesson-btn add" data-bind="click: $root.EditLessonViewModel().addDiscipline">
                             <span class="glyphicon glyphicon-plus"></span>
                             Добавить дисциплину
                         </a>
@@ -87,7 +87,7 @@
                     <!-- /ko -->
                     <!-- ko if: $parent.Lessons().length == 2 -->
                     <div class="col-md-4 col-md-offset-4 lesson-actions text-center">
-                        <a class="btn btn-link lesson-btn remove" data-bind="click: viewModel.removeDiscipline">
+                        <a class="btn btn-link lesson-btn remove" data-bind="click: $root.EditLessonViewModel().removeDiscipline">
                             <span class="glyphicon glyphicon-remove"></span>
                             Удалить дисциплину
                         </a>
@@ -99,7 +99,7 @@
             <div class="custom-modal-footer modal-footer">
                 <div class="btn-group" role="group" aria-label="...">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
-                    <button type="button" id="modal-submit" class="btn btn-success" data-bind="click: viewModel.saveLesson">Сохранить</button>
+                    <button type="button" id="modal-submit" class="btn btn-success" data-bind="click: $root.EditLessonViewModel().saveLesson">Сохранить</button>
                 </div>
             </div>
         </div>

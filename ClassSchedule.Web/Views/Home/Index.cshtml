@@ -122,14 +122,14 @@
     @Scripts.Render("~/bundles/underscore")
     @Scripts.Render("~/bundles/knockout")
     @Scripts.Render("~/bundles/typeahead")
-    @Scripts.Render("~/bundles/lesson")
+    @Scripts.Render("~/bundles/edit-lesson")
 
-    @*<script>
-        $(function() {
+    <script>
+        $(function () {
             /* Показ модального окна редактирования занятия
             ------------------------------------------------------------*/
-            $(".lesson-cell").dblclick(function() {
-                viewModel.loadLesson(this);
+            $(".lesson-cell").dblclick(function () {
+                viewModel.editLesson(this);
             });
 
             ko.applyBindings(viewModel);
@@ -138,6 +138,46 @@
         var viewModel = new MainViewModel();
         function MainViewModel() {
             var self = this;
-        }
-    </script>*@
+
+            self.EditLessonViewModel = ko.observable(new EditLessonViewModel());
+
+            self.editLesson = function (lessonCell) {
+                var weekNumber = $('.week-panel').attr('data-week');
+                var groupId = $(lessonCell).attr('data-group');
+                var dayNumber = $(lessonCell).attr('data-day');
+                var classNumber = $(lessonCell).attr('data-class-number');
+                var classDate = $(lessonCell).attr('data-class-date');
+
+                var parameters = {
+                    weekNumber: weekNumber,
+                    groupId: groupId,
+                    dayNumber: dayNumber,
+                    classNumber: classNumber
+                };
+
+                $.ajax({
+                    type: "GET",
+                    url: "/Home/EditLesson",
+                    data: parameters,
+                    success: function (data) {
+                        self.EditLessonViewModel(new EditLessonViewModel(data));
+
+                        var lessonDisciplines = self.EditLessonViewModel().Lessons();
+                        if (lessonDisciplines.length === 0) {
+                            self.EditLessonViewModel().addDiscipline();
+                        }
+
+                        $('#edit-lesson').modal({
+                            backdrop: 'static',
+                            keyboard: false
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        var err = eval("(" + xhr.responseText + ")");
+                        alert(err.Message);
+                    }
+                });
+            };
+        };
+    </script>
 }
