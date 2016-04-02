@@ -207,7 +207,7 @@ namespace ClassSchedule.Web.Controllers
                     var result = chairTeachers
                         .Select(
                             x =>
-                                new
+                                new TeacherViewModel
                                 {
                                     TeacherId = x.Key,
                                     TeacherFullName = x.Value
@@ -227,9 +227,9 @@ namespace ClassSchedule.Web.Controllers
             {
                 var housings = UnitOfWork.Repository<Housing>()
                     .GetQ()
-                    .Select(x => new
+                    .Select(x => new HousingViewModel
                     {
-                        x.HousingId,
+                        HousingId = x.HousingId,
                         HousingName = x.Abbreviation
                     });
 
@@ -248,12 +248,12 @@ namespace ClassSchedule.Web.Controllers
                     .GetQ(filter: x => (x.ChairId == chairId || x.ChairId == null) && x.HousingId == housingId,
                         orderBy: o => o.OrderByDescending(n => n.ChairId)
                             .ThenBy(n => n.AuditoriumNumber))
-                    .Select(x => new
+                    .Select(x => new AuditoriumViewModel
                     {
-                        x.AuditoriumId,
-                        x.AuditoriumNumber,
-                        x.AuditoriumType.AuditoriumTypeName,
-                        x.Places
+                        AuditoriumId = x.AuditoriumId,
+                        AuditoriumNumber = x.AuditoriumNumber,
+                        AuditoriumTypeName = x.AuditoriumType.AuditoriumTypeName,
+                        Places = x.Places ?? 0
                     }).ToList();
 
                 return Json(auditoriums);

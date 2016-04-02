@@ -1,80 +1,4 @@
 ﻿$(function () {
- 
-    /* Заполнение выпадающих списков
-    ------------------------------------------------------------*/
-    //var fillTeacherSelect = function (data, select, selectedId) {
-    //    select.html('');
-    //    if (!data.length) return;
-
-    //    var option = "<option></option>";
-    //    select.append(option);
-
-    //    _.each(data, function (item, ix, list) {
-    //        option = "<option value='" + item.TeacherId + "'>" + item.TeacherFullName + "</option>";
-    //        select.append(option);                  
-    //    });
-
-    //    if (selectedId) select.val(selectedId);
-    //};
-
-    //var loadTeachers = function (select, chairId, selectedId) {
-    //    $.post('/Dictionary/Teacher', { chairId: chairId }, function (data) {
-    //        fillTeacherSelect(data, select, selectedId);
-    //    });
-    //};
-
-    //var fillHousingSelect = function (data, select, selectedId) {
-    //    select.html('');
-    //    if (!data.length) return;
-
-    //    var option = "<option></option>";
-    //    select.append(option);
-
-    //    _.each(data, function (item, ix, list) {
-    //        option = "<option value='" + item.HousingId + "'>" + item.HousingName + "</option>";
-    //        select.append(option);
-    //    });
-
-    //    if (selectedId) select.val(selectedId);
-    //};
-
-    //var loadHousings = function (select, selectedId) {
-    //    $.post('/Dictionary/Housing', {}, function (data) {
-    //        fillHousingSelect(data, select, selectedId);
-    //    });
-    //};
-
-    //var fillAuditoriumSelect = function (data, select, selectedId) {
-    //    select.html('');
-    //    if (!data.length) return;
-
-    //    var option = "<option></option>";
-    //    select.append(option);
-
-    //    _.each(data, function (item, ix, list) {
-    //        option = "<option value='" + item.AuditoriumId + "'>" + item.AuditoriumName + "</option>";
-    //        select.append(option);
-    //    });
-
-    //    if (selectedId) select.val(selectedId);
-    //};
-
-    //var loadAuditorium = function (select, chairId, housingId, selectedId) {
-    //    $.post('/Dictionary/Auditorium', { chairId: chairId, housingId: housingId }, function (data) {
-    //        fillAuditoriumSelect(data, select, selectedId);
-    //    });
-    //};
-
-    //$('.housing').change(function () {
-    //    var lessonContainer = $(this).closest('.lesson-container');
-
-    //    var housingId = $(this).val();
-    //    var chairId = lessonContainer.find('.chair-id').val();
-
-    //    var auditoriumSelect = $(this).closest('.lesson-teacher').find('.auditorium');
-    //    loadAuditorium(auditoriumSelect, chairId, housingId);
-    //});
-
     /* Показ модального окна редактирования занятия
     ------------------------------------------------------------*/
     $(".lesson-cell").dblclick(function () {
@@ -110,6 +34,9 @@ function MainViewModel() {
             data: parameters,
             success: function (data) {
                 self.EditLessonViewModel(new EditLessonViewModel(data));
+                if (self.EditLessonViewModel().Lessons().length === 0) {
+                    self.addDiscipline();
+                }
 
                 $('#edit-lesson').modal({
                     backdrop: 'static',
@@ -140,6 +67,47 @@ function MainViewModel() {
         });
     };
 
+    self.removeDiscipline = function (discipline) {
+        self.EditLessonViewModel().Lessons.remove(discipline);
+    };
+
+    self.addDiscipline = function () {
+        self.EditLessonViewModel().Lessons.push(new LessonViewModel());
+    };
+
+    self.addTeacher = function (lesson) {
+        lesson.LessonParts.push(new LessonPartViewModel());
+    };
+
+    self.removeTeacher = function (lesson, teacher) {
+        lesson.LessonParts.remove(teacher);
+    };
+
+    /* Заполнение выпадающих списков
+    ------------------------------------------------------------*/
+    self.loadTeachers = function (lesson, chairId) {
+        $.post('/Dictionary/Teacher', { chairId: chairId }, function (data) {
+            ko.mapping.fromJS(data, {}, lesson.ChairTeachers);
+        });
+    };
+
+    self.loadHousings = function (lesson) {
+        $.post('/Dictionary/Housing', {}, function (data) {
+            ko.mapping.fromJS(data, {}, lesson.Housings);
+        });
+    };
+
+    self.housingChanged = function (lessonPart, event) {
+        var housingSelect = $(event.target);
+
+        var chairId = housingSelect.closest('.lesson-content').find('.chair-id').val();
+        $.post('/Dictionary/Auditorium', { chairId: chairId, housingId: lessonPart.HousingId() }, function (data) {
+            ko.mapping.fromJS(data, {}, lessonPart.Auditoriums);
+        });
+    };
+
+    /* Биндинги
+    ------------------------------------------------------------*/
     ko.bindingHandlers.typeahead = {
         init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var $element = $(element);
@@ -200,11 +168,8 @@ function MainViewModel() {
                     elementData.ChairId(disciplines[item].ChairId);
                     elementData.ChairName("Кафедра " + disciplines[item].ChairName);
 
-                    //var teacherSelects = $("#second-discipline .teacher");
-                    //loadTeachers(teacherSelects, disciplinesSecond[item].ChairId);
-
-                    //var housingSelects = $("#second-discipline .housing");
-                    //loadHousings(housingSelects);
+                    self.loadTeachers(elementData, disciplines[item].ChairId);
+                    self.loadHousings(elementData);
 
                     return item;
                 },
@@ -238,11 +203,28 @@ function MainViewModel() {
     };
 };
 
+/* Модели
+------------------------------------------------------------*/
 function EditLessonViewModel(data) {
+    var self = this;
+    self.foo = function() {
+        alert('!!!');
+    };
+
     var editLessonMapping = {
         'Lessons': {
             create: function (options) {
                 return new LessonViewModel(options.data);
+            }
+        },
+        'LessonTypes': {
+            create: function (options) {
+                return new LessonTypeViewModel(options.data);
+            }
+        },
+        'Housings': {
+            create: function (options) {
+                return new HousingViewModel(options.data);
             }
         }
     };
@@ -250,6 +232,21 @@ function EditLessonViewModel(data) {
 }
 
 function LessonViewModel(data) {
+    var self = this;
+    if (!data) {
+        self.DisciplineId = ko.observable('');
+        self.DisciplineName = ko.observable('');
+        self.ChairId = ko.observable('');
+        self.ChairName = ko.observable('');
+        // self.DayNumber = ko.observable('');
+        // self.ClassNumber = ko.observable('');
+        self.LessonTypeId = ko.observable('');
+        self.ChairTeachers = ko.observableArray([]);
+        self.LessonParts = ko.observableArray([new LessonPartViewModel()]);
+
+        return self;
+    }
+
     var lessonMapping = {
         'LessonParts': {
             create: function (options) {
@@ -260,17 +257,36 @@ function LessonViewModel(data) {
             create: function (options) {
                 return new TeacherViewModel(options.data);
             }
-        },
-        'Housings': {
-            create: function (options) {
-                return new HousingViewModel(options.data);
-            }
         }
     };
     ko.mapping.fromJS(data, lessonMapping, this);
 }
 
 function LessonPartViewModel(data) {
+    var self = this;
+    if (!data) {
+        self.LessonId = ko.observable('');
+        //self.DayNumber = ko.observable('');
+        //self.ClassNumber = ko.observable('');
+        //self.LessonTypeId = ko.observable('');
+        //self.LessonTypeName = ko.observable('');
+        //self.ChairId = ko.observable('');
+        //self.ChairName = ko.observable('');
+        //self.DisciplineId = ko.observable('');
+        //self.DisciplineName = ko.observable('');
+        self.TeacherId = ko.observable('');
+        self.TeacherLastName = ko.observable('');
+        self.TeacherFirstName = ko.observable('');
+        self.TeacherMiddleName = ko.observable('');
+        self.HousingId = ko.observable('');
+        self.AuditoriumId = ko.observable('');
+        self.AuditoriumName = ko.observable('');
+        self.Auditoriums = ko.observableArray([]);
+        self.IsNotActive = ko.observable('');
+
+        return self;
+    }
+
     var lessonPartMapping = {
         'Auditoriums': {
             create: function (options) {
@@ -279,6 +295,10 @@ function LessonPartViewModel(data) {
         }
     };
     ko.mapping.fromJS(data, lessonPartMapping, this);
+}
+
+function LessonTypeViewModel(data) {
+    ko.mapping.fromJS(data, {}, this);
 }
 
 function TeacherViewModel(data) {

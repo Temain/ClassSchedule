@@ -123,4 +123,21 @@
     @Scripts.Render("~/bundles/knockout")
     @Scripts.Render("~/bundles/typeahead")
     @Scripts.Render("~/bundles/lesson")
+
+    @*<script>
+        $(function() {
+            /* Показ модального окна редактирования занятия
+            ------------------------------------------------------------*/
+            $(".lesson-cell").dblclick(function() {
+                viewModel.loadLesson(this);
+            });
+
+            ko.applyBindings(viewModel);
+        });
+
+        var viewModel = new MainViewModel();
+        function MainViewModel() {
+            var self = this;
+        }
+    </script>*@
 }

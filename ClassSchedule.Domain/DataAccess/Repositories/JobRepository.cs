@@ -28,9 +28,9 @@ namespace ClassSchedule.Domain.DataAccess.Repositories
             };
 
             var query = @"
-                SELECT * 
+                SELECT t0.JobId AS [Key], t0.LastName + COALESCE(' ' + t0.FirstName, '') + COALESCE(' ' + t0.MiddleName, '') AS [Value]
                 FROM (
-                  SELECT j.JobId AS [Key], p.LastName + COALESCE(' ' + p.FirstName, '') + COALESCE(' ' + p.MiddleName, '') AS [Value], 
+                  SELECT  j.JobId, p.LastName, p.FirstName, p.MiddleName,
                     ROW_NUMBER() OVER(PARTITION BY e.PersonId ORDER BY j.JobDateStart DESC) as Rn 
                   FROM Job j 
                   LEFT JOIN Employee e ON j.EmployeeId = e.EmployeeId
@@ -48,7 +48,8 @@ namespace ClassSchedule.Domain.DataAccess.Repositories
                         AND (j.JobDateEnd IS NOT NULL AND ((j.JobDateEnd >= @startDate AND j.JobDateEnd <= @endDate) OR j.JobDateEnd > @endDate)))
                     )
                 ) AS t0
-                WHERE t0.Rn = 1;";
+                WHERE t0.Rn = 1
+                ORDER BY t0.LastName, t0.FirstName, t0.MiddleName;";
             var teachers = _context.Database.SqlQuery<KeyValueDictionary>(query, parameters).ToList();
 
             return teachers;

@@ -111,7 +111,8 @@ namespace ClassSchedule.Web.Controllers
                         x.DisciplineId,
                         x.Discipline.DisciplineName,
                         x.Discipline.ChairId,
-                        x.Discipline.Chair.DivisionName
+                        x.Discipline.Chair.DivisionName,
+                        x.LessonTypeId
                     })
                     .Select(x => new LessonViewModel
                     {
@@ -119,15 +120,16 @@ namespace ClassSchedule.Web.Controllers
                         DisciplineName = x.Key.DisciplineName,
                         ChairId = x.Key.ChairId,
                         ChairName = x.Key.DivisionName,
+                        LessonTypeId = x.Key.LessonTypeId ?? 0,
                         LessonParts = x
                             .Select(y => new LessonPartViewModel
                             {
                                 LessonId = y.LessonId,
-                                LessonTypeId = y.LessonTypeId ?? 0,
-                                DisciplineId = y.DisciplineId,
-                                DisciplineName = y.Discipline.DisciplineName,
-                                ChairId = y.Discipline.ChairId,
-                                ChairName = y.Discipline.Chair.DivisionName,
+                                // LessonTypeId = y.LessonTypeId ?? 0,
+                                // DisciplineId = y.DisciplineId,
+                                // DisciplineName = y.Discipline.DisciplineName,
+                                // ChairId = y.Discipline.ChairId,
+                                // ChairName = y.Discipline.Chair.DivisionName,
                                 HousingId = y.Auditorium.HousingId,
                                 AuditoriumId = y.AuditoriumId,
                                 TeacherId = y.JobId,
@@ -136,10 +138,33 @@ namespace ClassSchedule.Web.Controllers
                     })
                     .ToList();
 
-                var watch = System.Diagnostics.Stopwatch.StartNew();
+                // var watch = System.Diagnostics.Stopwatch.StartNew();
+
+                // Типы занятий
+                viewModel.LessonTypes = UnitOfWork.Repository<LessonType>()
+                    .GetQ()
+                    .Select(
+                        x =>
+                            new LessonTypeViewModel
+                            {
+                                LessonTypeId = x.LessonTypeId,
+                                LessonTypeName = x.LessonTypeName
+                            })
+                    .OrderBy(n => n.LessonTypeName)
+                    .ToList();
+
+                // Корпуса
+                viewModel.Housings = UnitOfWork.Repository<Housing>()
+                    .GetQ()
+                    .Select(x => new HousingViewModel
+                    {
+                        HousingId = x.HousingId,
+                        HousingName = x.Abbreviation
+                    })
+                    .ToList();
 
                 foreach (var lesson in lessons)
-                {
+                {                   
                     // Преподаватели
                     var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
                     if (jobRepository != null)
@@ -154,17 +179,7 @@ namespace ClassSchedule.Web.Controllers
                                         TeacherFullName = x.Value
                                     })
                             .ToList();
-                    }
-
-                    // Корпуса
-                    lesson.Housings = UnitOfWork.Repository<Housing>()
-                        .GetQ()
-                        .Select(x => new HousingViewModel
-                        {
-                            HousingId = x.HousingId,
-                            HousingName = x.Abbreviation
-                        })
-                        .ToList();
+                    }                   
 
                     // Аудитории
                     foreach (var lessonPart in lesson.LessonParts)
@@ -178,7 +193,7 @@ namespace ClassSchedule.Web.Controllers
                         .Select(x => new AuditoriumViewModel
                         {
                             AuditoriumId = x.AuditoriumId,
-                            AuditoriumName = x.AuditoriumNumber,
+                            AuditoriumNumber = x.AuditoriumNumber,
                             AuditoriumTypeName = x.AuditoriumType.AuditoriumTypeName,
                             Places = x.Places ?? 0
                         }).ToList();
@@ -188,8 +203,8 @@ namespace ClassSchedule.Web.Controllers
 
                 viewModel.Lessons = lessons;
 
-                watch.Stop();
-                var elapsedMs = watch.ElapsedMilliseconds;
+                // watch.Stop();
+                // var elapsedMs = watch.ElapsedMilliseconds;
 
                 return Json(viewModel);
             }
@@ -212,54 +227,57 @@ namespace ClassSchedule.Web.Controllers
                 return null;
             }
 
-            //foreach (var lessonViewModel in viewModel.LessonParts)
-            //{
-            //    // Обновление занятия
-            //    if (lessonViewModel.LessonId != 0 && lessonViewModel.LessonId != null)
-            //    {
-            //        var lessonId = lessonViewModel.LessonId;
-            //        var lesson = UnitOfWork.Repository<Lesson>()
-            //            .Get(x => x.LessonId == lessonId)
-            //            .SingleOrDefault();
+            foreach (var lessonViewModel in viewModel.Lessons)
+            {
+                foreach (var lessonPartViewModel in lessonViewModel.LessonParts)
+                {
+                    // Обновление занятия
+                    if (lessonPartViewModel.LessonId != 0 && lessonPartViewModel.LessonId != null)
+                    {
+                        var lessonId = lessonPartViewModel.LessonId;
+                        var lesson = UnitOfWork.Repository<Lesson>()
+                            .Get(x => x.LessonId == lessonId)
+                            .SingleOrDefault();
 
-            //        if (lesson != null)
-            //        {
-            //            lesson.LessonTypeId = lessonViewModel.LessonTypeId;
-            //            lesson.DisciplineId = lessonViewModel.DisciplineId;
-            //            lesson.AuditoriumId = lessonViewModel.AuditoriumId;
-            //            lesson.JobId = lessonViewModel.TeacherId;
-            //            lesson.IsNotActive = lessonViewModel.IsNotActive;
-            //            lesson.UpdatedAt = DateTime.Now;
+                        if (lesson != null)
+                        {
+                            lesson.LessonTypeId = lessonPartViewModel.LessonTypeId;
+                            lesson.DisciplineId = lessonPartViewModel.DisciplineId;
+                            lesson.AuditoriumId = lessonPartViewModel.AuditoriumId;
+                            lesson.JobId = lessonPartViewModel.TeacherId;
+                            lesson.IsNotActive = lessonPartViewModel.IsNotActive;
+                            lesson.UpdatedAt = DateTime.Now;
 
-            //            UnitOfWork.Repository<Lesson>().Update(lesson);
-            //            UnitOfWork.Save();
-            //        }                   
-            //    }
-            //    // Создание нового занятия
-            //    else
-            //    {
-            //        var classDate = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart, 
-            //            viewModel.WeekNumber, viewModel.DayNumber);
-            //        var lesson = new Lesson
-            //        {
-            //            LessonGuid = Guid.NewGuid(),
-            //            LessonTypeId = lessonViewModel.LessonTypeId,
-            //            WeekNumber = viewModel.WeekNumber,
-            //            DayNumber = viewModel.DayNumber,
-            //            ClassNumber = viewModel.ClassNumber,
-            //            ClassDate = classDate,
-            //            GroupId = viewModel.GroupId,
-            //            DisciplineId = lessonViewModel.DisciplineId,
-            //            AuditoriumId = lessonViewModel.AuditoriumId,
-            //            JobId = lessonViewModel.TeacherId,
-            //            IsNotActive = lessonViewModel.IsNotActive,
-            //            CreatedAt = DateTime.Now,
-            //        };
+                            UnitOfWork.Repository<Lesson>().Update(lesson);
+                            UnitOfWork.Save();
+                        }
+                    }
+                    // Создание нового занятия
+                    else
+                    {
+                        var classDate = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart,
+                            viewModel.WeekNumber, viewModel.DayNumber);
+                        var lesson = new Lesson
+                        {
+                            LessonGuid = Guid.NewGuid(),
+                            LessonTypeId = lessonPartViewModel.LessonTypeId,
+                            WeekNumber = viewModel.WeekNumber,
+                            DayNumber = viewModel.DayNumber,
+                            ClassNumber = viewModel.ClassNumber,
+                            ClassDate = classDate,
+                            GroupId = viewModel.GroupId,
+                            DisciplineId = lessonViewModel.DisciplineId,
+                            AuditoriumId = lessonPartViewModel.AuditoriumId,
+                            JobId = lessonPartViewModel.TeacherId,
+                            IsNotActive = lessonPartViewModel.IsNotActive,
+                            CreatedAt = DateTime.Now,
+                        };
 
-            //        UnitOfWork.Repository<Lesson>().Insert(lesson);
-            //        UnitOfWork.Save();
-            //    }
-            //}
+                        UnitOfWork.Repository<Lesson>().Insert(lesson);
+                        UnitOfWork.Save();
+                    }    
+                }
+            }
 
             return Json("Success");
         }
