@@ -259,6 +259,52 @@ namespace ClassSchedule.Web.Controllers
             return PartialView("_LessonCell", lessonCell);
         }
 
+        [HttpPost]
+        public ActionResult CopyLesson(int weekNumber, int sourceGroupId, int sourceDayNumber, int sourceClassNumber,
+            int targetGroupId, int targetDayNumber, int targetClassNumber)
+        {
+            var targetLessons = UnitOfWork.Repository<Lesson>()
+                .Get(x => x.GroupId == targetGroupId && x.WeekNumber == weekNumber
+                    && x.DayNumber == targetDayNumber && x.ClassNumber == targetClassNumber
+                    && x.DeletedAt == null);
+            foreach (var targetLesson in targetLessons)
+            {
+                targetLesson.DeletedAt = DateTime.Now;
+                UnitOfWork.Repository<Lesson>().Update(targetLesson);
+                UnitOfWork.Save();
+            }
+
+            var sourceLessons = UnitOfWork.Repository<Lesson>()
+                .Get(x => x.GroupId == sourceGroupId && x.WeekNumber == weekNumber
+                    && x.DayNumber == sourceDayNumber && x.ClassNumber == sourceClassNumber
+                    && x.DeletedAt == null);
+            foreach (var sourceLesson in sourceLessons)
+            {
+                var targetClassDate = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart,
+                    weekNumber, targetDayNumber);
+                var targetLesson = new Lesson
+                {
+                    AuditoriumId = sourceLesson.AuditoriumId,
+                    DisciplineId = sourceLesson.DisciplineId,
+                    GroupId = targetGroupId,
+                    JobId = sourceLesson.JobId,
+                    LessonTypeId = sourceLesson.LessonTypeId,
+                    WeekNumber = weekNumber,
+                    DayNumber = targetDayNumber,
+                    ClassNumber = targetClassNumber,
+                    ClassDate = targetClassDate,
+                    CreatedAt = DateTime.Now,
+                    LessonGuid = Guid.NewGuid()
+                };
+
+                UnitOfWork.Repository<Lesson>().Insert(targetLesson);
+                UnitOfWork.Save();
+            }
+
+            var lessonCell = GetLessonViewModel(targetGroupId, weekNumber, targetDayNumber, targetClassNumber);
+            return PartialView("_LessonCell", lessonCell);
+        }
+
         [HttpGet]
         public ActionResult SelectFlow()
         {

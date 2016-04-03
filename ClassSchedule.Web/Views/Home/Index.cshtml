@@ -96,45 +96,14 @@
             /* Показ модального окна редактирования занятия
             ------------------------------------------------------------*/
             $(".lesson-cell").click(function() {
-                viewModel.SelectedLessonCell = this;
-
-                var selectedCell = $('.lesson-cell.selected');            
-                if (!selectedCell.is(this)) {
-                    selectedCell.removeClass('selected');
-                    selectedCell.find('.actions').hide(150);
-
-                    $(this).addClass('selected');
-                    $(this).find('.actions').show(150);
-                }
-
-                $('.flash').hide(350);
+                viewModel.selectLesson(this);
             });
 
             $(".lesson-cell").dblclick(function() {
                 viewModel.editLesson(this);
             });
 
-            //$.contextMenu({
-            //    selector: '.lesson-cell',
-            //    callback: function (key, options) {
-            //        var m = "clicked: " + key;
-            //        window.console && console.log(m) || alert(m);
-            //    },
-            //    items: {
-            //        "edit": { name: "Edit", icon: "edit" },
-            //        "cut": { name: "Cut", icon: "cut" },
-            //        copy: { name: "Copy", icon: "copy" },
-            //        "paste": { name: "Paste", icon: "paste" },
-            //        "delete": { name: "Delete", icon: "delete" },
-            //        "sep1": "---------",
-            //        "quit": {
-            //            name: "Quit", icon: function () {
-            //                return 'context-menu-icon context-menu-icon-quit';
-            //            }
-            //        }
-            //    }
-            //});
-            $('[data-toggle="tooltip"]').tooltip();
+            // $('[data-toggle="tooltip"]').tooltip();
 
             ko.applyBindings(viewModel);
         });
@@ -144,11 +113,14 @@
         function MainViewModel() {
             var self = this;
 
-            self.SelectedLessonCell = null;
+            self.SelectedLessonCell = ko.observable();
+            self.CopiedLessonCell = ko.observable();
+
             self.EditLessonViewModel = ko.observable(new EditLessonViewModel());
 
             self.editLesson = function(lessonCell) {
-                self.SelectedLessonCell = lessonCell;
+                self.SelectedLessonCell(lessonCell);
+
                 var weekNumber = $('.week-panel').attr('data-week');
                 var groupId = $(lessonCell).attr('data-group');
                 var dayNumber = $(lessonCell).attr('data-day');
@@ -185,6 +157,98 @@
                     }
                 });
             };
+
+            self.selectLesson = function(lessonCell) {
+                self.SelectedLessonCell(lessonCell);
+
+                var selectedCell = $('.lesson-cell.selected');
+                if (!selectedCell.is(lessonCell)) {
+                    selectedCell.removeClass('selected');
+                    selectedCell.find('.actions').hide(150);
+
+                    $(lessonCell).addClass('selected');
+                    $(lessonCell).find('.actions').show(150);
+
+                    if (!self.CopiedLessonCell()) {
+                        $('.flash').hide(350);
+                    }
+                }
+            };
+
+            self.copyLesson = function() {
+                $('.flash').hide(350);
+
+                var selectedCell = self.SelectedLessonCell();
+                self.CopiedLessonCell(selectedCell);
+                var flash = $(selectedCell).find('.flash');
+                flash.find('span').text('К');
+                flash.addClass('bcg-warning');
+                flash.show(350);
+            };
+
+            self.pasteLesson = function() {
+                var targetLessonCell = self.SelectedLessonCell();
+                var sourceLessonCell = self.CopiedLessonCell();
+
+                var weekNumber = $('.week-panel').attr('data-week');
+
+                var targetGroupId = $(targetLessonCell).attr('data-group');
+                var targetDayNumber = $(targetLessonCell).attr('data-day');
+                var targetClassNumber = $(targetLessonCell).attr('data-class-number');
+                // var targetClassDate = $(targetLessonCell).attr('data-class-date');
+
+                var sourceGroupId = $(sourceLessonCell).attr('data-group');
+                var sourceDayNumber = $(sourceLessonCell).attr('data-day');
+                var sourceClassNumber = $(sourceLessonCell).attr('data-class-number');
+
+                var postData = {
+                    weekNumber: weekNumber,
+                    targetGroupId: targetGroupId, targetDayNumber: targetDayNumber, targetClassNumber: targetClassNumber,
+                    sourceGroupId: sourceGroupId, sourceDayNumber: sourceDayNumber, sourceClassNumber: sourceClassNumber
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/CopyLesson",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(postData),
+                    dataType: "html",
+                    success: function(result) {
+                        if (result) {
+                            $(targetLessonCell).html(result);
+                        }
+
+                        var flash = $(targetLessonCell).find(".flash");
+                        flash.addClass("bcg-success");
+                        flash.find("span").addClass("fa fa-check");
+                        flash.show(500);
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        alert(xhr.status);
+                        alert(thrownError);
+                    }
+                });
+            };
+        };
+
+        ko.bindingHandlers.tooltip = {
+            init: function(element, valueAccessor) {
+                var local = ko.utils.unwrapObservable(valueAccessor()),
+                    options = {};
+
+                ko.utils.extend(options, ko.bindingHandlers.tooltip.options);
+                ko.utils.extend(options, local);
+
+                $(element).tooltip(options);
+
+                ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+                    $(element).tooltip("destroy");
+                });
+            },
+            options: {
+                placement: "bottom",
+                trigger: "hover"
+            }
         };
     </script>
 }

@@ -59,16 +59,19 @@
         $.ajax({
             type: "POST",
             url: "/Home/EditLesson",
-            contentType: 'application/json; charset=utf-8',
+            contentType: "application/json; charset=utf-8",
             data: JSON.stringify({ viewModel: postData }),
             dataType: "html",
             success: function (result) {
                 if (result) {
-                    $(viewModel.SelectedLessonCell).html(result);
+                    $(viewModel.SelectedLessonCell()).html(result);
                 }
 
                 $("#edit-lesson").modal('hide');
-                $(viewModel.SelectedLessonCell).find('.flash').show(500);
+
+                var flash = $(viewModel.SelectedLessonCell()).find(".flash");
+                flash.find("span").addClass("fa fa-check");
+                flash.show(500);
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert(xhr.status);

@@ -2,24 +2,29 @@
 @using ClassSchedule.Web.Models.Schedule
 @model IEnumerable<LessonViewModel>
 
-<div class="flash" style="display: none">Изменения успешно сохранены.</div>
+<div class="flash" style="display: none"><span></span></div>
 
 <div class="actions" style="display: none">
-    <a href="#" data-toggle="tooltip" data-placement="bottom" title="Редактировать занятие" data-original-title="Редактировать занятие"><i class="fa fa-pencil"></i><span></span></a>
-    <a href="#" data-toggle="tooltip" data-placement="bottom" title="Удалить занятие" data-original-title="Удалить занятие"><i class="fa fa-trash"></i><span></span></a>
-    <a href="#" data-toggle="tooltip" data-placement="bottom" title="Копировать занятие" data-original-title="Копировать занятие"><i class="fa fa-files-o"></i><span></span></a>
+    <a href="#" data-bind="tooltip: { title: 'Редактировать занятие', trigger: 'hover' }"><i class="fa fa-pencil"></i><span></span></a>
+    <a href="#" data-bind="tooltip: { title: 'Удалить занятие', trigger: 'hover' }"><i class="fa fa-trash"></i><span></span></a>
+
+    <!-- ko if: CopiedLessonCell() != null -->
+    <a href="#" data-bind="click: pasteLesson, tooltip: { title: 'Вставить занятие', trigger: 'hover' }"><i class="fa fa-clipboard"></i><span></span></a>
+    <!-- /ko -->
+
+    <a href="#" data-bind="click: copyLesson, tooltip: { title: 'Копировать занятие', trigger: 'hover' }"><i class="fa fa-files-o"></i><span></span></a>
 </div>
 
 @foreach (LessonViewModel discipline in Model)
 {
     var isLection = discipline.LessonTypeId == (int)LessonTypes.Lection;
     <div class="lesson-cell-part">
-        <span class="discipline@(isLection ? " red" : "")" data-discipline="@discipline.DisciplineId">@discipline.DisciplineName @(isLection ? "(лекция)" : "")</span> -
+        <span class="discipline@(isLection ? " red" : "")" data-discipline="@discipline.DisciplineId">@discipline.DisciplineName</span><span>@(isLection ? "(лекция)" : "")</span> -
         @foreach (var lessonPart in discipline.LessonParts)
         {
             <span class="teacher" data-teacher="@lessonPart.TeacherId">@ScheduleHelpers.PersonShortName(lessonPart.TeacherLastName, lessonPart.TeacherFirstName, lessonPart.TeacherMiddleName)</span>
             <span class="auditorium" data-auditorium="@lessonPart.AuditoriumId">(@lessonPart.AuditoriumName),</span>
-        }       
+        }
     </div>
 }
 

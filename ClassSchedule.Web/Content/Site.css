@@ -277,18 +277,50 @@ textarea {
     /*box-shadow: 0 0.5px 2px #2E7F3E;*/
 }
 
-.lesson-cell > .flash {
+/*.lesson-cell > .flash {
     font-size: 1em;
-    /* border: 1px black solid; */
     position: absolute;
     top: -1.5em;
     height: 1.5em;
-    background-color: #2E7F3E;
     color: white;
     font-weight: bold;
     text-align: center;
     width: 100%;
     left: 0;
+}*/
+
+.lesson-cell > .flash {
+    font-size: 1em;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    color: white;
+    font-weight: bold;
+    border-style: solid;
+    border-width: 0 2.6em 2.2em 0;
+    /*border-color: transparent #ffc73b transparent transparent;*/
+}
+
+.lesson-cell > .flash span {
+    padding-left: 1.5em;
+}
+
+.bcg-success {
+    border-color: transparent #2E7F3E transparent transparent;
+    /*background-color: #2E7F3E;*/
+}
+
+.bcg-warning {
+    border-color: transparent #EAB14E transparent transparent;
+}
+
+.combined-class {
+    background: white;
+    width: 300%;
+    text-align: center;
+    z-index: 1;
 }
 
 .noselect {
@@ -384,7 +416,7 @@ textarea {
 
 
 
-/* Страшица ошибки
+/* Страница ошибки
 --------------------------------------------------*/
 
 .error-template {
