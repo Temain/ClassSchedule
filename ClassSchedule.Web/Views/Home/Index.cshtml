@@ -72,20 +72,9 @@
                             var number = classNumber;
                             var lesson = group.Lessons.Where(x => x.DayNumber == day && x.ClassNumber == number);
 
-                            foreach (LessonViewModel discipline in lesson)
-                            {
-                                var isLection = discipline.LessonTypeId == (int) LessonTypes.Lection;
-                                <div class="lesson-cell-part">
-                                    <span class="discipline@(isLection ? " red" : "")" data-discipline="@discipline.DisciplineId">@discipline.DisciplineName @(isLection ? "(лекция)" : "")</span> -
-                                    @foreach (var lessonPart in discipline.LessonParts)
-                                    {
-                                        <span class="teacher" data-teacher="@lessonPart.TeacherId">@ScheduleHelpers.PersonShortName(lessonPart.TeacherLastName, lessonPart.TeacherFirstName, lessonPart.TeacherMiddleName)</span>
-                                        <span class="auditorium" data-auditorium="@lessonPart.AuditoriumId">(@lessonPart.AuditoriumName),</span>
-                                    }
-                                </div>
-                            }
+                            @Html.Partial("_LessonCell", lesson)
                         }
-                    </div>
+                    </div>                   
                 }
 
                 <div class="day-separator"></div>
@@ -93,28 +82,6 @@
         </div>
     }
 </div>
-
-@*<div class="bordered-rb lesson-cell" style="height: 50px">
-        <div class="actions">
-                <a href="#">
-                    <i class="fa fa-pencil text-success"></i><span> Редактировать</span>
-                </a>
-                <br/>
-                <a href="#">
-                    <i class="fa fa-trash text-danger"></i><span> Удалить</span>
-                </a>
-            </div>
-    </div>
-    <div class="bordered-rb lesson-cell" style="height: 50px">
-        <div class="lesson-cell-part">
-                <span class="discipline red">Автоматизация систем управления sffgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgfd</span> - <span class="teacher">Потешин И.И.</span><span class="auditorium">(220гл.)</span>,
-                <span class="teacher">Гормыко Д.В.</span><span class="auditorium">(014зоо.)</span><br/>
-            </div>
-            <div class="lesson-cell-part">
-                <span class="discipline">Автоматизация систем управления</span> - <span class="teacher">Потешин И.И.</span><span class="auditorium">(220гл.)</span>,
-                <span class="teacher">Гормыко Д.В.</span><span class="auditorium">(014зоо.)</span><br/>
-            </div>
-    </div>*@
 
 @Html.Partial("_EditLesson")
 
@@ -125,23 +92,63 @@
     @Scripts.Render("~/bundles/edit-lesson")
 
     <script>
-        $(function () {
+        $(function() {
             /* Показ модального окна редактирования занятия
             ------------------------------------------------------------*/
-            $(".lesson-cell").dblclick(function () {
+            $(".lesson-cell").click(function() {
+                viewModel.SelectedLessonCell = this;
+
+                var selectedCell = $('.lesson-cell.selected');            
+                if (!selectedCell.is(this)) {
+                    selectedCell.removeClass('selected');
+                    selectedCell.find('.actions').hide(150);
+
+                    $(this).addClass('selected');
+                    $(this).find('.actions').show(150);
+                }
+
+                $('.flash').hide(350);
+            });
+
+            $(".lesson-cell").dblclick(function() {
                 viewModel.editLesson(this);
             });
+
+            //$.contextMenu({
+            //    selector: '.lesson-cell',
+            //    callback: function (key, options) {
+            //        var m = "clicked: " + key;
+            //        window.console && console.log(m) || alert(m);
+            //    },
+            //    items: {
+            //        "edit": { name: "Edit", icon: "edit" },
+            //        "cut": { name: "Cut", icon: "cut" },
+            //        copy: { name: "Copy", icon: "copy" },
+            //        "paste": { name: "Paste", icon: "paste" },
+            //        "delete": { name: "Delete", icon: "delete" },
+            //        "sep1": "---------",
+            //        "quit": {
+            //            name: "Quit", icon: function () {
+            //                return 'context-menu-icon context-menu-icon-quit';
+            //            }
+            //        }
+            //    }
+            //});
+            $('[data-toggle="tooltip"]').tooltip();
 
             ko.applyBindings(viewModel);
         });
 
         var viewModel = new MainViewModel();
+
         function MainViewModel() {
             var self = this;
 
+            self.SelectedLessonCell = null;
             self.EditLessonViewModel = ko.observable(new EditLessonViewModel());
 
-            self.editLesson = function (lessonCell) {
+            self.editLesson = function(lessonCell) {
+                self.SelectedLessonCell = lessonCell;
                 var weekNumber = $('.week-panel').attr('data-week');
                 var groupId = $(lessonCell).attr('data-group');
                 var dayNumber = $(lessonCell).attr('data-day');
@@ -159,7 +166,7 @@
                     type: "GET",
                     url: "/Home/EditLesson",
                     data: parameters,
-                    success: function (data) {
+                    success: function(data) {
                         self.EditLessonViewModel(new EditLessonViewModel(data));
 
                         var lessonDisciplines = self.EditLessonViewModel().Lessons();
@@ -172,7 +179,7 @@
                             keyboard: false
                         });
                     },
-                    error: function (xhr, status, error) {
+                    error: function(xhr, status, error) {
                         var err = eval("(" + xhr.responseText + ")");
                         alert(err.Message);
                     }

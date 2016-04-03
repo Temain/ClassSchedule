@@ -121,6 +121,7 @@ textarea {
     left: 0;
     right: 0;
     top: 110px;
+    z-index: 15;
 }
 
 .group-panel > div {
@@ -175,6 +176,7 @@ textarea {
 }
 
 .lesson-cell {
+    position: relative;
     height: 50px;
     padding: 0 5px;
 }
@@ -204,14 +206,54 @@ textarea {
 .lesson-cell > .actions {
     /*display: none;*/
     /*padding-top: 3px;*/
+    background: white;
+    border: 1px #ccc solid;
+    border-top: 1px white solid;
+    /*height: 2em;*/
+    position: absolute;
+    /*width: 10em;*/
+    bottom: -1.8em;
+    right: 5px;
+    border-top: 2px white solid;
+    border-left: 1px #2E7F3E solid;
+    border-bottom: 1px #2E7F3E solid;
+    border-right: 1px #2E7F3E solid;
+    z-index: 10;
 }
 
-.lesson-cell:hover > .actions {
-    display: block;
+.lesson-cell.selected {
+    /* box-shadow: 0 0 40px rgba(0, 0, 0, .1) inset; */
+    border: 1px #2E7F3E solid;
+    margin-left: -1px;
+}
+
+.lesson-cell > .actions > a {
+    /*color: #9d9d9d;*/
+    color: black;
+}
+
+.lesson-cell > .actions > a :hover {
+    color: black;
+}
+
+.lesson-cell > .actions > a:first-child > i {
+    padding-left: 0.5em;
+    padding-right: 0.25em;
+}
+
+.lesson-cell > .actions > a:last-child > i {
+    padding-left: 0.25em;
+    /*padding-right: 0.5em;*/
 }
 
 .lesson-cell > .actions > a > i {
-    font-size: 19px;
+    font-size: 1.3em;
+    /*margin-left: 0.5em;*/
+    margin-top: 0.1em;
+    padding-left: 0.25em;
+    padding-right: 0.25em;
+    padding-bottom: 0.3em;
+    /*margin-right: 0.5em;*/
     /*padding-right: 3px;
     padding-top: 1px;
     float: right;*/
@@ -220,13 +262,33 @@ textarea {
 .lesson-cell:hover {
     cursor: default;
     /* border: 1px #000000 solid;*/
-    box-shadow: 0 0 4px #2E7F3E;
+    /*box-shadow: 0 0 4px #2E7F3E;*/
     /*border: 1px solid #2E7F3E;
     margin-left: -1px;
     margin-top: -1px;*/
     /*box-shadow: 0 0 2px rgb(255, 92, 2);
     -webkit-box-shadow: 0 0 2px rgb(255, 92, 2);
     -moz-box-shadow: 0 0 2px rgb(255, 92, 2);*/
+}
+
+.lesson-cell:hover > .actions {
+    /*display: block;*/
+    cursor: default;
+    /*box-shadow: 0 0.5px 2px #2E7F3E;*/
+}
+
+.lesson-cell > .flash {
+    font-size: 1em;
+    /* border: 1px black solid; */
+    position: absolute;
+    top: -1.5em;
+    height: 1.5em;
+    background-color: #2E7F3E;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    left: 0;
 }
 
 .noselect {
@@ -237,6 +299,11 @@ textarea {
   -ms-user-select: none;       /* IE/Edge */
   user-select: none;           /* non-prefixed version, currently
                                   not supported by any browser */
+}
+
+.tooltip-inner {
+  white-space:nowrap;
+  max-width:none;
 }
 
 

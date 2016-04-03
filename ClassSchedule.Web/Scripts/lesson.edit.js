@@ -33,17 +33,46 @@
     self.saveLesson = function () {
         var editLessonViewModel = ko.toJS(self);
 
+        // Избавляемся от избыточных данных
+        var postData = {
+            ClassNumber: editLessonViewModel.ClassNumber,
+            DayNumber: editLessonViewModel.DayNumber,
+            GroupId: editLessonViewModel.GroupId,
+            Lessons: _.map(editLessonViewModel.Lessons, function (lessonDiscipline) {
+                return {
+                    ChairId: lessonDiscipline.ChairId,
+                    DisciplineId: lessonDiscipline.DisciplineId,
+                    LessonParts: _.map(lessonDiscipline.LessonParts, function (lessonPart) {
+                        return {
+                            AuditoriumId : lessonPart.AuditoriumId,
+                            HousingId: lessonPart.HousingId,
+                            LessonId: lessonPart.LessonId,
+                            TeacherId: lessonPart.TeacherId
+                        };
+                    }),
+                    LessonTypeId: lessonDiscipline.LessonTypeId
+                };
+            }),
+            WeekNumber: editLessonViewModel.WeekNumber
+        };
+
         $.ajax({
             type: "POST",
             url: "/Home/EditLesson",
             contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify({ viewModel: editLessonViewModel }),
-            dataType: 'json',
+            data: JSON.stringify({ viewModel: postData }),
+            dataType: "html",
             success: function (result) {
+                if (result) {
+                    $(viewModel.SelectedLessonCell).html(result);
+                }
+
                 $("#edit-lesson").modal('hide');
+                $(viewModel.SelectedLessonCell).find('.flash').show(500);
             },
-            error: function () {
-                alert("failure");
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status);
+                alert(thrownError);
             }
         });
     };

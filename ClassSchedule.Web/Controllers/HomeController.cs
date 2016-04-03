@@ -44,7 +44,7 @@ namespace ClassSchedule.Web.Controllers
                     GroupId = x.GroupId,
                     GroupName = x.DivisionName,
                     Lessons = x.Lessons
-                        .Where(g => g.WeekNumber == UserProfile.WeekNumber)
+                        .Where(g => g.WeekNumber == UserProfile.WeekNumber && g.DeletedAt == null)
                         .GroupBy(g => new { g.DayNumber, g.ClassNumber, 
                             g.DisciplineId, g.Discipline.DisciplineName, g.LessonTypeId })
                         .Select(s => new LessonViewModel
@@ -71,7 +71,7 @@ namespace ClassSchedule.Web.Controllers
                                 TeacherLastName = y.Job.Employee.Person.LastName,
                                 TeacherFirstName = y.Job.Employee.Person.FirstName,
                                 TeacherMiddleName = y.Job.Employee.Person.MiddleName,
-                                IsNotActive = y.IsNotActive
+                                // IsNotActive = y.IsNotActive
                             })
                         }) 
                 })
@@ -103,42 +103,7 @@ namespace ClassSchedule.Web.Controllers
                 ClassNumber = classNumber
             };
 
-            var lessons = UnitOfWork.Repository<Lesson>()
-                .GetQ(x => x.GroupId == groupId && x.WeekNumber == weekNumber
-                           && x.DayNumber == dayNumber && x.ClassNumber == classNumber)
-                .GroupBy(x => new
-                {
-                    x.DisciplineId,
-                    x.Discipline.DisciplineName,
-                    x.Discipline.ChairId,
-                    x.Discipline.Chair.DivisionName,
-                    x.LessonTypeId
-                })
-                .Select(x => new LessonViewModel
-                {
-                    DisciplineId = x.Key.DisciplineId,
-                    DisciplineName = x.Key.DisciplineName,
-                    ChairId = x.Key.ChairId,
-                    ChairName = x.Key.DivisionName,
-                    LessonTypeId = x.Key.LessonTypeId ?? 0,
-                    LessonParts = x
-                        .Select(y => new LessonPartViewModel
-                        {
-                            LessonId = y.LessonId,
-                            // LessonTypeId = y.LessonTypeId ?? 0,
-                            // DisciplineId = y.DisciplineId,
-                            // DisciplineName = y.Discipline.DisciplineName,
-                            // ChairId = y.Discipline.ChairId,
-                            // ChairName = y.Discipline.Chair.DivisionName,
-                            HousingId = y.Auditorium.HousingId,
-                            AuditoriumId = y.AuditoriumId,
-                            TeacherId = y.JobId,
-                            IsNotActive = y.IsNotActive
-                        })
-                })
-                .ToList();
-
-            // var watch = System.Diagnostics.Stopwatch.StartNew();
+            var lessons = GetLessonViewModel(groupId, weekNumber, dayNumber, classNumber);
 
             // Типы занятий
             viewModel.LessonTypes = UnitOfWork.Repository<LessonType>()
@@ -203,9 +168,6 @@ namespace ClassSchedule.Web.Controllers
 
             viewModel.Lessons = lessons;
 
-            // watch.Stop();
-            // var elapsedMs = watch.ElapsedMilliseconds;
-
             return Json(viewModel, JsonRequestBehavior.AllowGet);
         }
 
@@ -220,53 +182,69 @@ namespace ClassSchedule.Web.Controllers
             if (!ModelState.IsValid)
             {
                 var allErrors = ViewData.ModelState.Values.SelectMany(modelState => modelState.Errors).ToList();
+                foreach (ModelError error in allErrors)
+                {
+                    var message = error.ErrorMessage;
+                }
 
                 return null;
             }
 
+            // Удаление занятия(ий)
+            var viewModelLessonIds = viewModel.Lessons.SelectMany(x => x.LessonParts).Select(p => p.LessonId);
+            var lessonsForDelete = UnitOfWork.Repository<Lesson>()
+                .Get(x => x.GroupId == viewModel.GroupId && x.WeekNumber == viewModel.WeekNumber
+                        && x.DayNumber == viewModel.DayNumber && x.ClassNumber == viewModel.ClassNumber
+                        && x.DeletedAt == null)
+                .Where(x => !viewModelLessonIds.Contains(x.LessonId));
+            foreach (var lesson in lessonsForDelete)
+            {
+                lesson.DeletedAt = DateTime.Now;
+                UnitOfWork.Repository<Lesson>().Update(lesson);
+                UnitOfWork.Save();
+            }
+
+            // Создание и обновление занятий
             foreach (var lessonViewModel in viewModel.Lessons)
             {
                 foreach (var lessonPartViewModel in lessonViewModel.LessonParts)
-                {
+                {             
+                    var lessonId = lessonPartViewModel.LessonId;
+                    var lesson = UnitOfWork.Repository<Lesson>()
+                        .Get(x => x.LessonId == lessonId)
+                        .SingleOrDefault();
+
                     // Обновление занятия
-                    if (lessonPartViewModel.LessonId != 0 && lessonPartViewModel.LessonId != null)
+                    if (lesson != null)
                     {
-                        var lessonId = lessonPartViewModel.LessonId;
-                        var lesson = UnitOfWork.Repository<Lesson>()
-                            .Get(x => x.LessonId == lessonId)
-                            .SingleOrDefault();
+                        lesson.LessonTypeId = lessonViewModel.LessonTypeId;
+                        lesson.DisciplineId = lessonViewModel.DisciplineId;
+                        lesson.AuditoriumId = lessonPartViewModel.AuditoriumId;
+                        lesson.JobId = lessonPartViewModel.TeacherId;
+                        // lesson.IsNotActive = lessonPartViewModel.IsNotActive;
+                        lesson.UpdatedAt = DateTime.Now;
 
-                        if (lesson != null)
-                        {
-                            lesson.LessonTypeId = lessonPartViewModel.LessonTypeId;
-                            lesson.DisciplineId = lessonPartViewModel.DisciplineId;
-                            lesson.AuditoriumId = lessonPartViewModel.AuditoriumId;
-                            lesson.JobId = lessonPartViewModel.TeacherId;
-                            lesson.IsNotActive = lessonPartViewModel.IsNotActive;
-                            lesson.UpdatedAt = DateTime.Now;
-
-                            UnitOfWork.Repository<Lesson>().Update(lesson);
-                            UnitOfWork.Save();
-                        }
+                        UnitOfWork.Repository<Lesson>().Update(lesson);
+                        UnitOfWork.Save();
                     }
                     // Создание нового занятия
                     else
                     {
                         var classDate = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart,
                             viewModel.WeekNumber, viewModel.DayNumber);
-                        var lesson = new Lesson
+                        lesson = new Lesson
                         {
-                            LessonGuid = Guid.NewGuid(),
-                            LessonTypeId = lessonPartViewModel.LessonTypeId,
+                            LessonGuid = Guid.NewGuid(),                           
                             WeekNumber = viewModel.WeekNumber,
                             DayNumber = viewModel.DayNumber,
                             ClassNumber = viewModel.ClassNumber,
                             ClassDate = classDate,
                             GroupId = viewModel.GroupId,
+                            LessonTypeId = lessonViewModel.LessonTypeId,
                             DisciplineId = lessonViewModel.DisciplineId,
                             AuditoriumId = lessonPartViewModel.AuditoriumId,
                             JobId = lessonPartViewModel.TeacherId,
-                            IsNotActive = lessonPartViewModel.IsNotActive,
+                            // IsNotActive = lessonPartViewModel.IsNotActive,
                             CreatedAt = DateTime.Now,
                         };
 
@@ -276,7 +254,9 @@ namespace ClassSchedule.Web.Controllers
                 }
             }
 
-            return Json("Success");
+            var lessonCell = GetLessonViewModel(viewModel.GroupId, viewModel.WeekNumber, viewModel.DayNumber,
+                viewModel.ClassNumber);
+            return PartialView("_LessonCell", lessonCell);
         }
 
         [HttpGet]
@@ -309,5 +289,48 @@ namespace ClassSchedule.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        #region Вспомогательные методы
+
+        public List<LessonViewModel> GetLessonViewModel(int groupId, int weekNumber, int dayNumber, int classNumber)
+        {
+            var lessons = UnitOfWork.Repository<Lesson>()
+                .GetQ(x => x.GroupId == groupId && x.WeekNumber == weekNumber
+                    && x.DayNumber == dayNumber && x.ClassNumber == classNumber
+                    && x.DeletedAt == null)
+                .GroupBy(x => new
+                {
+                    x.DisciplineId,
+                    x.Discipline.DisciplineName,
+                    x.Discipline.ChairId,
+                    x.Discipline.Chair.DivisionName,
+                    x.LessonTypeId
+                })
+                .Select(x => new LessonViewModel
+                {
+                    DisciplineId = x.Key.DisciplineId,
+                    DisciplineName = x.Key.DisciplineName,
+                    ChairId = x.Key.ChairId,
+                    ChairName = x.Key.DivisionName,
+                    LessonTypeId = x.Key.LessonTypeId ?? 0,
+                    LessonParts = x
+                        .Select(y => new LessonPartViewModel
+                        {
+                            LessonId = y.LessonId,
+                            HousingId = y.Auditorium.HousingId,
+                            AuditoriumId = y.AuditoriumId,
+                            TeacherId = y.JobId,
+                            AuditoriumName = y.Auditorium.AuditoriumNumber + y.Auditorium.Housing.Abbreviation + ".",
+                            TeacherLastName = y.Job.Employee.Person.LastName,
+                            TeacherFirstName = y.Job.Employee.Person.FirstName,
+                            TeacherMiddleName = y.Job.Employee.Person.MiddleName,
+                            // IsNotActive = y.IsNotActive
+                        })
+                })
+                .ToList();
+
+            return lessons;
+        }
+
+        #endregion
     }
 }
