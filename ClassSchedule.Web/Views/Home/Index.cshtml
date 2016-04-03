@@ -229,6 +229,45 @@
                     }
                 });
             };
+
+            self.removeLesson = function () {
+                var selectedCell = self.SelectedLessonCell();
+
+                var weekNumber = $('.week-panel').attr('data-week');
+                var groupId = $(selectedCell).attr('data-group');
+                var dayNumber = $(selectedCell).attr('data-day');
+                var classNumber = $(selectedCell).attr('data-class-number');
+
+                var postData = {
+                    weekNumber: weekNumber, groupId: groupId,
+                    dayNumber: dayNumber, classNumber: classNumber
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/RemoveLesson",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(postData),
+                    dataType: "html",
+                    success: function (result) {
+                        //if (result) {
+                        //    $(selectedCell).html(result);
+                        //}
+
+                        $(selectedCell).find(".lesson-cell-part").html('');
+
+                        var flash = $(selectedCell).find(".flash");
+                        flash.addClass("bcg-success");
+                        flash.find("span").addClass("fa fa-check");
+                        flash.show(500);
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert(xhr.status);
+                        alert(thrownError);
+                    }
+                });
+             
+            };
         };
 
         ko.bindingHandlers.tooltip = {

@@ -305,6 +305,23 @@ namespace ClassSchedule.Web.Controllers
             return PartialView("_LessonCell", lessonCell);
         }
 
+        [HttpPost]
+        public ActionResult RemoveLesson(int groupId, int weekNumber, int dayNumber, int classNumber)
+        {
+            var lessons = UnitOfWork.Repository<Lesson>()
+                .Get(x => x.GroupId == groupId && x.WeekNumber == weekNumber
+                    && x.DayNumber == dayNumber && x.ClassNumber == classNumber
+                    && x.DeletedAt == null);
+            foreach (var lesson in lessons)
+            {
+                lesson.DeletedAt = DateTime.Now;
+                UnitOfWork.Repository<Lesson>().Update(lesson);
+                UnitOfWork.Save();
+            }
+
+            return null;
+        }
+
         [HttpGet]
         public ActionResult SelectFlow()
         {
