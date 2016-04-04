@@ -99,10 +99,17 @@
 
     /* Заполнение выпадающих списков
     ------------------------------------------------------------*/
-    self.loadTeachers = function (lesson, chairId) {
+    self.loadTeachers = function (lesson, chairId, teacherSelects) {
         $.post('/Dictionary/Teacher', { chairId: chairId }, function (data) {
             ko.mapping.fromJS(data, {}, lesson.ChairTeachers);
+
+            $('select.teacher').selectpicker('refresh');
         });
+    };
+
+    self.setTeacherOptionContent = function (option, item) {
+        $(option).attr('data-subtext', "<br><span class='description'>Описание</span>");
+        ko.applyBindingsToNode(option, {}, item);
     };
 
     self.loadHousings = function (lesson) {
@@ -191,7 +198,8 @@
                     elementData.ChairId(disciplines[item].ChairId);
                     elementData.ChairName("Кафедра " + disciplines[item].ChairName);
 
-                    self.loadTeachers(elementData, disciplines[item].ChairId);
+                    var teacherSelects = $element.find('select.teacher');
+                    self.loadTeachers(elementData, disciplines[item].ChairId, teacherSelects);
                     // self.loadHousings(elementData);
                     $.each(elementData.LessonParts(), function (index, lessonPart) {
                         lessonPart.HousingId('');
@@ -228,6 +236,71 @@
                 .typeahead(options);
         }
     };
+
+    ko.bindingHandlers.selectPicker = {
+        after: ['options'],
+        init: function (element, valueAccessor, allBindingsAccessor) {
+            if ($(element).is('select')) {
+                if (ko.isObservable(valueAccessor())) {
+                    if ($(element).prop('multiple') && $.isArray(ko.utils.unwrapObservable(valueAccessor()))) {
+                        // in the case of a multiple select where the valueAccessor() is an observableArray, call the default Knockout selectedOptions binding
+                        ko.bindingHandlers.selectedOptions.init(element, valueAccessor, allBindingsAccessor);
+                    } else {
+                        // regular select and observable so call the default value binding
+                        ko.bindingHandlers.value.init(element, valueAccessor, allBindingsAccessor);
+                    }
+                }
+
+                var allBindings = allBindingsAccessor();
+                //var options = allBindings.selectOptions();
+                //var optionValue = allBindings.optionValue;
+                //var optionText = allBindings.optionText;
+                //var optionContent = allBindings.optionContent;
+
+                //var selectContent = '';
+                //$.each(options, function(index, option) {
+                //    selectContent += "<option data-subtext='" + optionContent + "' value='" + option[optionValue]() + "'>" + option[optionText]() + "</option>";
+                //});
+                //$(element).html(selectContent);
+
+                $(element).addClass('selectpicker').selectpicker();
+            }
+        },
+        update: function (element, valueAccessor, allBindingsAccessor) {
+            if ($(element).is('select')) {
+                var selectPickerOptions = allBindingsAccessor().selectPickerOptions;
+                if (typeof selectPickerOptions !== 'undefined' && selectPickerOptions !== null) {
+                    var options = selectPickerOptions.optionsArray,
+                        optionsText = selectPickerOptions.optionsText,
+                        optionsValue = selectPickerOptions.optionsValue,
+                        optionsCaption = selectPickerOptions.optionsCaption,
+                        isDisabled = selectPickerOptions.disabledCondition || false,
+                        resetOnDisabled = selectPickerOptions.resetOnDisabled || false;
+                    if (ko.utils.unwrapObservable(options).length > 0) {
+                        // call the default Knockout options binding
+                        ko.bindingHandlers.options.update(element, options, allBindingsAccessor);
+                    }
+                    if (isDisabled && resetOnDisabled) {
+                        // the dropdown is disabled and we need to reset it to its first option
+                        $(element).selectpicker('val', $(element).children('option:first').val());
+                    }
+                    $(element).prop('disabled', isDisabled);
+                }
+                if (ko.isObservable(valueAccessor())) {
+                    if ($(element).prop('multiple') && $.isArray(ko.utils.unwrapObservable(valueAccessor()))) {
+                        // in the case of a multiple select where the valueAccessor() is an observableArray, call the default Knockout selectedOptions binding
+                        ko.bindingHandlers.selectedOptions.update(element, valueAccessor);
+                    } else {
+                        // call the default Knockout value binding
+                        ko.bindingHandlers.value.update(element, valueAccessor);
+                    }
+                }
+
+                $(element).selectpicker('refresh');
+            }
+        }
+    };
+
 }
 
 function LessonViewModel(data) {

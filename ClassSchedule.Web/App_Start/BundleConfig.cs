@@ -45,6 +45,12 @@ namespace ClassSchedule.Web
 
             bundles.Add(new ScriptBundle("~/bundles/edit-lesson").Include(
                        "~/Scripts/lesson.edit.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/bootstrap-select").Include(
+                       "~/Scripts/bootstrap-select.js"));
+            bundles.Add(new StyleBundle("~/Content/bootstrap-select").Include(
+                      "~/Content/bootstrap-select.css"));
+
         }
     }
 }

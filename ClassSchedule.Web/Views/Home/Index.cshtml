@@ -14,6 +14,7 @@
     int widthOfInfoColumn = 3;
     string widthOfGroupColumn = Math.Round((totalWidthOfColumns - widthOfInfoColumn * 2f) / numberOfGroups, 2).ToString(CultureInfo.GetCultureInfo("en-US"));
 }
+@Styles.Render("~/Content/bootstrap-select")
 
 <div class="schedule-container">
     @Html.Partial("_Navbar")
@@ -89,6 +90,7 @@
     @Scripts.Render("~/bundles/underscore")
     @Scripts.Render("~/bundles/knockout")
     @Scripts.Render("~/bundles/typeahead")
+    @Scripts.Render("~/bundles/bootstrap-select")
     @Scripts.Render("~/bundles/edit-lesson")
 
     <script>
