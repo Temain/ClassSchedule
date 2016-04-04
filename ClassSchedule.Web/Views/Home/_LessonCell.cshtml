@@ -19,7 +19,7 @@
 {
     var isLection = discipline.LessonTypeId == (int)LessonTypes.Lection;
     <div class="lesson-cell-part">
-        <span class="discipline@(isLection ? " red" : "")" data-discipline="@discipline.DisciplineId">@discipline.DisciplineName</span><span>@(isLection ? "(лекция)" : "")</span> -
+        <span class="discipline@(isLection ? " red" : "")" data-discipline="@discipline.DisciplineId">@discipline.DisciplineName</span><span class="lesson-type">@(isLection ? "(лекция)" : "")</span> -
         @foreach (var lessonPart in discipline.LessonParts)
         {
             <span class="teacher" data-teacher="@lessonPart.TeacherId">@ScheduleHelpers.PersonShortName(lessonPart.TeacherLastName, lessonPart.TeacherFirstName, lessonPart.TeacherMiddleName)</span>

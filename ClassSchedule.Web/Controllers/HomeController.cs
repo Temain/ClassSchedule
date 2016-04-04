@@ -80,6 +80,18 @@ namespace ClassSchedule.Web.Controllers
             viewModel.GroupLessons = groupLessons;
             viewModel.WeekNumber = UserProfile.WeekNumber;
 
+
+            //for (int day = 1; day < 7; day++)
+            //{
+            //    for (int number = 1; number < 7; number++)
+            //    {
+            //        for (int group = 0; group < groupLessons.Count; group++)
+            //        {
+            //            groupLessons[group].Lessons
+            //        }       
+            //    }
+            //}
+
             // Вычисление первой и последней даты редактируемой недели 
             DateTime yearStartDate = UserProfile.EducationYear.DateStart;
             int delta = DayOfWeek.Monday - yearStartDate.DayOfWeek;
