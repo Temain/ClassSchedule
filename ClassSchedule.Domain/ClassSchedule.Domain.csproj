@@ -140,6 +140,10 @@
     <Compile Include="Migrations\201603291405043_RemoveChairIdFromLessonTable.Designer.cs">
       <DependentUpon>201603291405043_RemoveChairIdFromLessonTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604041802237_AddOrderFieldToLessonTypeTable.cs" />
+    <Compile Include="Migrations\201604041802237_AddOrderFieldToLessonTypeTable.Designer.cs">
+      <DependentUpon>201604041802237_AddOrderFieldToLessonTypeTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AcademicPlan.cs" />
     <Compile Include="Models\Auditorium.cs" />
@@ -238,6 +242,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603291405043_RemoveChairIdFromLessonTable.resx">
       <DependentUpon>201603291405043_RemoveChairIdFromLessonTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604041802237_AddOrderFieldToLessonTypeTable.resx">
+      <DependentUpon>201604041802237_AddOrderFieldToLessonTypeTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

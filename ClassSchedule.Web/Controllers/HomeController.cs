@@ -119,7 +119,7 @@ namespace ClassSchedule.Web.Controllers
 
             // Типы занятий
             viewModel.LessonTypes = UnitOfWork.Repository<LessonType>()
-                .GetQ()
+                .GetQ(orderBy: o => o.OrderBy(n => n.Order))
                 .Select(
                     x =>
                         new LessonTypeViewModel
@@ -127,7 +127,6 @@ namespace ClassSchedule.Web.Controllers
                             LessonTypeId = x.LessonTypeId,
                             LessonTypeName = x.LessonTypeName
                         })
-                .OrderBy(n => n.LessonTypeName)
                 .ToList();
 
             // Корпуса

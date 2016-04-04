@@ -5,7 +5,7 @@
 <div class="flash" style="display: none"><span></span></div>
 
 <div class="actions" style="display: none">
-    <a href="#" data-bind="tooltip: { title: 'Редактировать занятие', trigger: 'hover' }"><i class="fa fa-pencil"></i><span></span></a>
+    <a href="#" data-bind="click: editLesson,tooltip: { title: 'Редактировать занятие', trigger: 'hover' }"><i class="fa fa-pencil"></i><span></span></a>
     <a href="#" data-bind="click: removeLesson, tooltip: { title: 'Удалить занятие', trigger: 'hover' }"><i class="fa fa-trash"></i><span></span></a>
 
     <!-- ko if: CopiedLessonCell() != null -->

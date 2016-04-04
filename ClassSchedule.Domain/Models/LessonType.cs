@@ -16,6 +16,7 @@ namespace ClassSchedule.Domain.Models
         public int LessonTypeId { get; set; }
         public Guid LessonTypeGuid { get; set; }
         public string LessonTypeName { get; set; }
+        public int Order { get; set; }
 
         /// <summary>
         /// Занятия этого типа
