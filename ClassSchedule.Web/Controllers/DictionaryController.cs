@@ -221,6 +221,32 @@ namespace ClassSchedule.Web.Controllers
         }
 
         [HttpPost]
+        public ActionResult TeacherWithEmployment(int chairId, int weekNumber, int dayNumber, int classNumber, int groupId)
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
+                if (jobRepository != null)
+                {
+                    var chairTeachers = jobRepository.ActualTeachersWithEmployment(UserProfile.EducationYear, chairId, weekNumber, dayNumber, classNumber, groupId);
+                    var result = chairTeachers
+                        .Select(
+                            x =>
+                                new TeacherViewModel
+                                {
+                                    TeacherId = x.JobId,
+                                    TeacherFullName = x.FullName,
+                                    Employment = x.Employment
+                                });
+
+                    return Json(result);
+                }
+            }
+
+            return null;
+        }
+
+        [HttpPost]
         public ActionResult Housing()
         {
             if (Request.IsAjaxRequest())

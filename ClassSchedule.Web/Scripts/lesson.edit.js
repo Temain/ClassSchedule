@@ -100,7 +100,15 @@
     /* Заполнение выпадающих списков
     ------------------------------------------------------------*/
     self.loadTeachers = function (lesson, chairId, teacherSelects) {
-        $.post('/Dictionary/Teacher', { chairId: chairId }, function (data) {
+        var parameters = {
+            chairId: chairId,
+            weekNumber: self.WeekNumber(),
+            dayNumber: self.DayNumber(),
+            classNumber: self.ClassNumber(),
+            groupId: self.GroupId()
+        };
+
+        $.post('/Dictionary/TeacherWithEmployment', parameters, function (data) {
             ko.mapping.fromJS(data, {}, lesson.ChairTeachers);
 
             $('select.teacher').selectpicker('refresh');
@@ -108,7 +116,13 @@
     };
 
     self.setTeacherOptionContent = function (option, item) {
-        $(option).attr('data-subtext', "<br><span class='description'>Описание</span>");
+        if (!item) return;
+
+        if (item.Employment()) {
+            $(option).attr('data-subtext', "<br><span class='description'>Преподаватель уже ведет занятия у групп: " + item.Employment() + "</span>");
+            $(option).addClass('red-gradient');
+        }
+       
         ko.applyBindingsToNode(option, {}, item);
     };
 
@@ -198,8 +212,8 @@
                     elementData.ChairId(disciplines[item].ChairId);
                     elementData.ChairName("Кафедра " + disciplines[item].ChairName);
 
-                    var teacherSelects = $element.find('select.teacher');
-                    self.loadTeachers(elementData, disciplines[item].ChairId, teacherSelects);
+                    //var teacherSelects = $element.find('select.teacher');
+                    self.loadTeachers(elementData, disciplines[item].ChairId/*, teacherSelects*/);
                     // self.loadHousings(elementData);
                     $.each(elementData.LessonParts(), function (index, lessonPart) {
                         lessonPart.HousingId('');

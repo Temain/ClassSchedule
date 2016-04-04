@@ -9,5 +9,6 @@ namespace ClassSchedule.Web.Models.Schedule
     {
         public int TeacherId { get; set; }
         public string TeacherFullName { get; set; }
+        public string Employment { get; set; }
     }
 }

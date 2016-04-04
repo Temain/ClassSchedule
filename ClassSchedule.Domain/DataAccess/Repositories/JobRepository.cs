@@ -18,6 +18,9 @@ namespace ClassSchedule.Domain.DataAccess.Repositories
             _context = context;
         }
 
+        /// <summary>
+        /// Преподаватели, работающие в определенном учебном году
+        /// </summary>
         public List<KeyValueDictionary> ActualTeachers(EducationYear educationYear, int? chairId)
         {
             var parameters = new object[]
@@ -51,6 +54,94 @@ namespace ClassSchedule.Domain.DataAccess.Repositories
                 WHERE t0.Rn = 1
                 ORDER BY t0.LastName, t0.FirstName, t0.MiddleName;";
             var teachers = _context.Database.SqlQuery<KeyValueDictionary>(query, parameters).ToList();
+
+            return teachers;
+        }
+
+        /// <summary>
+        /// Преподаватели, работающие в определенном учебном году
+        /// со списком групп, у которых они ведут занятия на определённой паре
+        /// Используется при редактировании занятия (выдача подсказки о занятости преподавателя)
+        /// </summary>
+        public List<TeacherQueryResult> ActualTeachersWithEmployment(EducationYear educationYear, int? chairId,
+            int weekNumber, int dayNumber, int classNumber, int currentGroupId)
+        {
+            var parameters = new object[]
+            {
+                new SqlParameter("@chairId", chairId),
+                new SqlParameter("@startDate", educationYear.DateStart),
+                new SqlParameter("@endDate", educationYear.DateEnd),
+                new SqlParameter("@weekNumber", weekNumber),
+                new SqlParameter("@dayNumber", dayNumber),
+                new SqlParameter("@classNumber", classNumber),
+                new SqlParameter("@groupId", currentGroupId)
+            };
+
+            var query = @"
+                DECLARE @teachers TABLE(
+                  JobId INT NOT NULL,
+                  PersonId INT NOT NULL,
+                  FullName VARCHAR(MAX)
+                )
+
+                -- Список актуальных на учебный год преподавателей
+                INSERT INTO @teachers (JobId, PersonId, FullName)
+                SELECT t0.JobId, t0.PersonId, t0.LastName + COALESCE(' ' + t0.FirstName, '') + COALESCE(' ' + t0.MiddleName, '') AS [Value]
+                FROM (
+                  SELECT j.JobId, p.PersonId, p.LastName, p.FirstName, p.MiddleName,
+                    ROW_NUMBER() OVER(PARTITION BY e.PersonId ORDER BY j.JobDateStart DESC) as Rn 
+                  FROM Job j 
+                  LEFT JOIN Employee e ON j.EmployeeId = e.EmployeeId
+                  LEFT JOIN Person p ON e.PersonId = p.PersonId
+                  WHERE j.ChairId = @chairId 
+                    AND (j.IsDeleted = 0 OR j.IsDeleted IS NULL)
+                    AND (e.IsDeleted = 0 OR e.IsDeleted IS NULL)
+                    AND (p.IsDeleted = 0 OR p.IsDeleted IS NULL)
+
+                    -- Проверка что преподаватель работал в определенном учебном году
+                    AND (
+                      (j.JobDateEnd IS NULL AND (j.JobDateStart < @startDate OR (j.JobDateStart >= @startDate AND j.JobDateStart <= @endDate))) 
+                      OR 
+                      (j.JobDateEnd IS NOT NULL AND (j.JobDateStart < @startDate OR (j.JobDateStart >= @startDate AND j.JobDateStart <= @endDate))
+                        AND (j.JobDateEnd IS NOT NULL AND ((j.JobDateEnd >= @startDate AND j.JobDateEnd <= @endDate) OR j.JobDateEnd > @endDate)))
+                    )
+                ) AS t0
+                WHERE t0.Rn = 1;
+
+                -- Занятия, которые ведут эти преподаватели в определенный день на определённой паре
+                DECLARE @teachersLessons TABLE(
+                  JobId INT NOT NULL,
+                  PersonId INT NOT NULL,
+                  GroupName VARCHAR(MAX)
+                )
+                INSERT INTO @teachersLessons (JobId, PersonId, GroupName)
+                SELECT j2.JobId, p2.PersonId, g.DivisionName AS GroupName
+                FROM Lesson ls
+                LEFT JOIN Job j2 ON ls.JobId = j2.JobId
+                LEFT JOIN Employee e2 ON j2.EmployeeId = e2.EmployeeId
+                LEFT JOIN Person p2 ON e2.PersonId = p2.PersonId
+                LEFT JOIN dict.[Group] g ON ls.GroupId = g.GroupId
+                INNER JOIN @teachers AS t2 ON p2.PersonId = t2.PersonId
+                WHERE ls.DeletedAt IS NULL
+                  AND ls.WeekNumber = @weekNumber AND ls.DayNumber = @dayNumber
+                  AND ls.ClassNumber = @classNumber
+                  AND ls.GroupId <> @groupId;
+
+                SELECT tch.JobId, tch.FullName, tls.Employment
+                FROM (
+                  SELECT les.PersonId, COUNT(*) AS [Count]
+                      ,STUFF((
+                          SELECT ',' + les2.GroupName
+                          from @teachersLessons les2
+                          where les2.PersonId = les.PersonId
+                          FOR XML PATH(''), TYPE
+                      ).value('.', 'varchar(max)'), 1, 1, '') AS Employment
+                  FROM @teachersLessons les
+                  GROUP BY les.PersonId
+                ) AS tls
+                RIGHT JOIN @teachers tch ON tch.PersonId = tls.PersonId
+                ORDER BY tch.FullName;";
+            var teachers = _context.Database.SqlQuery<TeacherQueryResult>(query, parameters).ToList();
 
             return teachers;
         }

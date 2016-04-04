@@ -161,6 +161,7 @@
     <Compile Include="Models\PersonVacation.cs" />
     <Compile Include="Models\Position.cs" />
     <Compile Include="Models\QueryResults\KeyValueDictionary.cs" />
+    <Compile Include="Models\QueryResults\TeacherQueryResult.cs" />
     <Compile Include="Models\SemesterSchedule.cs" />
     <Compile Include="Models\CourseSchedule.cs" />
     <Compile Include="Models\EducationDirection.cs" />
