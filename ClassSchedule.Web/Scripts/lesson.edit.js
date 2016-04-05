@@ -132,6 +132,15 @@
         });
     };
 
+    self.setHousingOptionContent = function (option, item) {
+        if (!item) return;
+
+        $(option).attr('data-subtext', "<span class='description'>" + item.Abbreviation() + "</span>");
+        $(option).attr('title', item.Abbreviation());
+
+        ko.applyBindingsToNode(option, {}, item);
+    };
+
     self.loadAuditoriums = function (lessonPart, chairId) {
         var housingId = lessonPart.HousingId();
         if (!housingId) {
@@ -230,7 +239,7 @@
                     }
 
                     elementData.DisciplineId("-1");
-                    return query;
+                    return this.query;
                 },
                 highlighter: function (item) {
                     var discipline = disciplines[item];

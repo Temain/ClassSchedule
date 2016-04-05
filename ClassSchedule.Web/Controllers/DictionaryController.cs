@@ -256,7 +256,8 @@ namespace ClassSchedule.Web.Controllers
                     .Select(x => new HousingViewModel
                     {
                         HousingId = x.HousingId,
-                        HousingName = x.Abbreviation
+                        HousingName = x.HousingName,
+                        Abbreviation = x.Abbreviation
                     });
 
                 return Json(housings);

@@ -226,6 +226,10 @@ textarea {
     color: white;
 }
 
+.bootstrap-select li > a:hover span {
+    color: white;
+}
+
 .lesson-cell > .actions {
     /*display: none;*/
     /*padding-top: 3px;*/
