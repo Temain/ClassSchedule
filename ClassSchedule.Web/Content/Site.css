@@ -221,8 +221,14 @@ textarea {
     color: white !important;
 }
 
+.bootstrap-select li > a {
+    white-space: pre;
+    font-family: monospace;
+    /*font-family: Courier;*/
+}
+
 .bootstrap-select li > a:hover {
-    background-color: #337ab7;
+    background: #337ab7;
     color: white;
 }
 

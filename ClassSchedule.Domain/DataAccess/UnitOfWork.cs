@@ -16,7 +16,9 @@ namespace ClassSchedule.Domain.DataAccess
 
         private Dictionary<string, Type> _extendedTypes = new Dictionary<string, Type>
         {
-            {typeof(Job).Name, typeof(JobRepository)}
+            {typeof(Job).Name, typeof(JobRepository)},
+            {typeof(Auditorium).Name, typeof(AuditoriumRepository)},
+            {typeof(Housing).Name, typeof(HousingRepository)}
         }; 
 
         public GenericRepository<TEntity> Repository<TEntity>() where TEntity : class 

@@ -57,9 +57,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context\ApplicationDbContext.cs" />
+    <Compile Include="DataAccess\Interfaces\IHousingRepository.cs" />
+    <Compile Include="DataAccess\Interfaces\IAuditoriumRepository.cs" />
     <Compile Include="DataAccess\Interfaces\IJobRepository.cs" />
     <Compile Include="DataAccess\Interfaces\IGenericRepository.cs" />
     <Compile Include="DataAccess\Interfaces\IUnitOfWork.cs" />
+    <Compile Include="DataAccess\Repositories\HousingRepository.cs" />
+    <Compile Include="DataAccess\Repositories\AuditoriumRepository.cs" />
     <Compile Include="DataAccess\Repositories\JobRepository.cs" />
     <Compile Include="DataAccess\Repositories\GenericRepository.cs" />
     <Compile Include="DataAccess\UnitOfWork.cs" />
@@ -164,6 +168,8 @@
     <Compile Include="Models\Person.cs" />
     <Compile Include="Models\PersonVacation.cs" />
     <Compile Include="Models\Position.cs" />
+    <Compile Include="Models\QueryResults\AuditoriumQueryResult.cs" />
+    <Compile Include="Models\QueryResults\HousingQueryResult.cs" />
     <Compile Include="Models\QueryResults\KeyValueDictionary.cs" />
     <Compile Include="Models\QueryResults\TeacherQueryResult.cs" />
     <Compile Include="Models\SemesterSchedule.cs" />

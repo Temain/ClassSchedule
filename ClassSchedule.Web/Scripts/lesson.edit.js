@@ -127,7 +127,7 @@
     };
 
     self.loadHousings = function (lesson) {
-        $.post('/Dictionary/Housing', {}, function (data) {
+        $.post('/Dictionary/HousingEqualLength', {}, function (data) {
             ko.mapping.fromJS(data, {}, lesson.Housings);
         });
     };
@@ -135,6 +135,7 @@
     self.setHousingOptionContent = function (option, item) {
         if (!item) return;
 
+        $(option).text(item.HousingName());
         $(option).attr('data-subtext', "<span class='description'>" + item.Abbreviation() + "</span>");
         $(option).attr('title', item.Abbreviation());
 
@@ -142,15 +143,53 @@
     };
 
     self.loadAuditoriums = function (lessonPart, chairId) {
+        if (!chairId) return;
+
         var housingId = lessonPart.HousingId();
         if (!housingId) {
             lessonPart.Auditoriums([]);
             return;
         }
 
-        $.post('/Dictionary/Auditorium', { chairId: chairId, housingId: lessonPart.HousingId() }, function (data) {
+        var parameters = {
+            chairId: chairId,
+            housingId: lessonPart.HousingId(),
+            weekNumber: self.WeekNumber(),
+            dayNumber: self.DayNumber(),
+            classNumber: self.ClassNumber(),
+            groupId: self.GroupId()
+        };
+
+        $.post('/Dictionary/AuditoriumWithEmployment', parameters, function (data) {
             ko.mapping.fromJS(data, {}, lessonPart.Auditoriums);
+
+            $('select.auditorium').selectpicker('refresh');
         });
+    };
+
+    self.setAuditoriumOptionContent = function (option, item) {
+        if (!item) return;
+
+        var optionContent = "<span class='description'>";
+        optionContent += "<span>" + item.AuditoriumTypeName() + "</span>";
+
+        if (item.Places() !== 0) {
+            optionContent += "<span>Мест : " + item.Places() + "</span>";
+        }
+
+        if (item.Employment()) {
+            optionContent += "<br><span>Занятие у групп: " + item.Employment() + "</span>";
+            $(option).addClass('red-gradient');
+        }
+        
+        optionContent += "</span>";
+        $(option).attr('data-subtext', optionContent);
+
+        
+
+        // $(option).attr('title', item.Abbreviation());
+
+        ko.applyBindingsToNode(option, {}, item);
     };
 
     self.housingChanged = function (lessonPart, event) {

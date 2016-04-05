@@ -71,13 +71,15 @@
                             </div>
                             <div class="col-md-2 form-group">
                                 <label class="control-label">Корпус</label>
-                                <select class="form-control teacher" title="" data-size="12" data-bind="selectPicker: HousingId, options: $root.EditLessonViewModel().Housings, optionsValue: 'HousingId', optionsText: 'HousingName', optionsCaption: '', 
+                                <select class="form-control housing" title="" data-size="12" data-bind="selectPicker: HousingId, options: $root.EditLessonViewModel().Housings, optionsValue: 'HousingId', optionsText: 'HousingName', optionsCaption: '',
                                     event: { change: $root.EditLessonViewModel().housingChanged}, optionsAfterRender: $root.EditLessonViewModel().setHousingOptionContent"></select>
                                 @*<select class="form-control housing" data-bind="value: HousingId, options: $root.EditLessonViewModel().Housings, optionsValue: 'HousingId', optionsText: 'HousingName', optionsCaption: '', event: { change: $root.EditLessonViewModel().housingChanged}"></select>*@
                             </div>
                             <div class="col-md-2 form-group">
                                 <label class="control-label">Аудитория</label>
-                                <select class="form-control auditorium" data-bind="value: AuditoriumId, options: Auditoriums, optionsValue: 'AuditoriumId', optionsText: 'AuditoriumNumber', optionsCaption: ''"></select>
+                                <select class="form-control auditorium" title="" data-size="12" data-bind="selectPicker: AuditoriumId, options: Auditoriums, optionsValue: 'AuditoriumId', optionsText: 'AuditoriumNumber', optionsCaption: '',
+                                    optionsAfterRender: $root.EditLessonViewModel().setAuditoriumOptionContent"></select>
+                                @*<select class="form-control auditorium" data-bind="value: AuditoriumId, options: Auditoriums, optionsValue: 'AuditoriumId', optionsText: 'AuditoriumNumber', optionsCaption: ''"></select>*@
                             </div>
                         </div>
                         <!-- /ko -->

@@ -130,15 +130,21 @@ namespace ClassSchedule.Web.Controllers
                 .ToList();
 
             // Корпуса
-            viewModel.Housings = UnitOfWork.Repository<Housing>()
-                .GetQ()
-                .Select(x => new HousingViewModel
-                {
-                    HousingId = x.HousingId,
-                    HousingName = x.HousingName,
-                    Abbreviation = x.Abbreviation
-                })
-                .ToList();
+            var housingRepository = UnitOfWork.Repository<Housing>() as HousingRepository;
+            if (housingRepository != null)
+            {
+                var housings = housingRepository.HousingEqualLength();
+                viewModel.Housings = housings
+                    .Select(
+                        x =>
+                            new HousingViewModel
+                            {
+                                HousingId = x.HousingId,
+                                HousingName = x.HousingName,
+                                Abbreviation = x.Abbreviation
+                            })
+                    .ToList();
+            }      
 
             foreach (var lesson in lessons)
             {                   
@@ -163,17 +169,26 @@ namespace ClassSchedule.Web.Controllers
                 {
                     var chairId = lesson.ChairId;
                     var housingId = lessonPart.HousingId;
-                    lessonPart.Auditoriums = UnitOfWork.Repository<Auditorium>()
-                        .GetQ(filter: x => (x.ChairId == chairId || x.ChairId == null) && x.HousingId == housingId,
-                            orderBy: o => o.OrderByDescending(n => n.ChairId)
-                                .ThenBy(n => n.AuditoriumNumber))
-                        .Select(x => new AuditoriumViewModel
-                        {
-                            AuditoriumId = x.AuditoriumId,
-                            AuditoriumNumber = x.AuditoriumNumber,
-                            AuditoriumTypeName = x.AuditoriumType.AuditoriumTypeName,
-                            Places = x.Places ?? 0
-                        }).ToList();
+
+                    var auditoriumRepository = UnitOfWork.Repository<Auditorium>() as AuditoriumRepository;
+                    if (auditoriumRepository != null)
+                    {
+                        var auditoriums = auditoriumRepository.AuditoriumWithEmployment(chairId, housingId, weekNumber, dayNumber, classNumber, groupId);
+                        lessonPart.Auditoriums = auditoriums
+                            .Select(
+                                x =>
+                                    new AuditoriumViewModel
+                                    {
+                                        AuditoriumId = x.AuditoriumId,
+                                        AuditoriumNumber = x.AuditoriumNumber,
+                                        AuditoriumTypeName = x.AuditoriumTypeName,
+                                        ChairId = x.ChairId,
+                                        Places = x.Places,
+                                        Comment = x.Comment,
+                                        Employment = x.Employment
+                                    })
+                                    .ToList();
+                    }
                 }
                     
             }

@@ -267,6 +267,33 @@ namespace ClassSchedule.Web.Controllers
         }
 
         [HttpPost]
+        public ActionResult HousingEqualLength()
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var housingRepository = UnitOfWork.Repository<Housing>() as HousingRepository;
+                if (housingRepository != null)
+                {
+                    var housings = housingRepository.HousingEqualLength();
+                    var result = housings
+                        .Select(
+                            x =>
+                                new HousingViewModel
+                                {
+                                    HousingId = x.HousingId,
+                                    HousingName = x.HousingName,
+                                    Abbreviation = x.Abbreviation
+                                });
+
+                    return Json(result);
+                }
+            
+            }
+
+            return null;
+        }
+
+        [HttpPost]
         public ActionResult Auditorium(int chairId, int housingId)
         {
             if (Request.IsAjaxRequest())
@@ -284,6 +311,36 @@ namespace ClassSchedule.Web.Controllers
                     }).ToList();
 
                 return Json(auditoriums);
+            }
+
+            return null;
+        }
+
+        [HttpPost]
+        public ActionResult AuditoriumWithEmployment(int chairId, int housingId, int weekNumber, int dayNumber, int classNumber, int groupId)
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var auditoriumRepository = UnitOfWork.Repository<Auditorium>() as AuditoriumRepository;
+                if (auditoriumRepository != null)
+                {
+                    var auditoriums = auditoriumRepository.AuditoriumWithEmployment(chairId, housingId, weekNumber, dayNumber, classNumber, groupId);
+                    var result = auditoriums
+                        .Select(
+                            x =>
+                                new AuditoriumViewModel
+                                {
+                                    AuditoriumId = x.AuditoriumId,
+                                    AuditoriumNumber = x.AuditoriumNumber,
+                                    AuditoriumTypeName = x.AuditoriumTypeName,
+                                    ChairId = x.ChairId,
+                                    Places = x.Places,
+                                    Comment = x.Comment,
+                                    Employment = x.Employment
+                                });
+
+                    return Json(result);
+                }
             }
 
             return null;
