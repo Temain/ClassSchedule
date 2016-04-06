@@ -68,14 +68,18 @@
                 {
                     <div class="bordered-rb lesson-cell noselect" data-group="@group.GroupId" data-day="@dayNumber" data-class-number="@classNumber"
                          data-class-date="@Model.FirstDayOfWeek.AddDays(dayNumber - 1).ToString("dd.MM.yyyy")">
+
+                        <div class="flash" style="display: none"><span></span></div>
+
                         @{
                             var day = dayNumber;
                             var number = classNumber;
                             var lesson = group.Lessons.Where(x => x.DayNumber == day && x.ClassNumber == number);
 
                             @Html.Partial("_LessonCell", lesson)
+                            @Html.Partial("_LessonActions")
                         }
-                    </div>                   
+                    </div>                    
                 }
 
                 <div class="day-separator"></div>
@@ -94,14 +98,14 @@
     @Scripts.Render("~/bundles/edit-lesson")
 
     <script>
-        $(function() {
+        $(function () {
             /* Показ модального окна редактирования занятия
             ------------------------------------------------------------*/
-            $(".lesson-cell").click(function() {
+            $(".lesson-cell").click(function () {
                 viewModel.selectLesson(this);
             });
 
-            $(".lesson-cell").dblclick(function() {
+            $(".lesson-cell").dblclick(function () {
                 viewModel.editLesson();
             });
 
@@ -138,7 +142,7 @@
 
             self.EditLessonViewModel = ko.observable(new EditLessonViewModel());
 
-            self.editLesson = function(/*lessonCell*/) {
+            self.editLesson = function (/*lessonCell*/) {
                 var lessonCell = self.SelectedLessonCell();
 
                 var weekNumber = $('.week-panel').attr('data-week');
@@ -158,7 +162,7 @@
                     type: "GET",
                     url: "/Home/EditLesson",
                     data: parameters,
-                    success: function(data) {
+                    success: function (data) {
                         self.EditLessonViewModel(new EditLessonViewModel(data));
 
                         var lessonDisciplines = self.EditLessonViewModel().Lessons();
@@ -170,16 +174,16 @@
                         $('#edit-lesson').modal({
                             backdrop: 'static',
                             keyboard: false
-                        });                       
+                        });
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         var err = eval("(" + xhr.responseText + ")");
                         alert(err.Message);
                     }
                 });
             };
 
-            self.selectLesson = function(lessonCell) {
+            self.selectLesson = function (lessonCell) {
                 self.SelectedLessonCell(lessonCell);
 
                 var selectedCell = $('.lesson-cell.selected');
@@ -196,18 +200,19 @@
                 }
             };
 
-            self.copyLesson = function() {
+            self.copyLesson = function () {
                 $('.flash').hide(350);
 
                 var selectedCell = self.SelectedLessonCell();
                 self.CopiedLessonCell(selectedCell);
                 var flash = $(selectedCell).find('.flash');
                 flash.find('span').text('К');
+                flash.find('span').removeClass('fa fa-check');
                 flash.addClass('bcg-warning');
                 flash.show(350);
             };
 
-            self.pasteLesson = function() {
+            self.pasteLesson = function () {
                 var targetLessonCell = self.SelectedLessonCell();
                 var sourceLessonCell = self.CopiedLessonCell();
 
@@ -234,17 +239,19 @@
                     contentType: "application/json; charset=utf-8",
                     data: JSON.stringify(postData),
                     dataType: "html",
-                    success: function(result) {
+                    success: function (result) {
                         if (result) {
-                            $(targetLessonCell).html(result);
+                            $(targetLessonCell).find('.lesson-cell-content').replaceWith(result);
                         }
+
+                        // ko.applyBindings(viewModel, targetLessonCell);
 
                         var flash = $(targetLessonCell).find(".flash");
                         flash.addClass("bcg-success");
                         flash.find("span").addClass("fa fa-check");
                         flash.show(500);
                     },
-                    error: function(xhr, ajaxOptions, thrownError) {
+                    error: function (xhr, ajaxOptions, thrownError) {
                         alert(xhr.status);
                         alert(thrownError);
                     }
@@ -287,12 +294,12 @@
                         alert(thrownError);
                     }
                 });
-             
+
             };
         };
 
         ko.bindingHandlers.tooltip = {
-            init: function(element, valueAccessor) {
+            init: function (element, valueAccessor) {
                 var local = ko.utils.unwrapObservable(valueAccessor()),
                     options = {};
 
@@ -301,7 +308,7 @@
 
                 $(element).tooltip(options);
 
-                ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+                ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
                     $(element).tooltip("destroy");
                 });
             },

@@ -2,41 +2,17 @@
 @using ClassSchedule.Web.Models.Schedule
 @model IEnumerable<LessonViewModel>
 
-<div class="flash" style="display: none"><span></span></div>
-
-<div class="actions" style="display: none">
-    <ul>
-        <li><a href="#" data-bind="click: editLesson,tooltip: { title: 'Редактировать занятие', trigger: 'hover' }"><i class="fa fa-pencil"></i><span></span></a></li>
-        <li><a href="#" data-bind="click: removeLesson, tooltip: { title: 'Удалить занятие', trigger: 'hover' }"><i class="fa fa-trash"></i><span></span></a></li>
-        <!-- ko if: CopiedLessonCell() != null && SelectedLessonCell() != CopiedLessonCell() -->
-            <li><a href="#" data-bind="click: pasteLesson, tooltip: { title: 'Вставить занятие', trigger: 'hover' }"><i class="fa fa-clipboard"></i><span></span></a></li>
-        <!-- /ko -->
-
-        <li><a href="#" data-bind="click: copyLesson, tooltip: { title: 'Копировать занятие', trigger: 'hover' }"><i class="fa fa-files-o"></i><span></span></a></li>
-    </ul>       
+<div class="lesson-cell-content">
+    @foreach (LessonViewModel discipline in Model)
+    {
+        var isLection = discipline.LessonTypeId == (int)LessonTypes.Lection;
+        <div class="lesson-cell-part">
+            <span class="discipline@(isLection ? " red" : "")" data-discipline="@discipline.DisciplineId">@discipline.DisciplineName</span><span class="lesson-type">@(isLection ? "(лекция)" : "")</span> -
+            @foreach (var lessonPart in discipline.LessonParts)
+            {
+                <span class="teacher" data-teacher="@lessonPart.TeacherId">@ScheduleHelpers.PersonShortName(lessonPart.TeacherLastName, lessonPart.TeacherFirstName, lessonPart.TeacherMiddleName)</span>
+                <span class="auditorium" data-auditorium="@lessonPart.AuditoriumId">(@lessonPart.AuditoriumName),</span>
+            }
+        </div>
+    }
 </div>
-
-@*<div class="actions" style="display: none">
-    <a href="#" data-bind="click: editLesson,tooltip: { title: 'Редактировать занятие', trigger: 'hover' }"><i class="fa fa-pencil"></i><span></span></a>
-    <a href="#" data-bind="click: removeLesson, tooltip: { title: 'Удалить занятие', trigger: 'hover' }"><i class="fa fa-trash"></i><span></span></a>
-
-    <!-- ko if: CopiedLessonCell() != null -->
-    <a href="#" data-bind="click: pasteLesson, tooltip: { title: 'Вставить занятие', trigger: 'hover' }"><i class="fa fa-clipboard"></i><span></span></a>
-    <!-- /ko -->
-
-    <a href="#" data-bind="click: copyLesson, tooltip: { title: 'Копировать занятие', trigger: 'hover' }"><i class="fa fa-files-o"></i><span></span></a>
-</div>*@
-
-@foreach (LessonViewModel discipline in Model)
-{
-    var isLection = discipline.LessonTypeId == (int)LessonTypes.Lection;
-    <div class="lesson-cell-part">
-        <span class="discipline@(isLection ? " red" : "")" data-discipline="@discipline.DisciplineId">@discipline.DisciplineName</span><span class="lesson-type">@(isLection ? "(лекция)" : "")</span> -
-        @foreach (var lessonPart in discipline.LessonParts)
-        {
-            <span class="teacher" data-teacher="@lessonPart.TeacherId">@ScheduleHelpers.PersonShortName(lessonPart.TeacherLastName, lessonPart.TeacherFirstName, lessonPart.TeacherMiddleName)</span>
-            <span class="auditorium" data-auditorium="@lessonPart.AuditoriumId">(@lessonPart.AuditoriumName),</span>
-        }
-    </div>
-}
-

@@ -181,26 +181,26 @@ textarea {
     padding: 0 5px;
 }
 
-.lesson-cell > .lesson-cell-part {
+.lesson-cell > .lesson-cell-content > .lesson-cell-part {
     /*height: 15px;*/
     line-height: 15px;
 }
 
-.lesson-cell > .lesson-cell-part > .lesson-type {
+.lesson-cell > .lesson-cell-content > .lesson-cell-part > .lesson-type {
     font-size: 12px;
     font-weight: bold;
 }
 
-.lesson-cell > .lesson-cell-part > .discipline {
+.lesson-cell > .lesson-cell-content > .lesson-cell-part > .discipline {
     font-size: 12px;
     font-weight: bold;
 }
 
-.lesson-cell > .lesson-cell-part > .teacher {
+.lesson-cell > .lesson-cell-content > .lesson-cell-part > .teacher {
     font-size: 12px;
 }
 
-.lesson-cell > .lesson-cell-part > .auditorium {
+.lesson-cell > .lesson-cell-content > .lesson-cell-part > .auditorium {
     font-size: 12px;
 }
 
