@@ -105,8 +105,16 @@
                 viewModel.editLesson();
             });
 
-            // $('[data-toggle="tooltip"]').tooltip();
-
+            ko.validation.init({
+                decorateInputElement: true,
+                errorElementClass: 'error',
+                errorClass: 'glyphicon glyphicon glyphicon-exclamation-sign form-control-feedback text-danger',
+                grouping: {
+                    deep: true,
+                    live: true,
+                    observable: true
+                }
+            });
             ko.applyBindings(viewModel);
         });
 

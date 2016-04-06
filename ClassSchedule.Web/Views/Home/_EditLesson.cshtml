@@ -34,22 +34,18 @@
 
                         <div class="col-md-4 form-group">
                             <label class="control-label">Тип занятия</label>
-                            <select class="form-control col-md-2" data-bind="selectPicker: LessonTypeId, options: $root.EditLessonViewModel().LessonTypes, optionsValue: 'LessonTypeId', optionsText: 'LessonTypeName'"></select>
-                            @*<select class="form-control col-md-2" data-bind="selectPicker: LessonTypeId, selectOptions: $root.EditLessonViewModel().LessonTypes, optionValue: 'LessonTypeId', optionText: 'LessonTypeName', optionContent: ''"></select>*@
-                            @*<select class="form-control col-md-2" data-bind="value: LessonTypeId, options: $root.EditLessonViewModel().LessonTypes, optionsValue: 'LessonTypeId', optionsText: 'LessonTypeName', optionsCaption: ''"></select>*@
+                            <select class="form-control col-md-2" data-bind="selectPicker: LessonTypeId, options: $root.EditLessonViewModel().LessonTypes, optionsValue: 'LessonTypeId', optionsText: 'LessonTypeName'"></select>                        
                         </div>
 
                         <!-- ko foreach: LessonParts -->
-                        <div class="lesson-teacher">
-                            <input type="hidden" class="lesson-id" data-bind="value: LessonId"/>
+                        <div class="col-md-12 lesson-teacher no-paddings">
+                            <input type="hidden" class="lesson-id" data-bind="value: LessonId" />
                             @*<pre data-bind="text: JSON.stringify(ko.toJS($parent.LessonParts.length), null, 2)"></pre>*@
 
                             <div class="col-md-7 col-md-offset-1 form-group">
                                 <div class="col-md-12 no-paddings">
                                     <label class="control-label">Преподаватель</label>
                                     <select class="form-control teacher" title="" data-size="12" data-bind="selectPicker: TeacherId, options: $parent.ChairTeachers, optionsValue: 'TeacherId', optionsText: 'TeacherFullName', optionsCaption: '', optionsAfterRender: $root.EditLessonViewModel().setTeacherOptionContent"></select>
-                                    @*<select class="form-control teacher" data-bind="selectPicker: TeacherId, selectOptions: $parent.ChairTeachers, optionValue: 'TeacherId', optionText: 'TeacherFullName', optionContent: 'Im teacher =)'"></select>*@
-                                    @*<select class="form-control teacher" data-bind="value: TeacherId, options: $parent.ChairTeachers, optionsValue: 'TeacherId', optionsText: 'TeacherFullName', optionsCaption: ''"></select>*@
                                 </div>
 
                                 <!-- ko if: $parent.LessonParts().length !== 2 && ($index() === ($parent.LessonParts().length - 1)) -->
@@ -73,13 +69,11 @@
                                 <label class="control-label">Корпус</label>
                                 <select class="form-control housing" title="" data-size="12" data-bind="selectPicker: HousingId, options: $root.EditLessonViewModel().Housings, optionsValue: 'HousingId', optionsText: 'HousingName', optionsCaption: '',
                                     event: { change: $root.EditLessonViewModel().housingChanged}, optionsAfterRender: $root.EditLessonViewModel().setHousingOptionContent"></select>
-                                @*<select class="form-control housing" data-bind="value: HousingId, options: $root.EditLessonViewModel().Housings, optionsValue: 'HousingId', optionsText: 'HousingName', optionsCaption: '', event: { change: $root.EditLessonViewModel().housingChanged}"></select>*@
                             </div>
                             <div class="col-md-2 form-group">
                                 <label class="control-label">Аудитория</label>
                                 <select class="form-control auditorium" title="" data-size="12" data-bind="selectPicker: AuditoriumId, options: Auditoriums, optionsValue: 'AuditoriumId', optionsText: 'AuditoriumNumber', optionsCaption: '',
                                     optionsAfterRender: $root.EditLessonViewModel().setAuditoriumOptionContent"></select>
-                                @*<select class="form-control auditorium" data-bind="value: AuditoriumId, options: Auditoriums, optionsValue: 'AuditoriumId', optionsText: 'AuditoriumNumber', optionsCaption: ''"></select>*@
                             </div>
                         </div>
                         <!-- /ko -->

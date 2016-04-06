@@ -40,8 +40,9 @@ namespace ClassSchedule.Web
                        "~/Scripts/underscore.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/knockout").Include(
-                      "~/Scripts/knockout-3.3.0.js",
-                      "~/Scripts/knockout.mapping-latest.js"));
+                      "~/Scripts/knockout-3.4.0.js",
+                      "~/Scripts/knockout.mapping-latest.js",
+                      "~/Scripts/knockout.validation.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/edit-lesson").Include(
                        "~/Scripts/lesson.edit.js"));
