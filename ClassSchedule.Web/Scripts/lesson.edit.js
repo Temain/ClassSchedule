@@ -81,6 +81,18 @@
         });
     };
 
+    self.validateAndSave = function () {
+        var editLessonViewModel = ko.toJS(self);
+        if(editLessonViewModel)
+
+
+        $element.closest(".discipline").siblings('.msg-text').slideDown(250);
+
+        if (true) {
+            self.saveLesson();
+        }
+    };
+
     self.removeDiscipline = function (discipline) {
         self.Lessons.remove(discipline);
     };
@@ -119,7 +131,10 @@
         if (!item) return;
 
         if (item.Employment()) {
-            $(option).attr('data-subtext', "<br><span class='description'>Преподаватель уже ведет занятия у групп: " + item.Employment() + "</span>");
+            var groupsCount = item.Employment().split(',').length - 1;
+            var inPlural = groupsCount > 1 ? 'групп' : 'группы';
+
+            $(option).attr('data-subtext', "<br><span class='description'>Уже ведёт занятие у " + inPlural + ": " + item.Employment() + "</span>");
             $(option).addClass('red-gradient');
         }
        
@@ -178,7 +193,10 @@
         }
 
         if (item.Employment()) {
-            optionContent += "<br><span>Занятие у групп: " + item.Employment() + "</span>";
+            var groupsCount = item.Employment().split(',').length - 1;
+            var inPlural = groupsCount > 1 ? 'групп' : 'группы';
+
+            optionContent += "<br><span>Занятие у " + inPlural + ": " + item.Employment() + "</span>";
             $(option).addClass('red-gradient');
         }
         
