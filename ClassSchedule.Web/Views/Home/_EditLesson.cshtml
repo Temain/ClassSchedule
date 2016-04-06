@@ -20,33 +20,33 @@
                         <span class="number-circle" data-bind="text: $index() + 1">1</span><div class="number-background"></div>
                     </div>
                     <div class="col-md-12 lesson-content">
-                        <div class="col-md-8 form-group">
-                            <label class="control-label">Дисциплина</label>
-                            <input type="text" class="discipline form-control" data-bind="typeahead: $data, textInput: DisciplineName" data-provide="typeahead" placeholder="Введите название дисциплины" autocomplete="off" value=""/>
-                            <input type="hidden" class="discipline-id" data-bind="value: DisciplineId"/>
-                            <div class="text-danger msg-text" style="display: none">
-                                <span class="glyphicon glyphicon glyphicon-exclamation-sign form-control-feedback"></span>Дисциплина не найдена
-                            </div>
-                                                   
-                            <div class="chair" data-bind="text: ChairName"></div>
-                            <input type="hidden" class="chair-id" data-bind="value: ChairId"/>                        
-                        </div>
+                        <div class="row">
+                            <div class="col-md-8 form-group">
+                                <label class="control-label">Дисциплина</label>
+                                <input type="text" class="discipline form-control" data-bind="typeahead: $data, textInput: DisciplineName" data-provide="typeahead" placeholder="Введите название дисциплины" autocomplete="off" value=""/>
+                                <input type="hidden" class="discipline-id" data-bind="value: DisciplineId"/>
+                                <div class="text-danger msg-text" style="display: none">
+                                    <span class="glyphicon glyphicon glyphicon-exclamation-sign form-control-feedback"></span>Дисциплина не найдена
+                                </div>
 
-                        <div class="col-md-4 form-group">
-                            <label class="control-label">Тип занятия</label>
-                            <select class="form-control col-md-2" data-bind="selectPicker: LessonTypeId, options: $root.EditLessonViewModel().LessonTypes, optionsValue: 'LessonTypeId', optionsText: 'LessonTypeName'"></select>                        
+                                <div class="chair" data-bind="text: ChairName"></div>
+                                <input type="hidden" class="chair-id" data-bind="value: ChairId"/>
+                            </div>
+
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Тип занятия</label>
+                                <select class="form-control col-md-2" data-bind="selectPicker: LessonTypeId, options: $root.EditLessonViewModel().LessonTypes, optionsValue: 'LessonTypeId', optionsText: 'LessonTypeName'"></select>
+                            </div>
                         </div>
 
                         <!-- ko foreach: LessonParts -->
-                        <div class="col-md-12 lesson-teacher no-paddings">
-                            <input type="hidden" class="lesson-id" data-bind="value: LessonId" />
+                        <div class="row">
+                            <input type="hidden" class="lesson-id" data-bind="value: LessonId"/>
                             @*<pre data-bind="text: JSON.stringify(ko.toJS($parent.LessonParts.length), null, 2)"></pre>*@
 
                             <div class="col-md-7 col-md-offset-1 form-group">
-                                <div class="col-md-12 no-paddings">
-                                    <label class="control-label">Преподаватель</label>
-                                    <select class="form-control teacher" title="" data-size="12" data-bind="selectPicker: TeacherId, options: $parent.ChairTeachers, optionsValue: 'TeacherId', optionsText: 'TeacherFullName', optionsCaption: '', optionsAfterRender: $root.EditLessonViewModel().setTeacherOptionContent"></select>
-                                </div>
+                                <label class="control-label">Преподаватель</label>
+                                <select class="form-control teacher" title="" data-size="12" data-bind="selectPicker: TeacherId, options: $parent.ChairTeachers, optionsValue: 'TeacherId', optionsText: 'TeacherFullName', optionsCaption: '', optionsAfterRender: $root.EditLessonViewModel().setTeacherOptionContent"></select>
 
                                 <!-- ko if: $parent.LessonParts().length !== 2 && ($index() === ($parent.LessonParts().length - 1)) -->
                                 <div class="col-md-4 no-paddings">
@@ -68,14 +68,14 @@
                             <div class="col-md-2 form-group">
                                 <label class="control-label">Корпус</label>
                                 <select class="form-control housing" title="" data-size="12" data-bind="selectPicker: HousingId, options: $root.EditLessonViewModel().Housings, optionsValue: 'HousingId', optionsText: 'HousingName', optionsCaption: '',
-                                    event: { change: $root.EditLessonViewModel().housingChanged}, optionsAfterRender: $root.EditLessonViewModel().setHousingOptionContent"></select>
+                                event: { change: $root.EditLessonViewModel().housingChanged}, optionsAfterRender: $root.EditLessonViewModel().setHousingOptionContent"></select>
                             </div>
                             <div class="col-md-2 form-group">
                                 <label class="control-label">Аудитория</label>
                                 <select class="form-control auditorium" title="" data-size="12" data-bind="selectPicker: AuditoriumId, options: Auditoriums, optionsValue: 'AuditoriumId', optionsText: 'AuditoriumNumber', optionsCaption: '',
-                                    optionsAfterRender: $root.EditLessonViewModel().setAuditoriumOptionContent"></select>
-                            </div>
-                        </div>
+                                optionsAfterRender: $root.EditLessonViewModel().setAuditoriumOptionContent"></select>
+                            </div>                            
+                        </div>                       
                         <!-- /ko -->
                     </div>
 

@@ -82,6 +82,7 @@
     };
 
     self.validateAndSave = function () {
+        self.isValidationEnabled(true);
         var valid = self.validationObject.isValid();
                
         if (valid) {
@@ -251,7 +252,7 @@
                     var labelsCount = Object.keys(disciplineLabels).length;
                     if (labelsCount === 0) {
                         $element.closest(".discipline").siblings('.msg-text').slideDown(250);
-                        elementData.DisciplineId("-1");
+                        elementData.DisciplineId("");
                         elementData.ChairId("");
                         elementData.ChairName("");
                     } else {
@@ -274,12 +275,10 @@
                     elementData.ChairId(disciplines[item].ChairId);
                     elementData.ChairName("Кафедра " + disciplines[item].ChairName);
 
-                    //var teacherSelects = $element.find('select.teacher');
-                    self.loadTeachers(elementData, disciplines[item].ChairId/*, teacherSelects*/);
-                    // self.loadHousings(elementData);
+                    self.loadTeachers(elementData, disciplines[item].ChairId);
+
                     $.each(elementData.LessonParts(), function (index, lessonPart) {
                         lessonPart.HousingId('');
-                        // self.loadAuditoriums(lessonPart, disciplines[item].ChairId);
                     });
 
                     return item;
@@ -291,7 +290,7 @@
                         return item;
                     }
 
-                    elementData.DisciplineId("-1");
+                    elementData.DisciplineId("");
                     return this.query;
                 },
                 highlighter: function (item) {
@@ -326,18 +325,6 @@
                         ko.bindingHandlers.value.init(element, valueAccessor, allBindingsAccessor);
                     }
                 }
-
-                var allBindings = allBindingsAccessor();
-                //var options = allBindings.selectOptions();
-                //var optionValue = allBindings.optionValue;
-                //var optionText = allBindings.optionText;
-                //var optionContent = allBindings.optionContent;
-
-                //var selectContent = '';
-                //$.each(options, function(index, option) {
-                //    selectContent += "<option data-subtext='" + optionContent + "' value='" + option[optionValue]() + "'>" + option[optionText]() + "</option>";
-                //});
-                //$(element).html(selectContent);
 
                 $(element).addClass('selectpicker').selectpicker();
             }
@@ -378,11 +365,9 @@
     };
 
     // Валидация
+    self.isValidationEnabled = ko.observable(false);
     self.validationObject = ko.validatedObservable({
         Lessons: self.Lessons
-        //name: self.name.extend({
-        //    required: true
-        //})
     });
 }
 
@@ -415,19 +400,30 @@ function LessonViewModel(data) {
         }
     };
 
+    ko.mapping.fromJS(data, lessonMapping, self);
+
     // Валидация
     self.validationObject = ko.validatedObservable({
-        LessonParts: self.LessonParts
+        LessonParts: self.LessonParts,
+        DisciplineId: self.DisciplineId.extend({
+            required: {
+                params: true,
+                message: " ",
+                onlyIf: function () {
+                    return viewModel.EditLessonViewModel().isValidationEnabled();
+                }
+            }
+        })
     });
 
-    return ko.mapping.fromJS(data, lessonMapping, self);;
+    return self;
 }
 
 function LessonPartViewModel(data) {
     var self = this;
     if (!data) {
         self.LessonId = ko.observable('');
-        self.TeacherId = ko.observable();
+        self.TeacherId = ko.observable('');
         self.TeacherLastName = ko.observable('');
         self.TeacherFirstName = ko.observable('');
         self.TeacherMiddleName = ko.observable('');
@@ -441,44 +437,47 @@ function LessonPartViewModel(data) {
     }
 
     var lessonPartMapping = {
-        'TeacherId': {
-            create: function (options) {
-                return ko.observable(options.data).extend({ required: true });
-            }
-        },
         'Auditoriums': {
             create: function (options) {
                 return new AuditoriumViewModel(options.data);
             }
         }
     };
+   
+    ko.mapping.fromJS(data, lessonPartMapping, self);
 
     // Валидация
     self.validationObject = ko.validatedObservable({
         TeacherId: self.TeacherId.extend({
-            // required: true
             required: {
                 params: true,
-                message: " "
+                message: " ",
+                onlyIf: function () {
+                    return viewModel.EditLessonViewModel().isValidationEnabled();
+                }
             }
         }),
         HousingId: self.HousingId.extend({
-            // required: true
             required: {
                 params: true,
-                message: " "
+                message: " ",
+                onlyIf: function () {
+                    return viewModel.EditLessonViewModel().isValidationEnabled();
+                }
             }
         }),
         AuditoriumId: self.AuditoriumId.extend({
-            // required: true
             required: {
                 params: true,
-                message: " "
+                message: " ",
+                onlyIf: function () {
+                    return viewModel.EditLessonViewModel().isValidationEnabled();
+                }
             }
         })
     });
 
-    return ko.mapping.fromJS(data, lessonPartMapping, self);
+    return self;
 }
 
 function LessonTypeViewModel(data) {

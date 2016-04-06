@@ -105,6 +105,16 @@
                 viewModel.editLesson();
             });
 
+            //// Отключаем вертикальную прокрутку
+            //$('#edit-lesson').on('shown.bs.modal', function () {
+            //    $('html').addClass('not-scrollable');
+            //});
+
+            //// Включаем вертикальную прокрутку
+            //$('#edit-lesson').on('hidden.bs.modal', function () {
+            //    $('html').removeClass('not-scrollable');
+            //});
+
             ko.validation.init({
                 decorateInputElement: true,
                 errorElementClass: 'error',
@@ -156,10 +166,11 @@
                             self.EditLessonViewModel().addDiscipline();
                         }
 
+                        // Показ модального окна
                         $('#edit-lesson').modal({
                             backdrop: 'static',
                             keyboard: false
-                        });
+                        });                       
                     },
                     error: function(xhr, status, error) {
                         var err = eval("(" + xhr.responseText + ")");
