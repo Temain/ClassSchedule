@@ -82,7 +82,7 @@ textarea {
 /* Страница редактирования расписания
 -------------------------------------------*/
 .schedule-container {
-    margin-top: 137px;
+    margin-top: 9.7em;
 }
 
 .bordered-right {
@@ -103,11 +103,12 @@ textarea {
     color: white;
     font-weight: bold;
     font-size: 1.1em;
-    height: 25px;
+    line-height: 1.6em;
+    height: 1.6em;
     position: fixed;
     left: 0;
     right: 0;
-    top: 85px;
+    top: 5.55em;
     z-index: 100;
 }
 
@@ -135,7 +136,7 @@ textarea {
 /* Вертикальное выравнивание текста 
 --------------------------------------------*/
 .days-panel > div {
-    line-height: 300px;
+    line-height: 21.6em;
 }
 
 .days-panel > div > span {
@@ -149,12 +150,12 @@ textarea {
 }
 
 .lessons-number-panel > div > span {
-    font-size: 15px;
+    font-size: 1.1em;
 }
 
 .lessons-number-panel > div > p {
     color: #999999;
-    font-size: 10px;
+    font-size: .7em;
 }
 
 .lessons-number-panel > div {
@@ -171,37 +172,48 @@ textarea {
 .day-separator {
     background: #F5F5F5;
     border-bottom: 1px #ccc solid;
-    height: 5px;
-    margin-top: 2px;
+    height: 0.4em;
+}
+
+.cell {
+    height: 3.6em;
+}
+
+.day-cell {
+    height: 21.6em;
 }
 
 .lesson-cell {
     position: relative;
-    height: 50px;
-    padding: 0 5px;
+    padding: 0 0.4em;
 }
 
-.lesson-cell > .lesson-cell-content > .lesson-cell-part {
-    /*height: 15px;*/
-    line-height: 15px;
+.lesson-cell > .lesson-cell-content {
+    font-size: 0.85em;
+    line-height: .9em;
 }
 
-.lesson-cell > .lesson-cell-content > .lesson-cell-part > .lesson-type {
-    font-size: 12px;
+.lesson-cell .lesson-cell-part  {
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
+}
+
+.lesson-cell .lesson-type {
+    /*font-size: 0.85em;*/
     font-weight: bold;
 }
 
-.lesson-cell > .lesson-cell-content > .lesson-cell-part > .discipline {
-    font-size: 12px;
+.lesson-cell .discipline {
+    /*font-size: 0.85em;*/
     font-weight: bold;
 }
 
 .lesson-cell > .lesson-cell-content > .lesson-cell-part > .teacher {
-    font-size: 12px;
+    /*font-size: 0.85em;*/
 }
 
 .lesson-cell > .lesson-cell-content > .lesson-cell-part > .auditorium {
-    font-size: 12px;
+    /*font-size: 0.85em;*/
 }
 
 .red {
@@ -237,17 +249,13 @@ textarea {
 }
 
 .lesson-cell > .actions {
-    /*display: none;*/
-    /*padding-top: 3px;*/
     background: white;
     border: 1px #ccc solid;
     border-top: 1px white solid;
-    /*height: 2em;*/
+    height: 2em;
     position: absolute;
-    /*width: 10em;*/
     bottom: -1.8em;
     right: 5px;
-    border-top: 2px white solid;
     border-left: 1px #2E7F3E solid;
     border-bottom: 1px #2E7F3E solid;
     border-right: 1px #2E7F3E solid;
@@ -260,31 +268,6 @@ textarea {
     margin-left: -1px;
 }
 
-/*.lesson-cell > .actions > a {
-    color: black;
-}
-
-.lesson-cell > .actions > a:hover {
-    color: #337ab7;
-}
-
-.lesson-cell > .actions > a:first-child > i {
-    padding-left: 0.5em;
-    padding-right: 0.25em;
-}
-
-.lesson-cell > .actions > a:last-child > i {
-    padding-left: 0.25em;   
-}
-
-.lesson-cell > .actions > a > i {
-    font-size: 1.3em;
-    margin-top: 0.1em;
-    padding-left: 0.25em;
-    padding-right: 0.25em;
-    padding-bottom: 0.3em;
-}*/
-
 /* Меню ячейки
 ---------------------------------------------------*/
 .lesson-cell:hover {
@@ -293,17 +276,13 @@ textarea {
 
 .lesson-cell > .actions > ul {
     margin: 0;
-    padding: 0 8px;
+    padding: 0 0.5em;
 }
 
 .lesson-cell > .actions > ul > li {
     display: inline;
     font-size: 1.3em;
-    /*margin-top: .1em;*/
-    padding-left: .25em;
-    padding-right: .25em;
-    padding-bottom: .3em;
-    /*padding: 0 3px;*/
+    padding: .1em .25em .25em .25em;
 }
 
 .lesson-cell > .actions > ul > li:first-child {
@@ -379,7 +358,7 @@ textarea {
 /* Главная панель 
 --------------------------------------------------*/
 .navbar {
-    height: 85px;
+    height: 6.1em;
   /*min-height: 80px;*/
   /*border-radius: 0;*/
 }
@@ -398,7 +377,7 @@ textarea {
 }
 
 .fa-32px {
-    font-size: 32px;
+    font-size: 2.4em;
 }
 
 /*.mojo-logo {
@@ -441,10 +420,10 @@ textarea {
 }    
 
 .navbar-divider {
-    height: 50px;
-    margin: 0 9px;
+    height: 3.6em;
+    margin: 0 0.5em;
     border-left: 1px solid #999999;
-    margin-top: 15px;
+    margin-top: 1em;
 }
 
 .dropdown-menu {

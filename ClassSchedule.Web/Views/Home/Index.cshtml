@@ -37,7 +37,7 @@
     <div class="days-panel" style="width: 3%; float: left">
         @for (int i = 0; i < 6; i++)
         {
-            <div class="bordered-rb text-center" style="height: 300px;">
+            <div class="bordered-rb day-cell text-center">
                 <span>@ScheduleHelpers.DayOfWeek(i) <br><small>@Model.FirstDayOfWeek.AddDays(i).ToString("dd.MM")</small></span>
             </div>
             <div class="day-separator"></div>
@@ -49,7 +49,7 @@
         {
             for (int j = 0; j < numberOfLessons; j++)
             {
-                <div class="bordered-rb text-center" style="height: 50px;">
+                <div class="bordered-rb cell text-center">
                     <span>@(j + 1)</span> <br>
                     <p>@ScheduleHelpers.TimeOfLesson(i, j)</p>
                 </div>
@@ -66,7 +66,7 @@
             {
                 for (int classNumber = 1; classNumber < 7; classNumber++)
                 {
-                    <div class="bordered-rb lesson-cell noselect" data-group="@group.GroupId" data-day="@dayNumber" data-class-number="@classNumber"
+                    <div class="bordered-rb cell lesson-cell noselect" data-group="@group.GroupId" data-day="@dayNumber" data-class-number="@classNumber"
                          data-class-date="@Model.FirstDayOfWeek.AddDays(dayNumber - 1).ToString("dd.MM.yyyy")">
 
                         <div class="flash" style="display: none"><span></span></div>

@@ -16,3 +16,28 @@
         </div>
     }
 </div>
+
+@*<div class="row lesson-cell-content">
+    @foreach (LessonViewModel discipline in Model)
+    {
+        var isLection = discipline.LessonTypeId == (int)LessonTypes.Lection;
+        <div class="col-md-12 lesson-cell-part">
+            <div class="col-md-7 no-paddings">
+                <span class="discipline@(isLection ? " red" : "")" data-discipline="@discipline.DisciplineId">@discipline.DisciplineName</span><span class="lesson-type">@(isLection ? "(лекция)" : "")</span>
+            </div>
+            <div class="col-md-3 no-paddings">
+                @foreach (var lessonPart in discipline.LessonParts)
+                {
+
+                    <span class="teacher" data-teacher="@lessonPart.TeacherId">@ScheduleHelpers.PersonShortName(lessonPart.TeacherLastName, lessonPart.TeacherFirstName, lessonPart.TeacherMiddleName)</span><br>
+                }
+            </div>
+            <div class="col-md-2 no-paddings">
+                @foreach (var lessonPart in discipline.LessonParts)
+                {
+                    <span class="auditorium" data-auditorium="@lessonPart.AuditoriumId">@lessonPart.AuditoriumName</span><br>
+                }
+            </div>
+        </div>
+    }
+</div>*@

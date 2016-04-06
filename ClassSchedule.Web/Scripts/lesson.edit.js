@@ -64,7 +64,7 @@
             dataType: "html",
             success: function (result) {
                 if (result) {
-                    $(viewModel.SelectedLessonCell()).html(result);
+                    $(viewModel.SelectedLessonCell()).find('.lesson-cell-content').replaceWith(result);
                 }
 
                 $("#edit-lesson").modal('hide');
