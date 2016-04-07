@@ -126,7 +126,12 @@ textarea {
 }
 
 .group-panel > div {
-    height: 25px;
+    height: 1.7em;
+}
+
+.group-panel .students {
+    font-weight: normal;
+    margin-left: 0.8em;
 }
 
 .days-panel {

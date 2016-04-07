@@ -46,6 +46,11 @@ namespace ClassSchedule.Domain.Models
         public Guid? ParentGuid { get; set; }
 
         /// <summary>
+        /// Количество студентов в группе
+        /// </summary>
+        public int? NumberOfStudents { get; set; }
+
+        /// <summary>
         /// Отметка об удалении записи
         /// </summary>
         public bool? IsDeleted { get; set; }

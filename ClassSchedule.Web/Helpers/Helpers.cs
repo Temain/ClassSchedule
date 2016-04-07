@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Security;
+using ClassSchedule.Web.Models.Schedule;
 
 namespace ClassSchedule.Web.Helpers
 {    
@@ -65,6 +66,24 @@ namespace ClassSchedule.Web.Helpers
             int delta = System.DayOfWeek.Monday - yearStartDate.DayOfWeek;
             DateTime firstMonday = yearStartDate.AddDays(delta);
             return firstMonday.AddDays((weekNumber * 7) + dayNumber - 1);
+        }
+
+        /// <summary>
+        /// Возвращает преподавателей и аудиторию занятия
+        /// </summary>
+        public static MvcHtmlString TeachersWithAuditorium(IEnumerable<LessonPartViewModel> lessonParts)
+        {
+            var teachers = new List<string>();
+            foreach (var lessonPart in lessonParts)
+            {
+                var teacher = @"<span class='teacher' data-teacher='" + lessonPart.TeacherId + "'>" + ScheduleHelpers.PersonShortName(lessonPart.TeacherLastName, lessonPart.TeacherFirstName, lessonPart.TeacherMiddleName) + "</span>"
+                    + "<span class='auditorium' data-auditorium='" + lessonPart.AuditoriumId + "'>" +"(" + lessonPart.AuditoriumName + ")</span>";
+                teachers.Add(teacher);
+            }
+
+            var result = String.Join(",", teachers);
+
+            return MvcHtmlString.Create(result);
         }
 
         /// <summary>

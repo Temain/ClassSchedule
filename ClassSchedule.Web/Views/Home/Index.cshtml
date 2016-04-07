@@ -29,7 +29,7 @@
         @foreach (var group in Model.GroupLessons)
         {
             <div class="bordered-rb text-center" data-group-id="@group.GroupId" style="width: @widthOfGroupColumn%; float: left">
-                @group.GroupName
+                <span>@group.GroupName</span> <span class="students"><i class="fa fa-male"></i> @group.NumberOfStudents</span>
             </div>
         }
     </div>

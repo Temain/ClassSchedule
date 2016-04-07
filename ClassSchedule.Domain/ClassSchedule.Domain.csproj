@@ -148,6 +148,10 @@
     <Compile Include="Migrations\201604041802237_AddOrderFieldToLessonTypeTable.Designer.cs">
       <DependentUpon>201604041802237_AddOrderFieldToLessonTypeTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604070641062_AddNumberOfStudentsFieldToGroupTable.cs" />
+    <Compile Include="Migrations\201604070641062_AddNumberOfStudentsFieldToGroupTable.Designer.cs">
+      <DependentUpon>201604070641062_AddNumberOfStudentsFieldToGroupTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AcademicPlan.cs" />
     <Compile Include="Models\Auditorium.cs" />
@@ -251,6 +255,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604041802237_AddOrderFieldToLessonTypeTable.resx">
       <DependentUpon>201604041802237_AddOrderFieldToLessonTypeTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604070641062_AddNumberOfStudentsFieldToGroupTable.resx">
+      <DependentUpon>201604070641062_AddNumberOfStudentsFieldToGroupTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

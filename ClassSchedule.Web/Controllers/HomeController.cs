@@ -43,6 +43,7 @@ namespace ClassSchedule.Web.Controllers
                 {
                     GroupId = x.GroupId,
                     GroupName = x.DivisionName,
+                    NumberOfStudents = x.NumberOfStudents,
                     Lessons = x.Lessons
                         .Where(g => g.WeekNumber == UserProfile.WeekNumber && g.DeletedAt == null)
                         .GroupBy(g => new { g.DayNumber, g.ClassNumber, 
