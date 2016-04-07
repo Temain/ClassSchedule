@@ -79,11 +79,11 @@
                         <div class="flash" style="display: none"><span></span></div>
 
                         @{
-                    var day = dayNumber;
-                    var number = classNumber;
-                    var lesson = group.Lessons.Where(x => x.DayNumber == day && x.ClassNumber == number);
+                            var day = dayNumber;
+                            var number = classNumber;
+                            var lesson = group.Lessons.Where(x => x.DayNumber == day && x.ClassNumber == number);
 
-                    @Html.Partial("_LessonCell", lesson)
+                            @Html.Partial("_LessonCell", lesson)
                             @Html.Partial("_LessonActions")
                         }
                     </div>
@@ -96,6 +96,7 @@
 </div>
 
 @Html.Partial("_EditLesson")
+@Html.Partial("_ActionModal")
 
 @section Scripts {
     @Scripts.Render("~/bundles/underscore")
@@ -212,97 +213,156 @@
 
                 var selectedCell = self.SelectedLessonCell();
                 self.CopiedLessonCell(selectedCell);
-                var flash = $(selectedCell).find('.flash');
-                flash.find('span').text('К');
-                flash.find('span').removeClass('fa fa-check');
-                flash.addClass('bcg-warning');
-                flash.show(350);
+
+                self.cellMark.copy();
             };
 
             self.pasteLesson = function () {
-                var targetLessonCell = self.SelectedLessonCell();
-                var sourceLessonCell = self.CopiedLessonCell();
+                var modalContent = "Вы действительно хотите вставить скопированное занятие?";
+                self.actionModal.content(modalContent);
+                self.actionModal.setWarningStyle();
 
-                var weekNumber = $('.week-panel').attr('data-week');
+                // Показ модального подтверждения
+                $('#action-modal').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                }).one('click', '#modal-confirm', function () {
 
-                var targetGroupId = $(targetLessonCell).attr('data-group');
-                var targetDayNumber = $(targetLessonCell).attr('data-day');
-                var targetClassNumber = $(targetLessonCell).attr('data-class-number');
-                // var targetClassDate = $(targetLessonCell).attr('data-class-date');
+                    var targetLessonCell = self.SelectedLessonCell();
+                    var sourceLessonCell = self.CopiedLessonCell();
 
-                var sourceGroupId = $(sourceLessonCell).attr('data-group');
-                var sourceDayNumber = $(sourceLessonCell).attr('data-day');
-                var sourceClassNumber = $(sourceLessonCell).attr('data-class-number');
+                    var weekNumber = $('.week-panel').attr('data-week');
 
-                var postData = {
-                    weekNumber: weekNumber,
-                    targetGroupId: targetGroupId, targetDayNumber: targetDayNumber, targetClassNumber: targetClassNumber,
-                    sourceGroupId: sourceGroupId, sourceDayNumber: sourceDayNumber, sourceClassNumber: sourceClassNumber
-                }
+                    var targetGroupId = $(targetLessonCell).attr('data-group');
+                    var targetDayNumber = $(targetLessonCell).attr('data-day');
+                    var targetClassNumber = $(targetLessonCell).attr('data-class-number');
+                    // var targetClassDate = $(targetLessonCell).attr('data-class-date');
 
-                $.ajax({
-                    type: "POST",
-                    url: "/Home/CopyLesson",
-                    contentType: "application/json; charset=utf-8",
-                    data: JSON.stringify(postData),
-                    dataType: "html",
-                    success: function (result) {
-                        if (result) {
-                            $(targetLessonCell).find('.lesson-cell-content').replaceWith(result);
-                        }
+                    var sourceGroupId = $(sourceLessonCell).attr('data-group');
+                    var sourceDayNumber = $(sourceLessonCell).attr('data-day');
+                    var sourceClassNumber = $(sourceLessonCell).attr('data-class-number');
 
-                        // ko.applyBindings(viewModel, targetLessonCell);
-
-                        var flash = $(targetLessonCell).find(".flash");
-                        flash.addClass("bcg-success");
-                        flash.find("span").addClass("fa fa-check");
-                        flash.show(500);
-                    },
-                    error: function (xhr, ajaxOptions, thrownError) {
-                        alert(xhr.status);
-                        alert(thrownError);
+                    var postData = {
+                        weekNumber: weekNumber,
+                        targetGroupId: targetGroupId, targetDayNumber: targetDayNumber, targetClassNumber: targetClassNumber,
+                        sourceGroupId: sourceGroupId, sourceDayNumber: sourceDayNumber, sourceClassNumber: sourceClassNumber
                     }
-                });
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/Home/CopyLesson",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(postData),
+                        dataType: "html",
+                        success: function (result) {
+                            if (result) {
+                                $(targetLessonCell).find('.lesson-cell-content').replaceWith(result);
+                            }
+
+                            self.cellMark.check();
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            alert(xhr.status);
+                            alert(thrownError);
+                        }
+                    });
+
+                    $('#action-modal').modal('hide');
+                });               
             };
 
             self.removeLesson = function () {
-                var selectedCell = self.SelectedLessonCell();
+                var modalContent = "Вы действительно хотите удалить занятие?";
+                self.actionModal.content(modalContent);
+                self.actionModal.setDangerStyle();
 
-                var weekNumber = $('.week-panel').attr('data-week');
-                var groupId = $(selectedCell).attr('data-group');
-                var dayNumber = $(selectedCell).attr('data-day');
-                var classNumber = $(selectedCell).attr('data-class-number');
+                // Показ модального подтверждения
+                $('#action-modal').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                }).one('click', '#modal-confirm', function () {
+                    var selectedCell = self.SelectedLessonCell();
 
-                var postData = {
-                    weekNumber: weekNumber, groupId: groupId,
-                    dayNumber: dayNumber, classNumber: classNumber
-                }
+                    var weekNumber = $('.week-panel').attr('data-week');
+                    var groupId = $(selectedCell).attr('data-group');
+                    var dayNumber = $(selectedCell).attr('data-day');
+                    var classNumber = $(selectedCell).attr('data-class-number');
 
-                $.ajax({
-                    type: "POST",
-                    url: "/Home/RemoveLesson",
-                    contentType: "application/json; charset=utf-8",
-                    data: JSON.stringify(postData),
-                    dataType: "html",
-                    success: function (result) {
-                        //if (result) {
-                        //    $(selectedCell).html(result);
-                        //}
-
-                        $(selectedCell).find(".lesson-cell-part").html('');
-
-                        var flash = $(selectedCell).find(".flash");
-                        flash.addClass("bcg-success");
-                        flash.find("span").addClass("fa fa-check");
-                        flash.show(500);
-                    },
-                    error: function (xhr, ajaxOptions, thrownError) {
-                        alert(xhr.status);
-                        alert(thrownError);
+                    var postData = {
+                        weekNumber: weekNumber, groupId: groupId,
+                        dayNumber: dayNumber, classNumber: classNumber
                     }
-                });
 
+                    $.ajax({
+                        type: "POST",
+                        url: "/Home/RemoveLesson",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(postData),
+                        dataType: "html",
+                        success: function (result) { 
+                            $(selectedCell).find(".lesson-cell-part").html('');
+                            self.cellMark.check();
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            alert(xhr.status);
+                            alert(thrownError);
+                        }
+                    });
+                });
             };
+
+            self.cellMark = {
+                check: function () {
+                    var flash = $(self.SelectedLessonCell()).find(".flash");
+                    flash.find('span').text('');
+                    flash.removeClass('bcg-warning');
+                    flash.addClass("bcg-success");
+                    flash.find("span").addClass("fa fa-check");
+                    flash.show(500);
+                },
+                copy: function () {
+                    var flash = $(self.SelectedLessonCell()).find(".flash");
+                    flash.find('span').text('К');
+                    flash.find('span').removeClass('fa fa-check');
+                    flash.addClass('bcg-warning');
+                    flash.show(350);
+                }
+            }
+
+            self.actionModal = {
+                lastStyle: null,
+                clear: function () {
+                    if (this.lastStyle) {
+                        $('#action-modal .custom-modal-header').removeClass(this.lastStyle);
+                        $('#modal-confirm').removeClass('btn-' + this.lastStyle);
+                    }                  
+                },
+
+                setSucessStyle: function () {
+                    this.clear();
+                    $('#action-modal .custom-modal-header').addClass('success');
+                    $('#modal-confirm').addClass('btn-success');
+                    this.lastStyle = 'success';
+                },
+
+                setWarningStyle: function () {
+                    this.clear();
+                    $('#action-modal .custom-modal-header').addClass('warning');
+                    $('#modal-confirm').addClass('btn-warning');
+                    this.lastStyle = 'warning';
+                },
+
+                setDangerStyle: function () {
+                    this.clear();
+                    $('#action-modal .custom-modal-header').addClass('danger');
+                    $('#modal-confirm').addClass('btn-danger');
+                    this.lastStyle = 'danger';
+                },
+
+                content: function(modalContent) {
+                    $('#action-modal .modal-body').html(modalContent);
+                }
+            }
         };
 
         ko.bindingHandlers.tooltip = {

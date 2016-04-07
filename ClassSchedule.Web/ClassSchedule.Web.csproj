@@ -456,6 +456,7 @@
     <Content Include="Views\Home\_LessonCell.cshtml" />
     <Content Include="Scripts\knockout.validation.min.js.map" />
     <Content Include="Views\Home\_LessonActions.cshtml" />
+    <Content Include="Views\Home\_ActionModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

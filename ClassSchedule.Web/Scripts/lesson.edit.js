@@ -69,10 +69,7 @@
 
                 $("#edit-lesson").modal('hide');
 
-                var flash = $(viewModel.SelectedLessonCell()).find(".flash");
-                flash.addClass("bcg-success");
-                flash.find("span").addClass("fa fa-check");
-                flash.show(500);
+                viewModel.cellMark.check();
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert(xhr.status);

@@ -501,8 +501,20 @@ transform: scaleX(-1);
 }
 
 .custom-modal-header {
-    background-color: #2E7F3E;
+    /*background-color: #2E7F3E;*/
     color: white;
+}
+
+.custom-modal-header.success {
+   background-color: #2E7F3E; 
+}
+
+.custom-modal-header.warning {
+   background-color: #eea236; 
+}
+
+.custom-modal-header.danger {
+    background-color: #c9302c;
 }
 
 .custom-modal-header  > .close {
