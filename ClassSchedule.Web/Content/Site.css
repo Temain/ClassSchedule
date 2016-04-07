@@ -132,6 +132,7 @@ textarea {
 .group-panel .students {
     font-weight: normal;
     margin-left: 0.8em;
+    position: absolute;
 }
 
 .days-panel {

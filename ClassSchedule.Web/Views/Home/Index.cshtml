@@ -20,7 +20,8 @@
     @Html.Partial("_Navbar")
 
     <div class="week-panel text-center" data-week="@Model.WeekNumber">
-        @(Model.WeekNumber % 2 == 0 ? "Вторая" : "Первая") [@Model.WeekNumber] неделя (@Model.FirstDayOfWeek.ToString("dd.MM") - @Model.LastDayOfWeek.ToString("dd.MM"))
+        @(Model.WeekNumber%2 == 0 ? "Вторая" : "Первая") [@Model.WeekNumber] неделя (@Model.FirstDayOfWeek.ToString("dd.MM") - @Model.LastDayOfWeek.ToString("dd.MM"))
+        @*<a href="#"><i class="fa fa-pencil"></i> Изменить</a>*@
     </div>
 
     <div class="group-panel">
@@ -29,7 +30,13 @@
         @foreach (var group in Model.GroupLessons)
         {
             <div class="bordered-rb text-center" data-group-id="@group.GroupId" style="width: @widthOfGroupColumn%; float: left">
-                <span>@group.GroupName</span> <span class="students"><i class="fa fa-male"></i> @group.NumberOfStudents</span>
+                <span>@group.GroupName</span>
+                @if (group.NumberOfStudents.HasValue && group.NumberOfStudents.Value != 0)
+                {
+                    <span class="students"><i class="fa fa-male"></i> @group.NumberOfStudents</span>
+                }
+
+                @*<span class="info"><i class="fa fa-info-circle"></i></span>*@
             </div>
         }
     </div>
@@ -72,14 +79,14 @@
                         <div class="flash" style="display: none"><span></span></div>
 
                         @{
-                            var day = dayNumber;
-                            var number = classNumber;
-                            var lesson = group.Lessons.Where(x => x.DayNumber == day && x.ClassNumber == number);
+                    var day = dayNumber;
+                    var number = classNumber;
+                    var lesson = group.Lessons.Where(x => x.DayNumber == day && x.ClassNumber == number);
 
-                            @Html.Partial("_LessonCell", lesson)
+                    @Html.Partial("_LessonCell", lesson)
                             @Html.Partial("_LessonActions")
                         }
-                    </div>                    
+                    </div>
                 }
 
                 <div class="day-separator"></div>
