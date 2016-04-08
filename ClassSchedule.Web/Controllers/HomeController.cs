@@ -230,6 +230,8 @@ namespace ClassSchedule.Web.Controllers
                 lesson.DeletedAt = DateTime.Now;
                 UnitOfWork.Repository<Lesson>().Update(lesson);
                 UnitOfWork.Save();
+
+                Logger.Info("Занятие помечено как удалённое : LessonId=" + lesson.LessonId);
             }
 
             // Создание и обновление занятий
@@ -254,6 +256,8 @@ namespace ClassSchedule.Web.Controllers
 
                         UnitOfWork.Repository<Lesson>().Update(lesson);
                         UnitOfWork.Save();
+
+                        Logger.Info("Обновлено занятие : LessonId=" + lesson.LessonId);
                     }
                     // Создание нового занятия
                     else
@@ -278,6 +282,8 @@ namespace ClassSchedule.Web.Controllers
 
                         UnitOfWork.Repository<Lesson>().Insert(lesson);
                         UnitOfWork.Save();
+
+                        Logger.Info("Создано новое занятие : LessonId=" + lesson.LessonId);
                     }    
                 }
             }
@@ -327,6 +333,8 @@ namespace ClassSchedule.Web.Controllers
 
                 UnitOfWork.Repository<Lesson>().Insert(targetLesson);
                 UnitOfWork.Save();
+
+                Logger.Info("Скопировано занятие : SourceLessonId={0}, TargetLessonId={1}", sourceLesson.LessonId, targetLesson.LessonId);
             }
 
             var lessonCell = GetLessonViewModel(targetGroupId, weekNumber, targetDayNumber, targetClassNumber);
@@ -345,6 +353,8 @@ namespace ClassSchedule.Web.Controllers
                 lesson.DeletedAt = DateTime.Now;
                 UnitOfWork.Repository<Lesson>().Update(lesson);
                 UnitOfWork.Save();
+
+                Logger.Info("Занятие помечено как удалённое : LessonId=" + lesson.LessonId);
             }
 
             return null;

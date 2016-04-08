@@ -202,9 +202,9 @@
                     $(lessonCell).addClass('selected');
                     $(lessonCell).find('.actions').show(150);
 
-                    if (!self.CopiedLessonCell()) {
-                        $('.flash').hide(350);
-                    }
+                    // if (!self.CopiedLessonCell()) {
+                        $('.flash.bcg-success').hide(350);
+                    // }
                 }
             };
 
@@ -218,7 +218,7 @@
             };
 
             self.pasteLesson = function () {
-                var modalContent = "Вы действительно хотите вставить скопированное занятие?";
+                var modalContent = "<p>Вы действительно хотите вставить скопированное занятие?</p>";
                 self.actionModal.content(modalContent);
                 self.actionModal.setWarningStyle();
 
@@ -308,7 +308,10 @@
                             alert(thrownError);
                         }
                     });
+
+                    $('#action-modal').modal('hide');
                 });
+
             };
 
             self.cellMark = {
@@ -324,6 +327,7 @@
                     var flash = $(self.SelectedLessonCell()).find(".flash");
                     flash.find('span').text('К');
                     flash.find('span').removeClass('fa fa-check');
+                    flash.removeClass('bcg-success');
                     flash.addClass('bcg-warning');
                     flash.show(350);
                 }
