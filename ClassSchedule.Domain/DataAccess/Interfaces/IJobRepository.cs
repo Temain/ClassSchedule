@@ -18,6 +18,13 @@ namespace ClassSchedule.Domain.DataAccess.Interfaces
         /// Используется при редактировании занятия (выдача подсказки о занятости преподавателя)
         /// </summary>
         List<TeacherQueryResult> ActualTeachersWithEmployment(EducationYear educationYear, int? chairId,
-            int weekNumber, int dayNumber, int classNumber, int currentGroupId);  
+            int weekNumber, int dayNumber, int classNumber, int currentGroupId);
+
+        /// <summary>
+        /// Окна между занятиями у преподавателей
+        /// </summary>
+        /// <param name="weekNumber">Номер недели</param>
+        /// <param name="maxDiff">Размер окна (количество занятий)</param>
+        List<TeacherDowntimeQueryResult> TeachersDowntime(int weekNumber, int maxDiff);
     }
 }

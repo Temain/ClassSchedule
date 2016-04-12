@@ -22,6 +22,7 @@ namespace ClassSchedule.Web.Models.Schedule
         public string TeacherLastName { get; set; }
         public string TeacherFirstName { get; set; }
         public string TeacherMiddleName { get; set; }
+        public bool TeacherHasDowntime { get; set; }
 
         public int HousingId { get; set; }
         public int AuditoriumId { get; set; }

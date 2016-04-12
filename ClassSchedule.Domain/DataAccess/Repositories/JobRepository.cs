@@ -145,5 +145,50 @@ namespace ClassSchedule.Domain.DataAccess.Repositories
 
             return teachers;
         }
+
+        /// <summary>
+        /// Окна между занятиями у преподавателей
+        /// </summary>
+        /// <param name="weekNumber">Номер недели</param>
+        /// <param name="maxDiff">Размер окна (количество занятий)</param>
+        public List<TeacherDowntimeQueryResult> TeachersDowntime(int weekNumber, int maxDiff = 1)
+        {
+            var parameters = new object[]
+            {
+                new SqlParameter("@weekNumber", weekNumber), 
+                new SqlParameter("@maxDiff", maxDiff),
+            };
+
+            var query = @"
+                WITH WeekLessons AS (
+                  SELECT j.JobId, ls.GroupId, e.PersonId, ls.DayNumber, ls.ClassNumber, 
+                    ROW_NUMBER() OVER(PARTITION BY e.PersonId, ls.DayNumber ORDER BY e.PersonId, ls.DayNumber,ls.ClassNumber) AS Drn,
+                    ROW_NUMBER() OVER(ORDER BY e.PersonId, ls.DayNumber, ls.ClassNumber) AS Crn
+                  FROM Lesson ls
+                  LEFT JOIN Job j ON ls.JobId = j.JobId
+                  LEFT JOIN Employee e ON j.EmployeeId = e.EmployeeId
+                  WHERE e.PersonId IN (
+                    SELECT DISTINCT e2.PersonId
+                    FROM Lesson tls
+                    LEFT JOIN Job j2 ON tls.JobId = j2.JobId
+                    LEFT JOIN Employee e2 ON j2.EmployeeId = e2.EmployeeId
+                    WHERE tls.WeekNumber = @weekNumber
+                      AND tls.DeletedAt IS NULL
+                      AND tls.GroupId IN (233,309,500)
+                  )
+                  --AND ls.JobId = 2716 
+                  AND ls.DeletedAt IS NULL
+                )
+                --SELECT * FROM WeekLessons
+
+                SELECT w.PersonId, w.JobId, w.GroupId, w.DayNumber, w.ClassNumber, /*prev.*,*/ 
+                  w.ClassNumber - prev.ClassNumber - 1 AS ClassDiff
+                FROM WeekLessons w
+                LEFT JOIN WeekLessons prev ON prev.Drn = w.Drn - 1 AND prev.Crn = w.Crn - 1
+                WHERE w.ClassNumber - prev.ClassNumber - 1 >= @maxDiff;";
+            var downtimes = _context.Database.SqlQuery<TeacherDowntimeQueryResult>(query, parameters).ToList();
+
+            return downtimes;
+        }
     }
 }

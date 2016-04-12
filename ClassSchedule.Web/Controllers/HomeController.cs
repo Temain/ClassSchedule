@@ -11,6 +11,7 @@ using ClassSchedule.Web.Helpers;
 using ClassSchedule.Web.Models;
 using ClassSchedule.Web.Models.Schedule;
 using Microsoft.AspNet.Identity;
+using WebGrease.Css.Extensions;
 
 namespace ClassSchedule.Web.Controllers
 {
@@ -78,26 +79,35 @@ namespace ClassSchedule.Web.Controllers
                 })
                 .ToList();
 
+            // Окна между занятиями у преподавателей
+            var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
+            if (jobRepository != null)
+            {
+                var downtimes = jobRepository.TeachersDowntime(UserProfile.WeekNumber, maxDiff: 2);
+                foreach (var downtime in downtimes)
+                {
+                    var groupId = downtime.GroupId;
+                    var dayNumber = downtime.DayNumber;
+                    var classNumber = downtime.ClassNumber;
+                    var jobId = downtime.JobId;
+
+                    groupLessons.Where(g => g.GroupId == groupId)
+                        .SelectMany(g => g.Lessons)
+                        .Where(x => x.DayNumber == dayNumber && x.ClassNumber == classNumber)
+                        .SelectMany(x => x.LessonParts)
+                        .Where(p => p.TeacherId == jobId)
+                        .All(c => { c.TeacherHasDowntime = true; return true; });
+                }
+            }
+
             viewModel.GroupLessons = groupLessons;
             viewModel.WeekNumber = UserProfile.WeekNumber;
-
-
-            //for (int day = 1; day < 7; day++)
-            //{
-            //    for (int number = 1; number < 7; number++)
-            //    {
-            //        for (int group = 0; group < groupLessons.Count; group++)
-            //        {
-            //            groupLessons[group].Lessons
-            //        }       
-            //    }
-            //}
 
             // Вычисление первой и последней даты редактируемой недели 
             DateTime yearStartDate = UserProfile.EducationYear.DateStart;
             int delta = DayOfWeek.Monday - yearStartDate.DayOfWeek;
             DateTime firstMonday = yearStartDate.AddDays(delta);
-            viewModel.FirstDayOfWeek = firstMonday.AddDays(UserProfile.WeekNumber*7);
+            viewModel.FirstDayOfWeek = firstMonday.AddDays(UserProfile.WeekNumber * 7);
             viewModel.LastDayOfWeek = viewModel.FirstDayOfWeek.AddDays(6);
 
             return View(viewModel);

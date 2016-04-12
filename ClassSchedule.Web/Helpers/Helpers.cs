@@ -71,12 +71,14 @@ namespace ClassSchedule.Web.Helpers
         /// <summary>
         /// Возвращает преподавателей и аудиторию занятия
         /// </summary>
+        [Obsolete]
         public static MvcHtmlString TeachersWithAuditorium(IEnumerable<LessonPartViewModel> lessonParts)
         {
             var teachers = new List<string>();
             foreach (var lessonPart in lessonParts)
             {
-                var teacher = @"<span class='teacher' data-teacher='" + lessonPart.TeacherId + "'>" + ScheduleHelpers.PersonShortName(lessonPart.TeacherLastName, lessonPart.TeacherFirstName, lessonPart.TeacherMiddleName) + "</span>"
+                var hasDowntime = lessonPart.TeacherHasDowntime ? "red" : "";
+                var teacher = @"<span class='teacher " + hasDowntime + "' data-teacher='" + lessonPart.TeacherId + "'>" + ScheduleHelpers.PersonShortName(lessonPart.TeacherLastName, lessonPart.TeacherFirstName, lessonPart.TeacherMiddleName) + "</span>"
                     + "<span class='auditorium' data-auditorium='" + lessonPart.AuditoriumId + "'>" +"(" + lessonPart.AuditoriumName + ")</span>";
                 teachers.Add(teacher);
             }

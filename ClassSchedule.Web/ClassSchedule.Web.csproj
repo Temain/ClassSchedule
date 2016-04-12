@@ -236,6 +236,7 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\TeacherController.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -251,6 +252,7 @@
     <Compile Include="Models\Schedule\LessonTypeViewModel.cs" />
     <Compile Include="Models\Schedule\ScheduleViewModel.cs" />
     <Compile Include="Models\Schedule\LessonViewModel.cs" />
+    <Compile Include="Models\Schedule\TeacherLesson.cs" />
     <Compile Include="Models\Schedule\TeacherViewModel.cs" />
     <Compile Include="Models\SelectFlowViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -458,10 +460,10 @@
     <Content Include="Scripts\knockout.validation.min.js.map" />
     <Content Include="Views\Home\_LessonActions.cshtml" />
     <Content Include="Views\Home\_ActionModal.cshtml" />
+    <Content Include="Views\Teacher\_TeacherDailySchedule.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Dictionary\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

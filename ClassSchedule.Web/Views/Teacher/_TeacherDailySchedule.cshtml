@@ -1,0 +1,29 @@
+﻿@using ClassSchedule.Web.Models.Schedule
+@model List<TeacherLesson>
+
+<div class="teacher-daily-schedule">
+    <table class="table table-condensed">
+        <tbody>
+            @for (int i = 1; i < 7; i++)
+            {
+                var lesson = Model.FirstOrDefault(x => x.ClassNumber == i);
+
+                <tr>
+                    <td class="class-number">@i</td>
+                    @if (lesson != null)
+                    {
+                        <td class="discipline">@(lesson.Discipline + (lesson.IsLection ? " (лекция)":""))</td>
+                        <td class="auditorium">@lesson.Auditorium</td>
+                        <td class="group">@lesson.Group</td>
+                    }
+                    else
+                    {
+                        <td class="discipline"></td>
+                        <td class="auditorium"></td>
+                        <td class="group"></td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

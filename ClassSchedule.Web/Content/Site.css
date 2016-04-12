@@ -214,6 +214,15 @@ textarea {
     font-weight: bold;
 }
 
+.lesson-cell a.teacher {
+    /*border-bottom: 1px black solid;
+    border-left: 1px black solid;
+    border-right: 1px black solid;*/
+    cursor: pointer;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
 .lesson-cell > .lesson-cell-content > .lesson-cell-part > .teacher {
     /*font-size: 0.85em;*/
 }
@@ -694,3 +703,42 @@ html { overflow-y: auto !important; }
 .footer {
     padding-bottom: 140px;
 }
+
+/* Дневное расписание преподавателя
+------------------------------------------*/
+.popover {
+    border-radius: 0;
+    max-width: 32em;
+}
+
+.teacher-daily-schedule {
+    font-size: 0.8em;
+}
+
+.teacher-daily-schedule > table {
+    margin-bottom: 0;
+}
+
+.teacher-daily-schedule > table > tbody > tr:first-child > td {
+    border-top: none !important; 
+}
+
+.teacher-daily-schedule .class-number {
+    border-right: 1px #ccc solid;
+    font-weight: bold;
+    /*padding: 0.6em;*/
+    /*padding-left: 0.8em;
+    padding-right: 0.8em;*/
+}
+
+.teacher-daily-schedule .discipline {
+    border-right: 1px #ccc solid;
+}
+
+.teacher-daily-schedule .auditorium {
+    border-right: 1px #ccc solid;
+}
+
+/*.teacher-daily-schedule .group {
+    display: inline-block;
+}*/

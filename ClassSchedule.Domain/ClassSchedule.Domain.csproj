@@ -175,6 +175,7 @@
     <Compile Include="Models\QueryResults\AuditoriumQueryResult.cs" />
     <Compile Include="Models\QueryResults\HousingQueryResult.cs" />
     <Compile Include="Models\QueryResults\KeyValueDictionary.cs" />
+    <Compile Include="Models\QueryResults\TeacherDowntimeQueryResult.cs" />
     <Compile Include="Models\QueryResults\TeacherQueryResult.cs" />
     <Compile Include="Models\SemesterSchedule.cs" />
     <Compile Include="Models\CourseSchedule.cs" />

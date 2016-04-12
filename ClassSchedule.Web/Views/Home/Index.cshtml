@@ -127,6 +127,34 @@
             //    $('html').removeClass('not-scrollable');
             //});
 
+            // Показ расписания преподавателя на день
+            $('a.teacher').click(function (event) {
+                event.preventDefault();
+
+                var element = $(this);
+                var dayNumber = $(this).closest('.lesson-cell').attr('data-day');
+                var teacherId = $(this).attr('data-teacher');
+                $.get('/Teacher/Schedule?teacherId=' + teacherId + '&dayNumber=' + dayNumber, function (result) {
+                    element.unbind('click').popover({
+                        html: true,
+                        container: 'body',
+                        title: 'Расписание преподавателя',
+                        content: result
+                    }).popover('show');
+                });
+            });
+
+            // Скрытие поповеров при клике вне него
+            $('body').on('click', function (e) {
+                $('[data-toggle="popover"]').each(function () {
+                    //the 'is' for buttons that trigger popups
+                    //the 'has' for icons within a button that triggers a popup
+                    if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                        $(this).popover('hide');
+                    }
+                });
+            });
+
             ko.validation.init({
                 decorateInputElement: true,
                 errorElementClass: 'error',

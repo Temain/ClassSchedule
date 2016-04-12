@@ -5,42 +5,35 @@
 <div class="lesson-cell-content">
     @foreach (LessonViewModel discipline in Model)
     {
+        var lessonParts = discipline.LessonParts.ToList();
         var isLection = discipline.LessonTypeId == (int)LessonTypes.Lection;
         <div class="lesson-cell-part">
             <span class="discipline@(isLection ? " red" : "")" data-discipline="@discipline.DisciplineId">@discipline.DisciplineName</span><span class="lesson-type">@(isLection ? "(лекция)" : "")</span> -
 
-            @ScheduleHelpers.TeachersWithAuditorium(discipline.LessonParts)
+            @*@ScheduleHelpers.TeachersWithAuditorium(discipline.LessonParts)*@
 
-            @*@foreach (var lessonPart in discipline.LessonParts)
+            @for (int i = 0; i < discipline.LessonParts.Count(); i++)
+            {
+                var teacherShortName = ScheduleHelpers.PersonShortName(lessonParts[i].TeacherLastName, lessonParts[i].TeacherFirstName, lessonParts[i].TeacherMiddleName);
+                var teacherHasDowntime = lessonParts[i].TeacherHasDowntime;
+                if (!teacherHasDowntime)
                 {
-                    <span class="teacher" data-teacher="@lessonPart.TeacherId">@ScheduleHelpers.PersonShortName(lessonPart.TeacherLastName, lessonPart.TeacherFirstName, lessonPart.TeacherMiddleName)</span>
-                        <span class="auditorium" data-auditorium="@lessonPart.AuditoriumId">(@lessonPart.AuditoriumName),</span>
-                }*@
+                    <span class="teacher" data-teacher="@lessonParts[i].TeacherId">
+                        @teacherShortName
+                    </span>
+                }
+                else
+                {
+                    <a class="teacher" data-toggle="popover" data-teacher="@lessonParts[i].TeacherId">
+                        <i class="fa fa-clock-o" aria-hidden="true"></i>
+                        @teacherShortName
+                    </a>
+                }
+
+                <span class="auditorium" data-auditorium="@lessonParts[i].AuditoriumId">
+                    (@lessonParts[i].AuditoriumName)@(i != lessonParts.Count - 1 ? "," : "")
+                </span>
+            }
         </div>
     }
 </div>
-
-@*<div class="row lesson-cell-content">
-        @foreach (LessonViewModel discipline in Model)
-        {
-            var isLection = discipline.LessonTypeId == (int)LessonTypes.Lection;
-            <div class="col-md-12 lesson-cell-part">
-                <div class="col-md-7 no-paddings">
-                    <span class="discipline@(isLection ? " red" : "")" data-discipline="@discipline.DisciplineId">@discipline.DisciplineName</span><span class="lesson-type">@(isLection ? "(лекция)" : "")</span>
-                </div>
-                <div class="col-md-3 no-paddings">
-                    @foreach (var lessonPart in discipline.LessonParts)
-                    {
-
-                        <span class="teacher" data-teacher="@lessonPart.TeacherId">@ScheduleHelpers.PersonShortName(lessonPart.TeacherLastName, lessonPart.TeacherFirstName, lessonPart.TeacherMiddleName)</span><br>
-                    }
-                </div>
-                <div class="col-md-2 no-paddings">
-                    @foreach (var lessonPart in discipline.LessonParts)
-                    {
-                        <span class="auditorium" data-auditorium="@lessonPart.AuditoriumId">@lessonPart.AuditoriumName</span><br>
-                    }
-                </div>
-            </div>
-        }
-    </div>*@
