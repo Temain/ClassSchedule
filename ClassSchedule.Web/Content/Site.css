@@ -223,6 +223,10 @@ textarea {
     padding-right: 2px;
 }
 
+.lesson-cell a.teacher > i {
+    font-size: 1.08em;
+}
+
 .lesson-cell > .lesson-cell-content > .lesson-cell-part > .teacher {
     /*font-size: 0.85em;*/
 }

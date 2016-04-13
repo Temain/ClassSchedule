@@ -128,21 +128,21 @@
             //});
 
             // Показ расписания преподавателя на день
-            $('a.teacher').click(function (event) {
-                event.preventDefault();
+            //$('a.teacher').click(function (event) {
+            //    var element = $(this);
+            //    var dayNumber = $(this).closest('.lesson-cell').attr('data-day');
+            //    var teacherId = $(this).attr('data-teacher');
+            //    $.get('/Teacher/Schedule?teacherId=' + teacherId + '&dayNumber=' + dayNumber, function (result) {
+            //        element.unbind('click').popover({
+            //            html: true,
+            //            container: 'body',
+            //            title: 'Расписание преподавателя',
+            //            content: result
+            //        }).popover('show');
+            //    });
 
-                var element = $(this);
-                var dayNumber = $(this).closest('.lesson-cell').attr('data-day');
-                var teacherId = $(this).attr('data-teacher');
-                $.get('/Teacher/Schedule?teacherId=' + teacherId + '&dayNumber=' + dayNumber, function (result) {
-                    element.unbind('click').popover({
-                        html: true,
-                        container: 'body',
-                        title: 'Расписание преподавателя',
-                        content: result
-                    }).popover('show');
-                });
-            });
+            //    event.preventDefault();
+            //});
 
             // Скрытие поповеров при клике вне него
             $('body').on('click', function (e) {
@@ -152,6 +152,29 @@
                     if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
                         $(this).popover('hide');
                     }
+                });
+            });
+
+            $('a.teacher').one('click', function (event) {               
+                var element = $(this);
+
+                element.popover(
+                {
+                    html: true,
+                    container: 'body',
+                    title: 'Расписание преподавателя',
+                    trigger: 'manual'
+                }); //.popover('show'); 
+
+                var dayNumber = element.closest('.lesson-cell').attr('data-day');
+                var teacherId = element.attr('data-teacher');
+                $.get('/Teacher/Schedule?teacherId=' + teacherId + '&dayNumber=' + dayNumber, function (result) {
+                    element.attr('data-content', result);
+                    element.popover('show');
+                });
+
+                element.on('click', function() {
+                    $(this).popover('toggle');
                 });
             });
 

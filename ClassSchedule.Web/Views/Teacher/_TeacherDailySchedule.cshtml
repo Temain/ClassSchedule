@@ -1,12 +1,12 @@
 ﻿@using ClassSchedule.Web.Models.Schedule
-@model List<TeacherLesson>
+@model List<ClassSchedule.Web.Models.Teacher.TeacherLesson>
 
 <div class="teacher-daily-schedule">
     <table class="table table-condensed">
         <tbody>
-            @for (int i = 1; i < 7; i++)
+        @*@for (int i = 1; i < 7; i++)
             {
-                var lesson = Model.FirstOrDefault(x => x.ClassNumber == i);
+                var lesson = Model.SingleOrDefault(x => x.ClassNumber == i);
 
                 <tr>
                     <td class="class-number">@i</td>
@@ -23,6 +23,56 @@
                         <td class="group"></td>
                     }
                 </tr>
+            }*@
+
+
+            @{
+                var classNumberViewed = false;
+                var disciplineViewed = false;
+                for (int classNumber = 1; classNumber <= 6; classNumber++)
+                {
+                    var lesson = Model.SingleOrDefault(x => x.ClassNumber == classNumber);
+
+                    if (lesson != null)
+                    {
+                        foreach (var discipline in lesson.Disciplines)
+                        {
+                            foreach (var auditorium in discipline.Auditoriums)
+                            {
+                                <tr>
+                                    @if (!classNumberViewed)
+                                    {
+                                        <td rowspan="@(lesson.Disciplines.SelectMany(d => d.Auditoriums).Count())" class="class-number">@classNumber</td>
+                                        classNumberViewed = true;
+                                    }
+
+                                    @if (!disciplineViewed)
+                                    {
+                                        <td class="discipline" rowspan="@(discipline.Auditoriums.Count())">@discipline.DisciplineName</td>
+                                        disciplineViewed = true;
+                                    }
+
+                                    <td class="auditorium">@auditorium.AuditoriumNumber</td>
+                                    <td class="groups">@(String.Join(",", auditorium.Groups))</td>
+                                </tr>
+                            }
+
+                            disciplineViewed = false;
+                        }
+
+                        classNumberViewed = false;
+                    }
+                    else
+                    {
+                        <tr>
+                            <td class="class-number">@classNumber</td>
+                            <td class="discipline"></td>
+                            <td class="auditorium"></td>
+                            <td class="groups"></td>
+                        </tr>
+                    }
+                   
+                }
             }
         </tbody>
     </table>

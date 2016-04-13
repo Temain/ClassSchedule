@@ -185,6 +185,14 @@ namespace ClassSchedule.Domain.DataAccess.Repositories
                   w.ClassNumber - prev.ClassNumber - 1 AS ClassDiff
                 FROM WeekLessons w
                 LEFT JOIN WeekLessons prev ON prev.Drn = w.Drn - 1 AND prev.Crn = w.Crn - 1
+                WHERE w.ClassNumber - prev.ClassNumber - 1 >= @maxDiff
+
+                UNION
+
+                SELECT prev.PersonId, prev.JobId, prev.GroupId, prev.DayNumber, prev.ClassNumber, /*prev.*,*/ 
+                  w.ClassNumber - prev.ClassNumber - 1 AS ClassDiff
+                FROM WeekLessons w
+                LEFT JOIN WeekLessons prev ON prev.Drn = w.Drn - 1 AND prev.Crn = w.Crn - 1
                 WHERE w.ClassNumber - prev.ClassNumber - 1 >= @maxDiff;";
             var downtimes = _context.Database.SqlQuery<TeacherDowntimeQueryResult>(query, parameters).ToList();
 
