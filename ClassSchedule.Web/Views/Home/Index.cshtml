@@ -155,7 +155,8 @@
                 });
             });
 
-            $('a.teacher').one('click', function (event) {               
+            // $('a.teacher')
+            $('body').on('click', 'a.teacher', function (event) {               
                 var element = $(this);
 
                 element.popover(
@@ -173,11 +174,14 @@
                     element.popover('show');
                 });
 
-                element.on('click', function() {
-                    $(this).popover('toggle');
-                });
+                //element.on('click', function() {
+                //    $(this).popover('toggle');
+                //});
+
+                event.preventDefault();
             });
 
+            // Валидация модального окна редактирования
             ko.validation.init({
                 decorateInputElement: true,
                 errorElementClass: 'error',

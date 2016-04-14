@@ -8,7 +8,7 @@
         var lessonParts = discipline.LessonParts.ToList();
         var isLection = discipline.LessonTypeId == (int)LessonTypes.Lection;
         <div class="lesson-cell-part">
-            <span class="discipline@(isLection ? " red" : "")" data-discipline="@discipline.DisciplineId">@discipline.DisciplineName</span><span class="lesson-type">@(isLection ? "(лекция)" : "")</span> -
+            <span class="discipline@(isLection ? " red" : "")" data-discipline="@discipline.DisciplineId">@discipline.DisciplineName</span><span class="lesson-type">@(isLection ? " (лекция)" : "")</span> -
 
             @*@ScheduleHelpers.TeachersWithAuditorium(discipline.LessonParts)*@
 

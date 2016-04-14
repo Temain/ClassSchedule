@@ -150,13 +150,15 @@ namespace ClassSchedule.Domain.DataAccess.Repositories
         /// Окна между занятиями у преподавателей
         /// </summary>
         /// <param name="weekNumber">Номер недели</param>
+        /// <param name="teacherId">Идентификатор преподавателя (JobId)</param>
         /// <param name="maxDiff">Размер окна (количество занятий)</param>
-        public List<TeacherDowntimeQueryResult> TeachersDowntime(int weekNumber, int maxDiff = 1)
+        public List<TeacherDowntimeQueryResult> TeachersDowntime(int weekNumber, int? teacherId = 0, int maxDiff = 1)
         {
             var parameters = new object[]
             {
                 new SqlParameter("@weekNumber", weekNumber), 
-                new SqlParameter("@maxDiff", maxDiff),
+                new SqlParameter("@teacherId", teacherId ?? 0),
+                new SqlParameter("@maxDiff", maxDiff)
             };
 
             var query = @"
@@ -176,24 +178,23 @@ namespace ClassSchedule.Domain.DataAccess.Repositories
                       AND tls.DeletedAt IS NULL
                       AND tls.GroupId IN (233,309,500)
                   )
-                  --AND ls.JobId = 2716 
+                  AND ls.JobId = CASE WHEN @teacherId <> 0 THEN @teacherId ELSE ls.JobId END
                   AND ls.DeletedAt IS NULL
                 )
-                --SELECT * FROM WeekLessons
-
-                SELECT w.PersonId, w.JobId, w.GroupId, w.DayNumber, w.ClassNumber, /*prev.*,*/ 
-                  w.ClassNumber - prev.ClassNumber - 1 AS ClassDiff
-                FROM WeekLessons w
-                LEFT JOIN WeekLessons prev ON prev.Drn = w.Drn - 1 AND prev.Crn = w.Crn - 1
-                WHERE w.ClassNumber - prev.ClassNumber - 1 >= @maxDiff
-
-                UNION
-
-                SELECT prev.PersonId, prev.JobId, prev.GroupId, prev.DayNumber, prev.ClassNumber, /*prev.*,*/ 
-                  w.ClassNumber - prev.ClassNumber - 1 AS ClassDiff
-                FROM WeekLessons w
-                LEFT JOIN WeekLessons prev ON prev.Drn = w.Drn - 1 AND prev.Crn = w.Crn - 1
-                WHERE w.ClassNumber - prev.ClassNumber - 1 >= @maxDiff;";
+                SELECT 
+                  w2.PersonId, w2.JobId, w2.GroupId, 
+                  w2.DayNumber, w2.ClassNumber, t0.ClassDiff 
+                FROM WeekLessons w2
+                LEFT JOIN (
+                  SELECT w.PersonId, w.JobId, w.GroupId, w.DayNumber, w.ClassNumber, /*prev.*,*/ 
+                    w.ClassNumber - prev.ClassNumber - 1 AS ClassDiff
+                  FROM WeekLessons w
+                  LEFT JOIN WeekLessons prev ON prev.PersonId = w.PersonId AND prev.Drn = w.Drn - 1 AND prev.Crn = w.Crn - 1
+                  WHERE w.ClassNumber - prev.ClassNumber - 1 >= @maxDiff
+                ) AS t0 ON w2.PersonId = t0.PersonId AND w2.DayNumber = t0.DayNumber 
+                  AND (w2.ClassNumber = t0.ClassNumber OR w2.ClassNumber = t0.ClassNumber - t0.ClassDiff - 1)
+                WHERE t0.PersonId IS NOT NULL
+                ORDER BY w2.PersonId, w2.DayNumber, w2.ClassNumber;";
             var downtimes = _context.Database.SqlQuery<TeacherDowntimeQueryResult>(query, parameters).ToList();
 
             return downtimes;

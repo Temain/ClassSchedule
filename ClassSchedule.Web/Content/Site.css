@@ -351,6 +351,10 @@ textarea {
     border-color: transparent #EAB14E transparent transparent;
 }
 
+.bcg-danger {
+    border-color: transparent #c9302c transparent transparent;
+}
+
 .combined-class {
     background: white;
     width: 300%;
@@ -743,6 +747,19 @@ html { overflow-y: auto !important; }
     border-right: 1px #ccc solid;
 }
 
-/*.teacher-daily-schedule .group {
-    display: inline-block;
-}*/
+.teacher-daily-schedule .groups {
+    position: relative;
+}
+
+.teacher-daily-schedule .downtime-mark {
+    font-size: 0.5em;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    color: white;
+    font-weight: bold;
+    border-style: solid;
+    border-width: 0 2.6em 2.2em 0;
+}

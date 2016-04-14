@@ -23,6 +23,9 @@ namespace ClassSchedule.Web.Controllers
         {
         }
 
+        /// <summary>
+        /// Показ расписания на неделю
+        /// </summary>
         public ActionResult Index()
         {
             var viewModel = new ScheduleViewModel();
@@ -438,6 +441,30 @@ namespace ClassSchedule.Web.Controllers
                         })
                 })
                 .ToList();
+
+            // Проверка на окна у преподавателей
+            var lessonTeacherIds = lessons
+                .SelectMany(x => x.LessonParts)
+                .Select(p => p.TeacherId)
+                .Distinct();
+
+            var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
+            if (jobRepository != null)
+            {
+                foreach (var teacherId in lessonTeacherIds)
+                {
+                    var teacherDowntime = jobRepository.TeachersDowntime(UserProfile.WeekNumber, teacherId, maxDiff: 2)
+                        .Where(x => x.DayNumber == dayNumber && x.ClassNumber == classNumber)
+                        .Distinct();
+
+                    if (teacherDowntime.Any())
+                    {
+                        lessons.SelectMany(x => x.LessonParts)
+                           .Where(p => p.TeacherId == teacherId)
+                           .All(c => { c.TeacherHasDowntime = true; return true; });   
+                    }
+                }
+            }           
 
             return lessons;
         }
