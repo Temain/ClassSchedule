@@ -63,14 +63,16 @@
             data: JSON.stringify({ viewModel: postData }),
             dataType: "html",
             success: function (result) {
-                if (result) {
+                if (result) {                   
                     $(viewModel.SelectedLessonCell()).find('.lesson-cell-content').replaceWith(result);
+
+                    // Обновление зависимых ячеек должно происходить после замены контента ячейки
+                    viewModel.refreshLesson();
                 }
 
                 $("#edit-lesson").modal('hide');
 
-                viewModel.cellMark.check();
-                viewModel.refreshLesson();
+                viewModel.cellMark.check();            
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert(xhr.status);

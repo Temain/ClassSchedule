@@ -339,11 +339,12 @@
                         contentType: "application/json; charset=utf-8",
                         data: JSON.stringify(postData),
                         dataType: "html",
-                        success: function (result) { 
+                        success: function (result) {
+                            // Обновление зависимых ячеек должно происходить раньше отчистки
+                            self.refreshLesson();
+
                             $(selectedCell).find(".lesson-cell-part").html('');
                             self.cellMark.check();
-
-                            // self.refreshLesson();
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
                             alert(xhr.status);
@@ -362,9 +363,12 @@
                 var groupId = $(selectedCell).attr('data-group');
                 var dayNumber = $(selectedCell).attr('data-day');
                 var classNumber = $(selectedCell).attr('data-class-number');
+                var teacherIds = $(selectedCell).find('.teacher').map(function() {
+                    return $(this).attr('data-teacher');
+                }).get();;
 
                 var postData = {
-                    groupId: groupId,
+                    groupId: groupId, teacherIds: teacherIds,
                     dayNumber: dayNumber, classNumber: classNumber
                 }
 

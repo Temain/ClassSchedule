@@ -377,28 +377,26 @@ namespace ClassSchedule.Web.Controllers
         }
 
         /// <summary>
-        /// Возвращает данные для обновления ячейки занятия в сетке расписания
-        /// и занятий с теми же преподавателями
+        /// Возвращает данные для обновления занятий преподавателей
+        /// Например, для того чтобы подсветилась подсказка об окнах в расписании преподавателей
         /// </summary>
         [HttpPost]
-        public ActionResult RefreshLesson(int groupId, int dayNumber, int classNumber)
+        public ActionResult RefreshLesson(int groupId, int dayNumber, int classNumber, int[] teacherIds)
         {
-            if (!Request.IsAjaxRequest()) return null;
+            if (!Request.IsAjaxRequest() || teacherIds == null) return null;
 
             var editableGroups = GetEditableGroups()
                 .Select(x => x.GroupId);
 
-            var selectedLessons = UnitOfWork.Repository<Lesson>()
-                .GetQ(x => x.GroupId == groupId && x.WeekNumber == UserProfile.WeekNumber
-                    && x.DayNumber == dayNumber && x.ClassNumber == classNumber
-                    && x.DeletedAt == null);
+            var teachersPersonIds = UnitOfWork.Repository<Job>()
+                .GetQ(t => teacherIds.Contains(t.JobId))
+                .Select(x => x.Employee.PersonId);
 
-            var changedLessons = selectedLessons
-                .SelectMany(x => x.Job.Lessons)
-                .Where(x => editableGroups.Contains(x.GroupId) && x.WeekNumber == UserProfile.WeekNumber
-                    && x.DayNumber == dayNumber && x.ClassNumber != classNumber
-                    && x.DeletedAt == null)
-                .ToList();
+            var changedLessons = UnitOfWork.Repository<Lesson>()
+               .GetQ(x => teachersPersonIds.Contains(x.Job.Employee.PersonId) && editableGroups.Contains(x.GroupId)
+                   && x.WeekNumber == UserProfile.WeekNumber && x.DayNumber == dayNumber 
+                   && x.ClassNumber != classNumber && x.DeletedAt == null)
+               .ToList();
 
             var lessonCellsForRefresh = new List<RefreshCellViewModel>();
             foreach (var lesson in changedLessons)
