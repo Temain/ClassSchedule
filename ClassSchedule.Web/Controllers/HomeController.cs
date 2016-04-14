@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.SessionState;
+using System.Web.UI;
 using ClassSchedule.Domain.DataAccess.Interfaces;
 using ClassSchedule.Domain.DataAccess.Repositories;
 using ClassSchedule.Domain.Models;
@@ -29,19 +32,7 @@ namespace ClassSchedule.Web.Controllers
         public ActionResult Index()
         {
             var viewModel = new ScheduleViewModel();
-            var groups = UnitOfWork.Repository<Group>()
-                .GetQ(g => g.IsDeleted != true, orderBy: o => o.OrderBy(n => n.DivisionName));
-
-            if (UserProfile.GroupId != null)
-            {
-                groups = groups.Where(g => g.GroupId == UserProfile.GroupId);                
-            }
-            else if (UserProfile.CourseId != null)
-            {
-                groups = groups.Where(g => g.CourseId == UserProfile.CourseId);
-                viewModel.FacultyName = UserProfile.Course.Faculty.DivisionName;
-            }
-
+            var groups = GetEditableGroups();
             var groupLessons = groups
                 .Select(x => new GroupLessonsViewModel
                 {
@@ -116,6 +107,10 @@ namespace ClassSchedule.Web.Controllers
             return View(viewModel);
         }
 
+        /// <summary>
+        /// Редактирование занятия
+        /// </summary>
+        // TODO: Убрать из параметров weekNumber, он есть в профиле пользователя 
         [HttpGet]
         public ActionResult EditLesson(int groupId, int weekNumber, int dayNumber, int classNumber)
         {
@@ -129,7 +124,7 @@ namespace ClassSchedule.Web.Controllers
                 ClassNumber = classNumber
             };
 
-            var lessons = GetLessonViewModel(groupId, weekNumber, dayNumber, classNumber);
+            var lessons = GetLessonViewModel(groupId, weekNumber, dayNumber, classNumber, checkDowntimes: false);
 
             // Типы занятий
             viewModel.LessonTypes = UnitOfWork.Repository<LessonType>()
@@ -306,6 +301,10 @@ namespace ClassSchedule.Web.Controllers
             return PartialView("_LessonCell", lessonCell);
         }
 
+        /// <summary>
+        /// Копирование занятия
+        /// </summary>
+        // TODO: Убрать из параметров weekNumber, он есть в профиле пользователя 
         [HttpPost]
         public ActionResult CopyLesson(int weekNumber, int sourceGroupId, int sourceDayNumber, int sourceClassNumber,
             int targetGroupId, int targetDayNumber, int targetClassNumber)
@@ -354,6 +353,10 @@ namespace ClassSchedule.Web.Controllers
             return PartialView("_LessonCell", lessonCell);
         }
 
+        /// <summary>
+        /// Удаление занятия
+        /// </summary>
+        // TODO: Убрать из параметров weekNumber, он есть в профиле пользователя 
         [HttpPost]
         public ActionResult RemoveLesson(int groupId, int weekNumber, int dayNumber, int classNumber)
         {
@@ -373,6 +376,54 @@ namespace ClassSchedule.Web.Controllers
             return null;
         }
 
+        /// <summary>
+        /// Возвращает данные для обновления ячейки занятия в сетке расписания
+        /// и занятий с теми же преподавателями
+        /// </summary>
+        [HttpPost]
+        public ActionResult RefreshLesson(int groupId, int dayNumber, int classNumber)
+        {
+            if (!Request.IsAjaxRequest()) return null;
+
+            var editableGroups = GetEditableGroups()
+                .Select(x => x.GroupId);
+
+            var selectedLessons = UnitOfWork.Repository<Lesson>()
+                .GetQ(x => x.GroupId == groupId && x.WeekNumber == UserProfile.WeekNumber
+                    && x.DayNumber == dayNumber && x.ClassNumber == classNumber
+                    && x.DeletedAt == null);
+
+            var changedLessons = selectedLessons
+                .SelectMany(x => x.Job.Lessons)
+                .Where(x => editableGroups.Contains(x.GroupId) && x.WeekNumber == UserProfile.WeekNumber
+                    && x.DayNumber == dayNumber && x.ClassNumber != classNumber
+                    && x.DeletedAt == null)
+                .ToList();
+
+            var lessonCellsForRefresh = new List<RefreshCellViewModel>();
+            foreach (var lesson in changedLessons)
+            {
+                var targetGroupId = lesson.GroupId;
+                var targetClassNumber = lesson.ClassNumber;
+                var lessonViewModel = GetLessonViewModel(targetGroupId, UserProfile.WeekNumber, dayNumber, targetClassNumber);
+
+                var lessonCellContent = RenderPartialToString(this, "_LessonCell", lessonViewModel, ViewData, TempData); 
+                var lessonCellForRefresh = new RefreshCellViewModel
+                {
+                    DayNumber = dayNumber,
+                    ClassNumber = targetClassNumber,
+                    GroupId = targetGroupId,
+                    Content = lessonCellContent
+                };
+                lessonCellsForRefresh.Add(lessonCellForRefresh);
+            }
+
+            return Json(lessonCellsForRefresh);
+        }
+
+        /// <summary>
+        /// Выбор потока / курса / группы
+        /// </summary>
         [HttpGet]
         public ActionResult SelectFlow()
         {
@@ -405,7 +456,28 @@ namespace ClassSchedule.Web.Controllers
 
         #region Вспомогательные методы
 
-        public List<LessonViewModel> GetLessonViewModel(int groupId, int weekNumber, int dayNumber, int classNumber)
+        /// <summary>
+        /// Возвращает список групп, для которых редактируется расписание
+        /// </summary>
+        public IQueryable<Group> GetEditableGroups()
+        {
+            var groups = UnitOfWork.Repository<Group>()
+                .GetQ(g => g.IsDeleted != true, orderBy: o => o.OrderBy(n => n.DivisionName));
+
+            if (UserProfile.GroupId != null)
+            {
+                groups = groups.Where(g => g.GroupId == UserProfile.GroupId);
+            }
+            else if (UserProfile.CourseId != null)
+            {
+                groups = groups.Where(g => g.CourseId == UserProfile.CourseId);             
+            }
+
+            return groups;
+        } 
+
+        // TODO: Убрать из параметров weekNumber, он есть в профиле пользователя
+        public List<LessonViewModel> GetLessonViewModel(int groupId, int weekNumber, int dayNumber, int classNumber, bool checkDowntimes = true)
         {
             var lessons = UnitOfWork.Repository<Lesson>()
                 .GetQ(x => x.GroupId == groupId && x.WeekNumber == weekNumber
@@ -443,30 +515,56 @@ namespace ClassSchedule.Web.Controllers
                 .ToList();
 
             // Проверка на окна у преподавателей
-            var lessonTeacherIds = lessons
-                .SelectMany(x => x.LessonParts)
-                .Select(p => p.TeacherId)
-                .Distinct();
-
-            var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
-            if (jobRepository != null)
+            if (checkDowntimes)
             {
-                foreach (var teacherId in lessonTeacherIds)
-                {
-                    var teacherDowntime = jobRepository.TeachersDowntime(UserProfile.WeekNumber, teacherId, maxDiff: 2)
-                        .Where(x => x.DayNumber == dayNumber && x.ClassNumber == classNumber)
-                        .Distinct();
+                var lessonTeacherIds = lessons
+                    .SelectMany(x => x.LessonParts)
+                    .Select(p => p.TeacherId)
+                    .Distinct();
 
-                    if (teacherDowntime.Any())
+                var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
+                if (jobRepository != null)
+                {
+                    foreach (var teacherId in lessonTeacherIds)
                     {
-                        lessons.SelectMany(x => x.LessonParts)
-                           .Where(p => p.TeacherId == teacherId)
-                           .All(c => { c.TeacherHasDowntime = true; return true; });   
+                        var teacherDowntime = jobRepository.TeachersDowntime(UserProfile.WeekNumber, teacherId, maxDiff: 2)
+                            .Where(x => x.DayNumber == dayNumber && x.ClassNumber == classNumber)
+                            .Distinct();
+
+                        if (teacherDowntime.Any())
+                        {
+                            lessons.SelectMany(x => x.LessonParts)
+                               .Where(p => p.TeacherId == teacherId)
+                               .All(c => { c.TeacherHasDowntime = true; return true; });
+                        }
                     }
-                }
-            }           
+                }   
+            }        
 
             return lessons;
+        }
+
+        public static string RenderPartialToString(Controller controller, string partialViewName, object model, ViewDataDictionary viewData, TempDataDictionary tempData)
+        {
+            ViewEngineResult result = ViewEngines.Engines.FindPartialView(controller.ControllerContext, partialViewName);
+
+            if (result.View != null)
+            {
+                controller.ViewData.Model = model;
+                StringBuilder sb = new StringBuilder();
+                using (StringWriter sw = new StringWriter(sb))
+                {
+                    using (HtmlTextWriter output = new HtmlTextWriter(sw))
+                    {
+                        ViewContext viewContext = new ViewContext(controller.ControllerContext, result.View, viewData, tempData, output);
+                        result.View.Render(viewContext, output);
+                    }
+                }
+
+                return sb.ToString();
+            }
+
+            return String.Empty;
         }
 
         #endregion

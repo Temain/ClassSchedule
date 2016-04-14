@@ -250,6 +250,7 @@
     <Compile Include="Models\Schedule\LessonPartViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Schedule\LessonTypeViewModel.cs" />
+    <Compile Include="Models\Schedule\RefreshCellViewModel.cs" />
     <Compile Include="Models\Schedule\ScheduleViewModel.cs" />
     <Compile Include="Models\Schedule\LessonViewModel.cs" />
     <Compile Include="Models\Teacher\TeacherDiscipline.cs" />

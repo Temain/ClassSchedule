@@ -70,6 +70,7 @@
                 $("#edit-lesson").modal('hide');
 
                 viewModel.cellMark.check();
+                viewModel.refreshLesson();
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert(xhr.status);

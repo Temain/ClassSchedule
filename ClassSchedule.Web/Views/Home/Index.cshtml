@@ -127,23 +127,6 @@
             //    $('html').removeClass('not-scrollable');
             //});
 
-            // Показ расписания преподавателя на день
-            //$('a.teacher').click(function (event) {
-            //    var element = $(this);
-            //    var dayNumber = $(this).closest('.lesson-cell').attr('data-day');
-            //    var teacherId = $(this).attr('data-teacher');
-            //    $.get('/Teacher/Schedule?teacherId=' + teacherId + '&dayNumber=' + dayNumber, function (result) {
-            //        element.unbind('click').popover({
-            //            html: true,
-            //            container: 'body',
-            //            title: 'Расписание преподавателя',
-            //            content: result
-            //        }).popover('show');
-            //    });
-
-            //    event.preventDefault();
-            //});
-
             // Скрытие поповеров при клике вне него
             $('body').on('click', function (e) {
                 $('[data-toggle="popover"]').each(function () {
@@ -155,7 +138,7 @@
                 });
             });
 
-            // $('a.teacher')
+            // Показ расписания преподавателя на день
             $('body').on('click', 'a.teacher', function (event) {               
                 var element = $(this);
 
@@ -315,6 +298,8 @@
                             }
 
                             self.cellMark.check();
+
+                            self.refreshLesson();
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
                             alert(xhr.status);
@@ -357,6 +342,8 @@
                         success: function (result) { 
                             $(selectedCell).find(".lesson-cell-part").html('');
                             self.cellMark.check();
+
+                            // self.refreshLesson();
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
                             alert(xhr.status);
@@ -367,6 +354,44 @@
                     $('#action-modal').modal('hide');
                 });
 
+            };
+
+            self.refreshLesson = function() {
+                var selectedCell = self.SelectedLessonCell();
+
+                var groupId = $(selectedCell).attr('data-group');
+                var dayNumber = $(selectedCell).attr('data-day');
+                var classNumber = $(selectedCell).attr('data-class-number');
+
+                var postData = {
+                    groupId: groupId,
+                    dayNumber: dayNumber, classNumber: classNumber
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/RefreshLesson",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(postData),
+                    dataType: "html",
+                    success: function (data) {
+                        var refreshedCells = JSON.parse(data);
+
+                        $.each(refreshedCells, function(index, cell) {
+                            var cellSelector = ".lesson-cell[data-group='" + cell.GroupId + "'][data-day='"
+                                + cell.DayNumber + "'][data-class-number='" + cell.ClassNumber + "']";
+
+                            $(cellSelector).find('.lesson-cell-content').replaceWith(cell.Content);
+                        });
+
+                        //$(selectedCell).find(".lesson-cell-part").html('');
+                        //self.cellMark.check();
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert(xhr.status);
+                        alert(thrownError);
+                    }
+                });
             };
 
             self.cellMark = {
