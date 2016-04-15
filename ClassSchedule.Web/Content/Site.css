@@ -338,8 +338,20 @@ textarea {
     /*border-color: transparent #ffc73b transparent transparent;*/
 }
 
-.lesson-cell > .flash span {
+/*.lesson-cell > .flash span {
     padding-left: 1.5em;
+}*/
+
+.lesson-cell > .flash.check span {
+    padding-left: 1.5em;
+}
+
+.lesson-cell > .flash.copy span {
+    padding-left: 1.7em;
+}
+
+.lesson-cell > .flash.refresh span {
+    padding-left: 1.3em;
 }
 
 .bcg-success {
@@ -353,6 +365,10 @@ textarea {
 
 .bcg-danger {
     border-color: transparent #c9302c transparent transparent;
+}
+
+.bcg-info {
+    border-color: transparent #5bc0de transparent transparent;
 }
 
 .combined-class {

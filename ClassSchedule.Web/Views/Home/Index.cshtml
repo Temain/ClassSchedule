@@ -240,14 +240,13 @@
                     $(lessonCell).addClass('selected');
                     $(lessonCell).find('.actions').show(150);
 
-                    // if (!self.CopiedLessonCell()) {
-                        $('.flash.bcg-success').hide(350);
-                    // }
+                    $('.flash.check').hide(350);                  
                 }
             };
 
             self.copyLesson = function () {
-                $('.flash').hide(350);
+                $('.flash.copy').hide(350);
+                $('.flash.copy').removeClass('copy');
 
                 var selectedCell = self.SelectedLessonCell();
                 self.CopiedLessonCell(selectedCell);
@@ -365,7 +364,7 @@
                 var classNumber = $(selectedCell).attr('data-class-number');
                 var teacherIds = $(selectedCell).find('.teacher').map(function() {
                     return $(this).attr('data-teacher');
-                }).get();;
+                }).get();
 
                 var postData = {
                     groupId: groupId, teacherIds: teacherIds,
@@ -385,11 +384,9 @@
                             var cellSelector = ".lesson-cell[data-group='" + cell.GroupId + "'][data-day='"
                                 + cell.DayNumber + "'][data-class-number='" + cell.ClassNumber + "']";
 
-                            $(cellSelector).find('.lesson-cell-content').replaceWith(cell.Content);
-                        });
-
-                        //$(selectedCell).find(".lesson-cell-part").html('');
-                        //self.cellMark.check();
+                            self.cellMark.refresh(cellSelector);
+                            $(cellSelector).find('.lesson-cell-content').replaceWith(cell.Content);                           
+                        });                   
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
                         alert(xhr.status);
@@ -399,21 +396,71 @@
             };
 
             self.cellMark = {
-                check: function () {
-                    var flash = $(self.SelectedLessonCell()).find(".flash");
-                    flash.find('span').text('');
-                    flash.removeClass('bcg-warning');
-                    flash.addClass("bcg-success");
-                    flash.find("span").addClass("fa fa-check");
-                    flash.show(500);
+                getFlash: function (lessonCell) {
+                    var selectedCell = lessonCell || self.SelectedLessonCell();
+                    return $(selectedCell).find(".flash");
                 },
-                copy: function () {
-                    var flash = $(self.SelectedLessonCell()).find(".flash");
-                    flash.find('span').text('К');
-                    flash.find('span').removeClass('fa fa-check');
+                clear: function (lessonCell) {
+                    var flash = this.getFlash(lessonCell);
+                    flash.removeClass('check');
+                    flash.removeClass('copy');
+                    flash.removeClass('refresh');
+
+                    flash.removeClass('bcg-warning');
                     flash.removeClass('bcg-success');
-                    flash.addClass('bcg-warning');
+                    flash.removeClass('bcg-info');
+
+                    var flashContent = flash.find("span");
+                    flashContent.html('');
+                    flashContent.text('');
+                    flashContent.removeClass('fa fa-check');
+                },
+
+                check: function (lessonCell) {
+                    this.clear(lessonCell);
+
+                    var flash = this.getFlash(lessonCell);
+                    flash.addClass("check");
+                    flash.addClass("bcg-success");
+
+                    var flashContent = flash.find("span");
+                    flashContent.addClass("fa fa-check");
+
                     flash.show(350);
+                },
+                copy: function (lessonCell) {
+                    this.clear(lessonCell);
+
+                    var flash = this.getFlash(lessonCell);
+                    flash.addClass("copy");
+                    flash.addClass('bcg-warning');
+
+                    var flashContent = flash.find("span");
+                    flashContent.text('К');
+                   
+                    flash.show(350);
+                },
+                refresh: function (lessonCell) {
+                    var flash = this.getFlash(lessonCell);
+                    var hasCopy = flash.hasClass('copy');
+
+                    this.clear(lessonCell);
+                   
+                    flash.addClass("refresh");
+                    flash.addClass('bcg-info');
+
+                    var flashContent = flash.find("span");
+                    var spin = "<i class='fa fa-refresh fa-spin fa-fw margin-bottom'></i>" +
+                        "<span class='sr-only'>Loading...</span>";
+                    flashContent.html(spin);
+
+                    flash.show(350).delay(1000).hide(350, function() {
+                        if (hasCopy) {
+                            self.cellMark.copy(lessonCell);
+                        }
+                    });
+
+                    return flash;
                 }
             }
 
