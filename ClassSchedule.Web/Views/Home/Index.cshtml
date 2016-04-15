@@ -293,12 +293,11 @@
                         dataType: "html",
                         success: function (result) {
                             if (result) {
+                                self.refreshLesson(sourceLessonCell, targetLessonCell);
                                 $(targetLessonCell).find('.lesson-cell-content').replaceWith(result);
                             }
 
                             self.cellMark.check();
-
-                            self.refreshLesson();
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
                             alert(xhr.status);
@@ -356,16 +355,36 @@
 
             };
 
-            self.refreshLesson = function() {
-                var selectedCell = self.SelectedLessonCell();
+            self.refreshLesson = function(sourceLessonCell, targetLessonCell) {
+                var selectedCell = sourceLessonCell || self.SelectedLessonCell();
 
                 var groupId = $(selectedCell).attr('data-group');
                 var dayNumber = $(selectedCell).attr('data-day');
                 var classNumber = $(selectedCell).attr('data-class-number');
-                var teacherIds = $(selectedCell).find('.teacher').map(function() {
+
+                var teacherIds = $(selectedCell).find('.teacher').map(function () {
                     return $(this).attr('data-teacher');
                 }).get();
+ 
+                // Целевая ячейка используется для обновления после копирования
+                if (targetLessonCell) {
 
+                    // Если в исходной ячейке не пусто, то берем группу, день и номер занятия из целевой ячейки
+                    // Если в исходной ячейке пусто, берем идентификаторы преподавателей из целевой ячейки
+                    if (teacherIds.length) {
+
+                        groupId = $(targetLessonCell).attr('data-group');
+                        dayNumber = $(targetLessonCell).attr('data-day');
+                        classNumber = $(targetLessonCell).attr('data-class-number');
+
+                    } else {
+                       
+                        teacherIds = $(targetLessonCell).find('.teacher').map(function () {
+                            return $(this).attr('data-teacher');
+                        }).get();
+                    }
+                }
+              
                 var postData = {
                     groupId: groupId, teacherIds: teacherIds,
                     dayNumber: dayNumber, classNumber: classNumber

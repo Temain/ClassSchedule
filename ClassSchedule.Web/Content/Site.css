@@ -113,7 +113,11 @@ textarea {
 }
 
 .group-panel {
-    /* box-shadow: 0 5px 5px -5px #333;*/
+    /*box-shadow: 0 5px 5px -5px #333;*/
+    /*-webkit-box-shadow: 0px -5px 37px 7px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px -5px 37px 7px rgba(0,0,0,0.75);
+    box-shadow: 0px -5px 37px 7px rgba(0,0,0,0.75);*/
+
     background: white;
     border-top: 1px #ccc solid;
     font-weight: bold;
@@ -750,6 +754,7 @@ html { overflow-y: auto !important; }
 .teacher-daily-schedule .class-number {
     border-right: 1px #ccc solid;
     font-weight: bold;
+    font-size: 1.2em;
     /*padding: 0.6em;*/
     /*padding-left: 0.8em;
     padding-right: 0.8em;*/

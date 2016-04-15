@@ -63,10 +63,14 @@
             data: JSON.stringify({ viewModel: postData }),
             dataType: "html",
             success: function (result) {
-                if (result) {                   
+                if (result) {
+                    // Обновление происходит до и после из-за того что нужно обновить расписание
+                    // старого преподавателя и нового преподавателя (если преподаватель был изменён)
+                    // Временное решение
+                    viewModel.refreshLesson();
+
                     $(viewModel.SelectedLessonCell()).find('.lesson-cell-content').replaceWith(result);
 
-                    // Обновление зависимых ячеек должно происходить после замены контента ячейки
                     viewModel.refreshLesson();
                 }
 

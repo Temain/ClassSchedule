@@ -41,7 +41,10 @@
 
                                     @if (!disciplineViewed)
                                     {
-                                        <td class="discipline" rowspan="@(discipline.Auditoriums.Count())">@discipline.DisciplineName</td>
+                                        <td class="discipline" rowspan="@(discipline.Auditoriums.Count())">
+                                            <span @(discipline.IsLection ? " style=font-weight:bold;" : "")>@discipline.DisciplineName</span>
+                                            <span>@(discipline.IsLection ? " (лекция)" : "")</span>
+                                        </td>
                                         disciplineViewed = true;
                                     }
 

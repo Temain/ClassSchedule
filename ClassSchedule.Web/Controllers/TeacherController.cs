@@ -45,13 +45,14 @@ namespace ClassSchedule.Web.Controllers
                         {
                             DayNumber = dayNumber,
                             ClassNumber = x.Key.ClassNumber,
-                            Disciplines = x.GroupBy(g => new { g.DisciplineId, g.Discipline.DisciplineName })                            
+                            Disciplines = x.GroupBy(g => new { g.DisciplineId, g.Discipline.DisciplineName, g.LessonTypeId })                            
                                 .Select(
                                     d => 
                                         new TeacherDiscipline
                                         {
                                             DisciplineId = d.Key.DisciplineId,
                                             DisciplineName = d.Key.DisciplineName,
+                                            IsLection = d.Key.LessonTypeId == (int) LessonTypes.Lection,
                                             Auditoriums = d.GroupBy(g => new { g.AuditoriumId, AuditoriumNumber = g.Auditorium.AuditoriumNumber + g.Auditorium.Housing.Abbreviation })
                                                 .Select(
                                                     a => 
