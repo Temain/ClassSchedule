@@ -52,6 +52,11 @@ namespace ClassSchedule.Web
             bundles.Add(new StyleBundle("~/Content/bootstrap-select").Include(
                       "~/Content/bootstrap-select.css"));
 
+            bundles.Add(new StyleBundle("~/Content/login").Include(
+                      "~/Content/bootstrap.css",
+                      "~/Content/font-awesome.css",
+                      "~/Content/login.css"));
+
         }
     }
 }

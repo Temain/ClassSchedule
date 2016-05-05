@@ -1,10 +1,80 @@
 ﻿@model ClassSchedule.Web.Models.LoginViewModel
 @{
+    Layout = null;
     ViewBag.Title = "Выполнить вход";
 }
 
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="~/Content/Images/favicon.ico" type="image/x-icon" media="screen">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/login")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+</head>
+<body>
+    <div class="page-wrap gradient-primary">
+        <div class="container">
+            <h1 class="logo"></h1>
+            <div class="content">
+                <div class="panel">
+                    <h3>
+                        @*Вход <small>Введите имя пользователя и пароль</small>*@
+                        Log in to your account
+                    </h3>
+                    @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        if (ViewData.ModelState[""] != null && ViewData.ModelState[""].Errors.Count > 0)
+                        {
+                            <div class="alert alert-danger" role="alert">@Html.ValidationSummary(true)</div>
+                        }
+
+                        <div class="form-group">
+                            <div class="input-icon glyphicon glyphicon-user"></div>
+                            @Html.TextBoxFor(m => m.UserName, "Логин", new { @class = "form-control input-lg", @placeholder = "Введите имя пользователя", @autofocus = "true", @tabindex = "1" })
+                            @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-icon glyphicon glyphicon-lock"></div>
+                            @Html.PasswordFor(m => m.Password, new {@class = "form-control input-lg", @placeholder = "Введите пароль", @tabindex = "2"})
+                            @Html.ValidationMessageFor(m => m.Password, "", new {@class = "text-danger"})
+                        </div>
+
+                        @*<div class="form-group">
+                                <div class="col-md-offset-3 col-md-9">
+                                    <div class="checkbox">
+                                        @Html.CheckBoxFor(m => m.RememberMe)
+                                        @Html.LabelFor(m => m.RememberMe)
+                                    </div>
+                                </div>
+                            </div>*@
+
+                        <div class="form-group mrgbtm0">
+                            <button type="submit" value="Выполнить вход" class="btn btn-primary btn-lg btn-block" tabindex="3">Войти</button>
+                        </div>
+                    }
+
+                    @*<div class="panel-footer"></div>*@
+                    <a class="panel-footer" href="/signup/login">New to Heroku? &nbsp;<span>Sign Up</span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer><span>© 2016 ФГБОУ ВПО «Кубанский государственный аграрный университет»</span></footer>
+</body>
+</html>
+
+
 @*<h2>@ViewBag.Title.</h2>*@
-<div class="row">
+@*<div class="row">
     <div class="col-md-6 col-md-offset-3">
         <section id="loginForm">
             @using (Html.BeginForm("Login", "Account", new {ReturnUrl = ViewBag.ReturnUrl}, FormMethod.Post, new {@class = "form-horizontal", role = "form"}))
@@ -48,23 +118,11 @@
                         <button type="submit" value="Выполнить вход" class="btn btn-primary btn-lg full-width"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Войти</button>
                     </div>
                 </div>
-                @*<p>
-                    @Html.ActionLink("Регистрация нового пользователя", "Register")
-                </p>*@
-                @* Включите, когда будет включено подтверждение учетной записи для функции сброса пароля
-                    <p>
-                        @Html.ActionLink("Забыли пароль?", "ForgotPassword")
-                    </p>*@
             }
         </section>
     </div>
-    @*<div class="col-md-4">
-        <section id="socialLoginForm">
-            @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
-        </section>
-    </div>*@
-</div>
+</div>*@
 
-@section Scripts {
+@*@section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-}
+}*@

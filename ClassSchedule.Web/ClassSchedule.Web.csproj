@@ -284,6 +284,7 @@
     <Content Include="Content\Images\logo_vert2.png" />
     <Content Include="Content\Images\logo_vert2_240.png" />
     <Content Include="Content\Images\pdf_icon.png" />
+    <Content Include="Content\Login.css" />
     <Content Include="favicon.ico" />
     <Content Include="Fonts\blisspro-bold-webfont.svg" />
     <Content Include="Fonts\blisspro-bolditalic-webfont.svg" />
@@ -464,6 +465,7 @@
     <Content Include="Views\Home\_LessonActions.cshtml" />
     <Content Include="Views\Home\_ActionModal.cshtml" />
     <Content Include="Views\Teacher\_TeacherDailySchedule.cshtml" />
+    <Content Include="Views\Account\LoginOld.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
