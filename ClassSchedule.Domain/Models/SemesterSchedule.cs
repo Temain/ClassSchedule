@@ -63,6 +63,16 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         public int WeeksOfHolidays { get; set; }
 
+        /// <summary>
+        /// Научно-исследовательская работа, недель
+        /// </summary>
+        public int ResearchWorkWeeks { get; set; }
+
+        /// <summary>
+        /// График учебного процесса
+        /// </summary>
+        public string Schedule { get; set; }
+
 
         public int CourseScheduleId { get; set; }
         public virtual CourseSchedule CourseSchedule { get; set; }

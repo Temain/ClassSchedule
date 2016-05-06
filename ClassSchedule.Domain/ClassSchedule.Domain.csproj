@@ -152,6 +152,14 @@
     <Compile Include="Migrations\201604070641062_AddNumberOfStudentsFieldToGroupTable.Designer.cs">
       <DependentUpon>201604070641062_AddNumberOfStudentsFieldToGroupTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605060142056_AddScheduleFieldToSemesterAndCoursePlan.cs" />
+    <Compile Include="Migrations\201605060142056_AddScheduleFieldToSemesterAndCoursePlan.Designer.cs">
+      <DependentUpon>201605060142056_AddScheduleFieldToSemesterAndCoursePlan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605060400118_AddResearchWorkWeeksToSchedule.cs" />
+    <Compile Include="Migrations\201605060400118_AddResearchWorkWeeksToSchedule.Designer.cs">
+      <DependentUpon>201605060400118_AddResearchWorkWeeksToSchedule.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AcademicPlan.cs" />
     <Compile Include="Models\Auditorium.cs" />
@@ -259,6 +267,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604070641062_AddNumberOfStudentsFieldToGroupTable.resx">
       <DependentUpon>201604070641062_AddNumberOfStudentsFieldToGroupTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605060142056_AddScheduleFieldToSemesterAndCoursePlan.resx">
+      <DependentUpon>201605060142056_AddScheduleFieldToSemesterAndCoursePlan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605060400118_AddResearchWorkWeeksToSchedule.resx">
+      <DependentUpon>201605060400118_AddResearchWorkWeeksToSchedule.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

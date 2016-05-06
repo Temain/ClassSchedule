@@ -110,6 +110,17 @@ namespace AcademicPlan.Parser.Models.Plan.Title
             {
                 return Schedule.Count(x => x == (char)ScheduleAbbreviations.Holidays);
             }
-        }     
+        }
+
+        /// <summary>
+        /// Научно-исследовательская работа, недель
+        /// </summary>
+        public int ResearchWorkWeeks
+        {
+            get
+            {
+                return Schedule.Count(x => x == (char)ScheduleAbbreviations.ResearchWork);
+            }
+        }
     }
 }

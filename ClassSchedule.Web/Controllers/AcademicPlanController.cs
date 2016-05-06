@@ -117,23 +117,23 @@ namespace ClassSchedule.Web.Controllers
             string xml = System.IO.File.ReadAllText(fileName);
             var document = xml.ParseXml<Document>();
 
-            var discs = document.Plan.Disciplines
-                .Select(x => new TempDiscipline { DisciplineName = x.DisciplineName, ChairCode = x.ChairCode })
-                .OrderBy(o => o.DisciplineName)
-                .Distinct();
-            foreach (var disc in discs)
-            {
-                var discInDb = UnitOfWork.Repository<TempDiscipline>()
-                    .Get(d => d.DisciplineName == disc.DisciplineName && d.ChairCode == disc.ChairCode)
-                    .SingleOrDefault();
-                if (discInDb == null)
-                {
-                    UnitOfWork.Repository<TempDiscipline>().Insert(disc);
-                    UnitOfWork.Save();
-                }
-            }
+            //var discs = document.Plan.Disciplines
+            //    .Select(x => new TempDiscipline { DisciplineName = x.DisciplineName, ChairCode = x.ChairCode })
+            //    .OrderBy(o => o.DisciplineName)
+            //    .Distinct();
+            //foreach (var disc in discs)
+            //{
+            //    var discInDb = UnitOfWork.Repository<TempDiscipline>()
+            //        .Get(d => d.DisciplineName == disc.DisciplineName && d.ChairCode == disc.ChairCode)
+            //        .SingleOrDefault();
+            //    if (discInDb == null)
+            //    {
+            //        UnitOfWork.Repository<TempDiscipline>().Insert(disc);
+            //        UnitOfWork.Save();
+            //    }
+            //}
 
-            return null;
+            //return null;
 
             var academicPlan = new Domain.Models.AcademicPlan
             {
@@ -166,6 +166,8 @@ namespace ClassSchedule.Web.Controllers
                     WeeksOfHolidays = courseSchedulePlan.WeeksOfHolidays,
                     FirstMaxLoad = courseSchedulePlan.FirstMaxLoad,
                     SecondMaxLoad = courseSchedulePlan.SecondMaxLoad,
+                    Schedule = courseSchedulePlan.Schedule,
+                    ResearchWorkWeeks = courseSchedulePlan.ResearchWorkWeeks,
                     SemesterSchedules = new List<SemesterSchedule>()
                 };
 
@@ -183,6 +185,8 @@ namespace ClassSchedule.Web.Controllers
                         TheoreticalTrainingWeeks = semesterSchedulePlan.TheoreticalTrainingWeeks,
                         WeeksOfHolidays = semesterSchedulePlan.WeeksOfHolidays,
                         NumberOfFirstWeek = semesterSchedulePlan.NumberOfFirstWeek,
+                        Schedule = semesterSchedulePlan.Schedule,
+                        ResearchWorkWeeks = semesterSchedulePlan.ResearchWorkWeeks,
                         DisciplineSemesterPlans = new List<DisciplineSemesterPlan>()
                     };
 
@@ -236,6 +240,39 @@ namespace ClassSchedule.Web.Controllers
             academicPlan.CourseSchedules = courseSchedules;
             
             return academicPlan;
+        }
+
+        [HttpPost]
+        public ActionResult Info(int groupId)
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var academicPlan = UnitOfWork.Repository<Domain.Models.AcademicPlan>()
+                    .GetQ(filter: x => x.ProgramOfEducation.Groups.Any(g => g.GroupId == groupId), includeProperties: "CourseSchedules")
+                    .OrderByDescending(d => d.UploadedAt)
+                    .FirstOrDefault();
+                if (academicPlan != null)
+                {
+                    var courseSchedule = academicPlan.CourseSchedules
+                        .Where(x => x.CourseNumber == UserProfile.EducationYear.YearStart - academicPlan.ProgramOfEducation.YearStart + 1)
+                        .Select(x => new
+                        {
+                            x.TheoreticalTrainingWeeks,
+                            x.ExamSessionWeeks,
+                            x.WeeksOfHolidays,
+                            x.FinalQualifyingWorkWeeks,
+                            x.StudyTrainingWeeks,
+                            x.PracticalTrainingWeeks,
+                            x.StateExamsWeeks,
+                            x.ResearchWorkWeeks
+                        })
+                        .SingleOrDefault();
+
+                    return Json(courseSchedule); 
+                }
+            }
+
+            return null;
         }
     }
 }

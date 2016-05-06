@@ -148,7 +148,7 @@ namespace ClassSchedule.Web.Controllers
                         && x.Groups.Any(g => g.Course.YearStart == yearStart))
                     .Select(x => new
                     {
-                        ProgramOfEducationid = x.ProgramOfEducationId,
+                        ProgramOfEducationId = x.ProgramOfEducationId,
                         EducationProfileId = x.EducationProfileId,
                         EducationLevelId = x.EducationLevelId,
                         EducationProfileName =

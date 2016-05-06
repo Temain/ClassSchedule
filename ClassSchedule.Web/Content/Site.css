@@ -139,6 +139,13 @@ textarea {
     position: absolute;
 }
 
+.group-panel .program {
+    font-weight: normal;
+    margin-left: 0.8em;
+    position: absolute;
+    font-size: 1.1em;    
+}
+
 .days-panel {
     font-weight: bold;
 }
@@ -289,6 +296,11 @@ textarea {
     /* box-shadow: 0 0 40px rgba(0, 0, 0, .1) inset; */
     border: 1px #2E7F3E solid;
     margin-left: -1px;
+    border-color: #2C6738;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px #38BB52;
+    /*box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(121,88,159,0.6);*/
+    box-shadow: inset 0 1px 2px rgba(203,203,210,0.2),0 0 2px #38BB52;
 }
 
 /* Меню ячейки
@@ -783,4 +795,47 @@ html { overflow-y: auto !important; }
     font-weight: bold;
     border-style: solid;
     border-width: 0 2.6em 2.2em 0;
+}
+
+/* Информация о программе обучения
+------------------------------------------*/
+@media screen and (min-width: 768px) {	
+	#info-modal .modal-dialog  {width:1000px;}
+}
+
+.info-modal .content {
+    padding: 5px 20px;
+}
+
+.info-modal dl > dt {
+    font-weight: normal;
+    color: #848484;
+    font-size: 1em;
+    text-align: left;
+    width: 250px;
+    margin-bottom: 5px;
+}
+
+.info-modal dl > dd {
+    font-size: 0.9em;
+}
+
+.info-modal .block {
+    padding-bottom: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #E7E7EC;
+    border-bottom: 1px solid #E7E7EC;
+}
+
+.info-modal .block:first-child {
+    border-top: none;
+}
+
+.info-modal .block:last-child {
+    border-bottom: none;
+}
+
+.info-modal .title {
+    font-size: 1.2em;
+    font-weight: 200;
 }

@@ -1,0 +1,105 @@
+﻿<!-- Modal -->
+<div id="info-modal" class="info-modal modal fade" role="dialog" data-bind="with: $root.ProgramInfo">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content custom-modal-content">
+            <div class="modal-header custom-modal-header warning">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Информация о группе</h4>
+            </div>
+            <div class="modal-body">
+                <div class="content">
+                    <div class="row block">
+                        <div class="col-md-4">
+                            <div class="title">Основная информация</div>
+                        </div>
+                        <div class="col-md-8">
+                            <dl class="dl-horizontal">
+                                <dt>Группа</dt>
+                                <dd>АШ1401</dd>
+                                <dt>Количество студентов в группе</dt>
+                                <dd><span><i class="fa fa-male"></i> 30</span></dd> 
+                                <dt>Направление</dt>
+                                <dd>35.03.05 Агрономия</dd>
+                                <dt>Форма обучения</dt>
+                                <dd>Очная</dd>
+                                <dt>Уровень образования</dt>
+                                <dd>Академический бакалавриат</dd>
+                                
+                            </dl>
+                        </div>
+                    </div>
+                    @*<div class="row block">
+                        <div class="col-md-4">
+                            <div class="title">Направление/специальность</div>
+                        </div>
+                        <div class="col-md-8">
+                            35.04.05 Агрономия
+                        </div>
+                    </div>*@
+                    <div class="row block">
+                        <div class="col-md-12">
+                            <div class="title mrgbtm12">График учебного процесса</div>
+                        </div>
+                        <div class="col-md-8">
+                            <div id="chart" style="width: 600px; height: 300px;"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <dl class="dl-horizontal mrgtop36">
+                                <dt>Теоретическое обучение</dt>
+                                <dd data-bind="text: TheoreticalTrainingWeeks() + ' нед.'"></dd>
+                                <dt>Экзаменационные сессии</dt>
+                                <dd data-bind="text: ExamSessionWeeks() + ' нед.'"></dd>
+                                <dt>Каникулы</dt>
+                                <dd data-bind="text: WeeksOfHolidays() + ' нед.'"></dd>
+                                <dt>Научно-исследовательская работа</dt>
+                                <dd data-bind="text: ResearchWorkWeeks() + ' нед.'"></dd>
+                                <dt>Учебные практики</dt>
+                                <dd data-bind="text: StudyTrainingWeeks() + ' нед.'"></dd>
+                                <dt>Производственные практики</dt>
+                                <dd data-bind="text: PracticalTrainingWeeks() + ' нед.'"></dd>
+                                <dt>Выпускная квалификационная работа</dt>
+                                <dd data-bind="text: FinalQualifyingWorkWeeks() + ' нед.'"></dd>
+                                <dt>Гос. Экзамены и/или защита ВКР</dt>
+                                <dd data-bind="text: StateExamsWeeks() + ' нед.'"></dd>
+                            </dl>
+                        </div>
+                    </div>
+                    @*<div class="row block">
+                        <div class="col-md-4">
+                            <div class="title">График</div>
+                        </div>
+                        <div class="col-md-8">
+                            <dl class="dl-horizontal">
+                                <dt>Теоретическое обучение</dt>
+                                <dd data-bind="text: TheoreticalTrainingWeeks() + ' недель'"></dd>
+                                <dt>Экзаменационные сессии</dt>
+                                <dd data-bind="text: ExamSessionWeeks() + ' недель'"></dd>
+                                <dt>Каникулы</dt>
+                                <dd data-bind="text: WeeksOfHolidays() + ' недель'"></dd>
+                                <dt>Научно-исследовательская работа</dt>
+                                <dd data-bind="text: ResearchWorkWeeks() + ' недель'"></dd>
+                                <dt>Учебные практики</dt>
+                                <dd data-bind="text: StudyTrainingWeeks() + ' недель'"></dd>
+                                <dt>Производственные практики</dt>
+                                <dd data-bind="text: PracticalTrainingWeeks() + ' недель'"></dd>
+                                <dt>Выпускная квалификационная работа</dt>
+                                <dd data-bind="text: FinalQualifyingWorkWeeks() + ' недель'"></dd>
+                                <dt>Гос. Экзамены и/или защита ВКР</dt>
+                                <dd data-bind="text: StateExamsWeeks() + ' недель'"></dd>
+                            </dl>
+                        </div>
+                    </div>*@
+                </div>          
+            </div>
+            @*<div class="custom-modal-footer modal-footer">
+                    <div class="btn-group" role="group" aria-label="...">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Нет</button>
+                        <button type="button" id="modal-confirm" class="btn btn-warning">Да</button>
+                    </div>
+                </div>*@
+        </div>
+
+    </div>
+</div>

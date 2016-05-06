@@ -45,7 +45,13 @@ namespace ClassSchedule.Web
                       "~/Scripts/knockout.validation.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/edit-lesson").Include(
-                       "~/Scripts/lesson.edit.js"));
+                       "~/Scripts/lesson.edit.js",
+                       "~/Scripts/programinfo.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/highcharts").Include(
+                       "~/Scripts/highcharts/highcharts.js",
+                       "~/Scripts/highcharts/highcharts-more.js",
+                       "~/Scripts/highcharts/themes/grid-light.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap-select").Include(
                        "~/Scripts/bootstrap-select.js"));

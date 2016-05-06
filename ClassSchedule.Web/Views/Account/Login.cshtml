@@ -15,6 +15,7 @@
     @Styles.Render("~/Content/login")
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/bootstrap")
 </head>
 <body>
@@ -24,8 +25,7 @@
             <div class="content">
                 <div class="panel">
                     <h3>
-                        @*Вход <small>Введите имя пользователя и пароль</small>*@
-                        Log in to your account
+                        Вход <small>Введите логин и пароль</small>
                     </h3>
                     @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
                     {
@@ -33,19 +33,22 @@
 
                         if (ViewData.ModelState[""] != null && ViewData.ModelState[""].Errors.Count > 0)
                         {
-                            <div class="alert alert-danger" role="alert">@Html.ValidationSummary(true)</div>
+                            <div class="validation-errors alert alert-danger alert-dismissible" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                @Html.ValidationSummary(true)
+                            </div>
                         }
 
                         <div class="form-group">
                             <div class="input-icon glyphicon glyphicon-user"></div>
-                            @Html.TextBoxFor(m => m.UserName, "Логин", new { @class = "form-control input-lg", @placeholder = "Введите имя пользователя", @autofocus = "true", @tabindex = "1" })
-                            @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                            @Html.TextBoxFor(m => m.UserName, "Логин", new { @class = "form-control input-lg", @placeholder = "Введите логин", @autofocus = "true", @tabindex = "1" })
+                            @*@Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })*@
                         </div>
 
                         <div class="form-group">
                             <div class="input-icon glyphicon glyphicon-lock"></div>
-                            @Html.PasswordFor(m => m.Password, new {@class = "form-control input-lg", @placeholder = "Введите пароль", @tabindex = "2"})
-                            @Html.ValidationMessageFor(m => m.Password, "", new {@class = "text-danger"})
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control input-lg", @placeholder = "Введите пароль", @tabindex = "2" })
+                            @*@Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })*@
                         </div>
 
                         @*<div class="form-group">
@@ -63,7 +66,7 @@
                     }
 
                     @*<div class="panel-footer"></div>*@
-                    <a class="panel-footer" href="/signup/login">New to Heroku? &nbsp;<span>Sign Up</span></a>
+                    <a class="panel-footer" href="/signup/login">Хз чё тут написать &nbsp;<span>Бла Бла Бла</span></a>
                 </div>
             </div>
         </div>
@@ -71,58 +74,3 @@
     <footer><span>© 2016 ФГБОУ ВПО «Кубанский государственный аграрный университет»</span></footer>
 </body>
 </html>
-
-
-@*<h2>@ViewBag.Title.</h2>*@
-@*<div class="row">
-    <div class="col-md-6 col-md-offset-3">
-        <section id="loginForm">
-            @using (Html.BeginForm("Login", "Account", new {ReturnUrl = ViewBag.ReturnUrl}, FormMethod.Post, new {@class = "form-horizontal", role = "form"}))
-            {
-                @Html.AntiForgeryToken()
-
-                <div class="page-header">
-                    <h1>Вход <small>Введите логин и пароль</small>
-                    </h1>
-                </div>
-                
-                if (ViewData.ModelState[""] != null && ViewData.ModelState[""].Errors.Count > 0)
-                {
-                    <div class="alert alert-danger" role="alert">@Html.ValidationSummary(true)</div>
-                }
-
-                <div class="form-group">
-                    @Html.LabelFor(m => m.UserName, new {@class = "col-md-3 control-label"})
-                    <div class="col-md-9">
-                        @Html.TextBoxFor(m => m.UserName, "Логин", new {@class = "form-control"})
-                        @Html.ValidationMessageFor(m => m.UserName, "", new {@class = "text-danger"})
-                    </div>
-                </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Password, new {@class = "col-md-3 control-label"})
-                    <div class="col-md-9">
-                        @Html.PasswordFor(m => m.Password, new {@class = "form-control"})
-                        @Html.ValidationMessageFor(m => m.Password, "", new {@class = "text-danger"})
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-offset-3 col-md-9">
-                        <div class="checkbox">
-                            @Html.CheckBoxFor(m => m.RememberMe)
-                            @Html.LabelFor(m => m.RememberMe)
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-offset-3 col-md-4">
-                        <button type="submit" value="Выполнить вход" class="btn btn-primary btn-lg full-width"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Войти</button>
-                    </div>
-                </div>
-            }
-        </section>
-    </div>
-</div>*@
-
-@*@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}*@

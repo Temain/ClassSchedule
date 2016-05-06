@@ -66,6 +66,16 @@ namespace ClassSchedule.Domain.Models
         public int WeeksOfHolidays { get; set; }
 
         /// <summary>
+        /// Научно-исследовательская работа, недель
+        /// </summary>
+        public int ResearchWorkWeeks { get; set; }
+
+        /// <summary>
+        /// График учебного процесса
+        /// </summary>
+        public string Schedule { get; set; }
+
+        /// <summary>
         /// Учебный план
         /// </summary>
         public int AcademicPlanId { get; set; }

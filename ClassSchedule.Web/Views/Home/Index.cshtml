@@ -29,14 +29,14 @@
         <div class="bordered-rb text-center" style="width: 3%; float: left">Пара</div>
         @foreach (var group in Model.GroupLessons)
         {
-            <div class="bordered-rb text-center" data-group-id="@group.GroupId" style="width: @widthOfGroupColumn%; float: left">
+            <div class="group bordered-rb text-center" data-group-id="@group.GroupId" style="width: @widthOfGroupColumn%; float: left">
                 <span>@group.GroupName</span>
-                @if (group.NumberOfStudents.HasValue && group.NumberOfStudents.Value != 0)
+                @*@if (group.NumberOfStudents.HasValue && group.NumberOfStudents.Value != 0)
                 {
                     <span class="students"><i class="fa fa-male"></i> @group.NumberOfStudents</span>
-                }
-
-                @*<span class="info"><i class="fa fa-info-circle"></i></span>*@
+                }*@
+               
+                <a href="#" class="program" data-bind="click: programInfo, tooltip: { title: 'Информация о группе', trigger: 'hover' }"><i class="fa fa-info"></i><span></span></a>
             </div>
         }
     </div>
@@ -97,6 +97,7 @@
 
 @Html.Partial("_EditLesson")
 @Html.Partial("_ActionModal")
+@Html.Partial("_InfoModal")
 
 @section Scripts {
     @Scripts.Render("~/bundles/underscore")
@@ -104,16 +105,17 @@
     @Scripts.Render("~/bundles/typeahead")
     @Scripts.Render("~/bundles/bootstrap-select")
     @Scripts.Render("~/bundles/edit-lesson")
+    @Scripts.Render("~/bundles/highcharts")
 
     <script>
-        $(function () {
+        $(function() {
             /* Показ модального окна редактирования занятия
             ------------------------------------------------------------*/
-            $(".lesson-cell").click(function () {
+            $(".lesson-cell").click(function() {
                 viewModel.selectLesson(this);
             });
 
-            $(".lesson-cell").dblclick(function () {
+            $(".lesson-cell").dblclick(function() {
                 viewModel.editLesson();
             });
 
@@ -128,8 +130,8 @@
             //});
 
             // Скрытие поповеров при клике вне него
-            $('body').on('click', function (e) {
-                $('[data-toggle="popover"]').each(function () {
+            $('body').on('click', function(e) {
+                $('[data-toggle="popover"]').each(function() {
                     //the 'is' for buttons that trigger popups
                     //the 'has' for icons within a button that triggers a popup
                     if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
@@ -139,7 +141,7 @@
             });
 
             // Показ расписания преподавателя на день
-            $('body').on('click', 'a.teacher', function (event) {               
+            $('body').on('click', 'a.teacher', function(event) {
                 var element = $(this);
 
                 element.popover(
@@ -152,7 +154,7 @@
 
                 var dayNumber = element.closest('.lesson-cell').attr('data-day');
                 var teacherId = element.attr('data-teacher');
-                $.get('/Teacher/Schedule?teacherId=' + teacherId + '&dayNumber=' + dayNumber, function (result) {
+                $.get('/Teacher/Schedule?teacherId=' + teacherId + '&dayNumber=' + dayNumber, function(result) {
                     element.attr('data-content', result);
                     element.popover('show');
                 });
@@ -187,8 +189,9 @@
             self.CopiedLessonCell = ko.observable();
 
             self.EditLessonViewModel = ko.observable(new EditLessonViewModel());
+            self.ProgramInfo = ko.observable(new ProgramInfo());
 
-            self.editLesson = function (/*lessonCell*/) {
+            self.editLesson = function( /*lessonCell*/) {
                 var lessonCell = self.SelectedLessonCell();
 
                 var weekNumber = $('.week-panel').attr('data-week');
@@ -208,7 +211,7 @@
                     type: "GET",
                     url: "/Home/EditLesson",
                     data: parameters,
-                    success: function (data) {
+                    success: function(data) {
                         self.EditLessonViewModel(new EditLessonViewModel(data));
 
                         var lessonDisciplines = self.EditLessonViewModel().Lessons();
@@ -222,14 +225,14 @@
                             keyboard: false
                         });
                     },
-                    error: function (xhr, status, error) {
+                    error: function(xhr, status, error) {
                         var err = eval("(" + xhr.responseText + ")");
                         alert(err.Message);
                     }
                 });
             };
 
-            self.selectLesson = function (lessonCell) {
+            self.selectLesson = function(lessonCell) {
                 self.SelectedLessonCell(lessonCell);
 
                 var selectedCell = $('.lesson-cell.selected');
@@ -240,11 +243,11 @@
                     $(lessonCell).addClass('selected');
                     $(lessonCell).find('.actions').show(150);
 
-                    $('.flash.check').hide(350);                  
+                    $('.flash.check').hide(350);
                 }
             };
 
-            self.copyLesson = function () {
+            self.copyLesson = function() {
                 $('.flash.copy').hide(350);
                 $('.flash.copy').removeClass('copy');
 
@@ -254,7 +257,7 @@
                 self.cellMark.copy();
             };
 
-            self.pasteLesson = function () {
+            self.pasteLesson = function() {
                 var modalContent = "<p>Вы действительно хотите вставить скопированное занятие?</p>";
                 self.actionModal.content(modalContent);
                 self.actionModal.setWarningStyle();
@@ -263,7 +266,7 @@
                 $('#action-modal').modal({
                     backdrop: 'static',
                     keyboard: false
-                }).one('click', '#modal-confirm', function () {
+                }).one('click', '#modal-confirm', function() {
 
                     var targetLessonCell = self.SelectedLessonCell();
                     var sourceLessonCell = self.CopiedLessonCell();
@@ -281,8 +284,12 @@
 
                     var postData = {
                         weekNumber: weekNumber,
-                        targetGroupId: targetGroupId, targetDayNumber: targetDayNumber, targetClassNumber: targetClassNumber,
-                        sourceGroupId: sourceGroupId, sourceDayNumber: sourceDayNumber, sourceClassNumber: sourceClassNumber
+                        targetGroupId: targetGroupId,
+                        targetDayNumber: targetDayNumber,
+                        targetClassNumber: targetClassNumber,
+                        sourceGroupId: sourceGroupId,
+                        sourceDayNumber: sourceDayNumber,
+                        sourceClassNumber: sourceClassNumber
                     }
 
                     $.ajax({
@@ -291,7 +298,7 @@
                         contentType: "application/json; charset=utf-8",
                         data: JSON.stringify(postData),
                         dataType: "html",
-                        success: function (result) {
+                        success: function(result) {
                             if (result) {
                                 self.refreshLesson(sourceLessonCell, targetLessonCell);
                                 $(targetLessonCell).find('.lesson-cell-content').replaceWith(result);
@@ -299,17 +306,17 @@
 
                             self.cellMark.check();
                         },
-                        error: function (xhr, ajaxOptions, thrownError) {
+                        error: function(xhr, ajaxOptions, thrownError) {
                             alert(xhr.status);
                             alert(thrownError);
                         }
                     });
 
                     $('#action-modal').modal('hide');
-                });               
+                });
             };
 
-            self.removeLesson = function () {
+            self.removeLesson = function() {
                 var modalContent = "Вы действительно хотите удалить занятие?";
                 self.actionModal.content(modalContent);
                 self.actionModal.setDangerStyle();
@@ -318,7 +325,7 @@
                 $('#action-modal').modal({
                     backdrop: 'static',
                     keyboard: false
-                }).one('click', '#modal-confirm', function () {
+                }).one('click', '#modal-confirm', function() {
                     var selectedCell = self.SelectedLessonCell();
 
                     var weekNumber = $('.week-panel').attr('data-week');
@@ -327,8 +334,10 @@
                     var classNumber = $(selectedCell).attr('data-class-number');
 
                     var postData = {
-                        weekNumber: weekNumber, groupId: groupId,
-                        dayNumber: dayNumber, classNumber: classNumber
+                        weekNumber: weekNumber,
+                        groupId: groupId,
+                        dayNumber: dayNumber,
+                        classNumber: classNumber
                     }
 
                     $.ajax({
@@ -337,14 +346,14 @@
                         contentType: "application/json; charset=utf-8",
                         data: JSON.stringify(postData),
                         dataType: "html",
-                        success: function (result) {
+                        success: function(result) {
                             // Обновление зависимых ячеек должно происходить раньше отчистки
                             self.refreshLesson();
 
                             $(selectedCell).find(".lesson-cell-part").html('');
                             self.cellMark.check();
                         },
-                        error: function (xhr, ajaxOptions, thrownError) {
+                        error: function(xhr, ajaxOptions, thrownError) {
                             alert(xhr.status);
                             alert(thrownError);
                         }
@@ -362,10 +371,10 @@
                 var dayNumber = $(selectedCell).attr('data-day');
                 var classNumber = $(selectedCell).attr('data-class-number');
 
-                var teacherIds = $(selectedCell).find('.teacher').map(function () {
+                var teacherIds = $(selectedCell).find('.teacher').map(function() {
                     return $(this).attr('data-teacher');
                 }).get();
- 
+
                 // Целевая ячейка используется для обновления после копирования
                 if (targetLessonCell) {
 
@@ -378,16 +387,18 @@
                         classNumber = $(targetLessonCell).attr('data-class-number');
 
                     } else {
-                       
-                        teacherIds = $(targetLessonCell).find('.teacher').map(function () {
+
+                        teacherIds = $(targetLessonCell).find('.teacher').map(function() {
                             return $(this).attr('data-teacher');
                         }).get();
                     }
                 }
-              
+
                 var postData = {
-                    groupId: groupId, teacherIds: teacherIds,
-                    dayNumber: dayNumber, classNumber: classNumber
+                    groupId: groupId,
+                    teacherIds: teacherIds,
+                    dayNumber: dayNumber,
+                    classNumber: classNumber
                 }
 
                 $.ajax({
@@ -396,7 +407,7 @@
                     contentType: "application/json; charset=utf-8",
                     data: JSON.stringify(postData),
                     dataType: "html",
-                    success: function (data) {
+                    success: function(data) {
                         var refreshedCells = JSON.parse(data);
 
                         $.each(refreshedCells, function(index, cell) {
@@ -404,10 +415,10 @@
                                 + cell.DayNumber + "'][data-class-number='" + cell.ClassNumber + "']";
 
                             self.cellMark.refresh(cellSelector);
-                            $(cellSelector).find('.lesson-cell-content').replaceWith(cell.Content);                           
-                        });                   
+                            $(cellSelector).find('.lesson-cell-content').replaceWith(cell.Content);
+                        });
                     },
-                    error: function (xhr, ajaxOptions, thrownError) {
+                    error: function(xhr, ajaxOptions, thrownError) {
                         alert(xhr.status);
                         alert(thrownError);
                     }
@@ -415,11 +426,11 @@
             };
 
             self.cellMark = {
-                getFlash: function (lessonCell) {
+                getFlash: function(lessonCell) {
                     var selectedCell = lessonCell || self.SelectedLessonCell();
                     return $(selectedCell).find(".flash");
                 },
-                clear: function (lessonCell) {
+                clear: function(lessonCell) {
                     var flash = this.getFlash(lessonCell);
                     flash.removeClass('check');
                     flash.removeClass('copy');
@@ -435,7 +446,7 @@
                     flashContent.removeClass('fa fa-check');
                 },
 
-                check: function (lessonCell) {
+                check: function(lessonCell) {
                     this.clear(lessonCell);
 
                     var flash = this.getFlash(lessonCell);
@@ -447,7 +458,7 @@
 
                     flash.show(350);
                 },
-                copy: function (lessonCell) {
+                copy: function(lessonCell) {
                     this.clear(lessonCell);
 
                     var flash = this.getFlash(lessonCell);
@@ -456,15 +467,15 @@
 
                     var flashContent = flash.find("span");
                     flashContent.text('К');
-                   
+
                     flash.show(350);
                 },
-                refresh: function (lessonCell) {
+                refresh: function(lessonCell) {
                     var flash = this.getFlash(lessonCell);
                     var hasCopy = flash.hasClass('copy');
 
                     this.clear(lessonCell);
-                   
+
                     flash.addClass("refresh");
                     flash.addClass('bcg-info');
 
@@ -484,43 +495,57 @@
             }
 
             self.actionModal = {
-                lastStyle: null,
-                clear: function () {
-                    if (this.lastStyle) {
-                        $('#action-modal .custom-modal-header').removeClass(this.lastStyle);
-                        $('#modal-confirm').removeClass('btn-' + this.lastStyle);
-                    }                  
-                },
+                    lastStyle: null,
+                    clear: function() {
+                        if (this.lastStyle) {
+                            $('#action-modal .custom-modal-header').removeClass(this.lastStyle);
+                            $('#modal-confirm').removeClass('btn-' + this.lastStyle);
+                        }
+                    },
 
-                setSucessStyle: function () {
-                    this.clear();
-                    $('#action-modal .custom-modal-header').addClass('success');
-                    $('#modal-confirm').addClass('btn-success');
-                    this.lastStyle = 'success';
-                },
+                    setSucessStyle: function() {
+                        this.clear();
+                        $('#action-modal .custom-modal-header').addClass('success');
+                        $('#modal-confirm').addClass('btn-success');
+                        this.lastStyle = 'success';
+                    },
 
-                setWarningStyle: function () {
-                    this.clear();
-                    $('#action-modal .custom-modal-header').addClass('warning');
-                    $('#modal-confirm').addClass('btn-warning');
-                    this.lastStyle = 'warning';
-                },
+                    setWarningStyle: function() {
+                        this.clear();
+                        $('#action-modal .custom-modal-header').addClass('warning');
+                        $('#modal-confirm').addClass('btn-warning');
+                        this.lastStyle = 'warning';
+                    },
 
-                setDangerStyle: function () {
-                    this.clear();
-                    $('#action-modal .custom-modal-header').addClass('danger');
-                    $('#modal-confirm').addClass('btn-danger');
-                    this.lastStyle = 'danger';
-                },
+                    setDangerStyle: function() {
+                        this.clear();
+                        $('#action-modal .custom-modal-header').addClass('danger');
+                        $('#modal-confirm').addClass('btn-danger');
+                        this.lastStyle = 'danger';
+                    },
 
-                content: function(modalContent) {
-                    $('#action-modal .modal-body').html(modalContent);
+                    content: function(modalContent) {
+                        $('#action-modal .modal-body').html(modalContent);
+                    }
+                },
+                self.programInfo = function(data, event) {
+                    var element = $(event.target);
+                    var groupId = element.closest('.group').attr('data-group-id');
+
+                    $.post('/AcademicPlan/Info', { groupId: groupId }, function (data) {
+                        self.ProgramInfo(new ProgramInfo(data));
+                        self.ProgramInfo().highcharts();
+
+                        $('#info-modal').modal({
+                            backdrop: 'static',
+                            keyboard: false
+                        });
+                    });
                 }
-            }
         };
 
         ko.bindingHandlers.tooltip = {
-            init: function (element, valueAccessor) {
+            init: function(element, valueAccessor) {
                 var local = ko.utils.unwrapObservable(valueAccessor()),
                     options = {};
 
@@ -529,7 +554,7 @@
 
                 $(element).tooltip(options);
 
-                ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+                ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
                     $(element).tooltip("destroy");
                 });
             },

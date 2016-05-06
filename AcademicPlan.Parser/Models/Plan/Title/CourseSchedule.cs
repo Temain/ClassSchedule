@@ -33,6 +33,7 @@ namespace AcademicPlan.Parser.Models.Plan.Title
         /// Э - Экзаменационные сессии
         /// К - Каникулы
         /// Н - Научно-исследовательская работа
+        /// У - Учебная практика
         /// П - Производственная практика
         /// Д - Выпускная квалификационная работа
         /// Г - Гос. Экзамены и/или защита ВКР
@@ -125,6 +126,17 @@ namespace AcademicPlan.Parser.Models.Plan.Title
                 return Schedule.Count(x => x == (char)ScheduleAbbreviations.Holidays);
             }
         }
+
+        /// <summary>
+        /// Научно-исследовательская работа, недель
+        /// </summary>
+        public int ResearchWorkWeeks
+        {
+            get
+            {
+                return Schedule.Count(x => x == (char)ScheduleAbbreviations.ResearchWork);
+            }
+        }
     }
 
     public enum ScheduleAbbreviations
@@ -162,6 +174,11 @@ namespace AcademicPlan.Parser.Models.Plan.Title
         /// <summary>
         /// Каникулы
         /// </summary>
-        Holidays = 'К'
+        Holidays = 'К',
+
+        /// <summary>
+        /// Научно-исследовательская работа
+        /// </summary>
+        ResearchWork = 'Н'
     }
 }
