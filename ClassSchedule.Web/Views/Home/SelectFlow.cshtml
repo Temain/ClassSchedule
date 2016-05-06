@@ -11,7 +11,7 @@
     <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
             <li>
-                <a href="@Url.Action("Index")">
+                <a href="@Url.Action("Index", "Home")">
                     <i class="fa fa-arrow-circle-left fa-32px"></i><br>
                     <span class="nav-icon-text">К расписанию</span>
                 </a>
@@ -42,6 +42,8 @@
 </div>
 
 <div class="schedule-container">
+    <div class="week-panel text-center"></div>
+
     <div class="container">
         @using (Html.BeginForm())
         {
@@ -49,14 +51,15 @@
 
             <div id="selectFaculty">
                 <h2>Выберите факультет</h2>
-                <hr />
+                <hr/>
 
                 <div class="row">
                     <div id="facultyGroup" class="col-md-7 form-group">
-                        @Html.LabelFor(model => model.FacultyId, new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.FacultyId, (SelectList)ViewBag.Faculties, String.Empty, new { @class = "form-control", @id = "facultyId" })
+                        @Html.LabelFor(model => model.FacultyId, new {@class = "control-label"})
+                        @Html.DropDownListFor(model => model.FacultyId, (SelectList) ViewBag.Faculties, String.Empty, new {@class = "form-control", @id = "facultyId"})
                         @Html.ValidationMessageFor(model => model.FacultyId)
-                        <p id="facultyError" class="help-block red" style="display: none;"> <span class="glyphicon glyphicon glyphicon-exclamation-sign form-control-feedback"></span> Выберите факультет из списка</p>
+                        <p id="facultyError" class="help-block red" style="display: none;"> <span class="glyphicon glyphicon glyphicon-exclamation-sign form-control-feedback"></span> Выберите факультет из списка
+                        </p>
                     </div>
                 </div>
 
@@ -102,14 +105,14 @@
                         <span class="glyphicon glyphicon-share-alt icon-flipped" aria-hidden="true"></span> Назад
                     </button>
                     <button type="submit" class="btn btn-success btn-lg">
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Готово 
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Готово
                     </button>
                 </div>
             </div>
-            
+
             <div id="selectFlow" style="display: none;">
                 <h2>Выберите поток</h2>
-                <hr />
+                <hr/>
 
                 <div class="row">
                     <div class="col-md-3 form-group">
@@ -124,10 +127,10 @@
 
                 <div class="btn-group mrgtop36" role="group">
                     <button id="selectFlowBack" type="button" value="Назад" class="btn btn-default btn-lg">
-                        <span class="glyphicon glyphicon-share-alt icon-flipped" aria-hidden="true"></span> Назад 
+                        <span class="glyphicon glyphicon-share-alt icon-flipped" aria-hidden="true"></span> Назад
                     </button>
                     <button type="submit" class="btn btn-success btn-lg">
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Готово 
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Готово
                     </button>
                 </div>
             </div>

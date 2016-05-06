@@ -799,7 +799,7 @@ html { overflow-y: auto !important; }
 
 /* Информация о программе обучения
 ------------------------------------------*/
-@media screen and (min-width: 768px) {	
+/*@media screen and (min-width: 768px) {	
 	#info-modal .modal-dialog  {width:1000px;}
 }
 
@@ -836,6 +836,35 @@ html { overflow-y: auto !important; }
 }
 
 .info-modal .title {
+    font-size: 1.2em;
+    font-weight: 200;
+}*/
+
+.schedule-container dl > dt {
+    font-weight: normal;
+    color: #848484;
+    font-size: 1em;
+    text-align: left;
+    width: 250px;
+    margin-bottom: 5px;
+}
+
+.schedule-container .block {
+    padding-bottom: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #E7E7EC;
+    /*border-bottom: 1px solid #E7E7EC;*/
+}
+
+/*.schedule-container .block:first-child {
+    border-top: none;
+}*/
+
+/*.schedule-container .block:last-child {
+    border-bottom: none;
+}*/
+
+.schedule-container .title {
     font-size: 1.2em;
     font-weight: 200;
 }

@@ -5,10 +5,15 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using AcademicPlan.Parser.Models;
+using AcademicPlan.Parser.Models.Plan.Title;
 using AcademicPlan.Parser.Service;
 using ClassSchedule.Domain.DataAccess.Interfaces;
 using ClassSchedule.Domain.Models;
+using ClassSchedule.Web.Helpers;
+using ClassSchedule.Web.Models;
 using AcademicPlan = ClassSchedule.Domain.Models.AcademicPlan;
+using CourseSchedule = ClassSchedule.Domain.Models.CourseSchedule;
+using SemesterSchedule = ClassSchedule.Domain.Models.SemesterSchedule;
 
 namespace ClassSchedule.Web.Controllers
 {
@@ -242,37 +247,110 @@ namespace ClassSchedule.Web.Controllers
             return academicPlan;
         }
 
-        [HttpPost]
+        [HttpGet]
         public ActionResult Info(int groupId)
         {
-            if (Request.IsAjaxRequest())
+            var academicPlan = UnitOfWork.Repository<Domain.Models.AcademicPlan>()
+                .GetQ(filter: x => x.ProgramOfEducation.Groups.Any(g => g.GroupId == groupId), includeProperties: "CourseSchedules")
+                .OrderByDescending(d => d.UploadedAt)
+                .FirstOrDefault();
+            if (academicPlan == null)
             {
-                var academicPlan = UnitOfWork.Repository<Domain.Models.AcademicPlan>()
-                    .GetQ(filter: x => x.ProgramOfEducation.Groups.Any(g => g.GroupId == groupId), includeProperties: "CourseSchedules")
-                    .OrderByDescending(d => d.UploadedAt)
-                    .FirstOrDefault();
-                if (academicPlan != null)
-                {
-                    var courseSchedule = academicPlan.CourseSchedules
-                        .Where(x => x.CourseNumber == UserProfile.EducationYear.YearStart - academicPlan.ProgramOfEducation.YearStart + 1)
-                        .Select(x => new
-                        {
-                            x.TheoreticalTrainingWeeks,
-                            x.ExamSessionWeeks,
-                            x.WeeksOfHolidays,
-                            x.FinalQualifyingWorkWeeks,
-                            x.StudyTrainingWeeks,
-                            x.PracticalTrainingWeeks,
-                            x.StateExamsWeeks,
-                            x.ResearchWorkWeeks
-                        })
-                        .SingleOrDefault();
+                return new HttpStatusCodeResult(404);
+            }
 
-                    return Json(courseSchedule); 
+            var courseSchedule = academicPlan.CourseSchedules
+                .SingleOrDefault(x => x.CourseNumber == UserProfile.EducationYear.YearStart - academicPlan.ProgramOfEducation.YearStart + 1);
+            if (courseSchedule == null)
+            {
+                return new HttpStatusCodeResult(404, "Учебный план загружен некорректно.");
+            }
+            
+            var viewModel = new GroupInfoViewModel
+            {
+                GroupId = groupId,
+                TheoreticalTrainingWeeks = courseSchedule.TheoreticalTrainingWeeks,
+                ExamSessionWeeks = courseSchedule.ExamSessionWeeks,
+                WeeksOfHolidays = courseSchedule.WeeksOfHolidays,
+                FinalQualifyingWorkWeeks = courseSchedule.FinalQualifyingWorkWeeks,
+                StudyTrainingWeeks = courseSchedule.StudyTrainingWeeks,
+                PracticalTrainingWeeks = courseSchedule.PracticalTrainingWeeks,
+                StateExamsWeeks = courseSchedule.StateExamsWeeks,
+                ResearchWorkWeeks = courseSchedule.ResearchWorkWeeks
+            };
+          
+            return View(viewModel);    
+        }
+
+        [HttpPost]
+        public ActionResult ChartData(int groupId)
+        {
+            if (!Request.IsAjaxRequest())
+            {
+                return null;
+            }
+
+            var academicPlan = UnitOfWork.Repository<Domain.Models.AcademicPlan>()
+                .GetQ(filter: x => x.ProgramOfEducation.Groups.Any(g => g.GroupId == groupId), includeProperties: "CourseSchedules")
+                .OrderByDescending(d => d.UploadedAt)
+                .FirstOrDefault();
+            if (academicPlan == null)
+            {
+                return new HttpStatusCodeResult(404);
+            }
+
+            var courseSchedule = academicPlan.CourseSchedules
+                .SingleOrDefault(x => x.CourseNumber == UserProfile.EducationYear.YearStart - academicPlan.ProgramOfEducation.YearStart + 1);
+            if (courseSchedule == null)
+            {
+                return new HttpStatusCodeResult(404, "Учебный план загружен некорректно.");
+            }
+
+            var chartSeries = new List<ChartSeriesViewModel>();
+
+            // Вычисляем периоды в графике обучения
+            int startWeek = 0;
+            for (int currentWeek = 0; currentWeek < courseSchedule.Schedule.Length - 1; currentWeek++)
+            {
+                var currentAbbr = courseSchedule.Schedule[currentWeek];
+                var nextAbbr = courseSchedule.Schedule[currentWeek + 1];
+                if (currentAbbr != nextAbbr)
+                {
+                    var series = chartSeries.SingleOrDefault(x => x.Name == currentAbbr + "");
+                    if (series == null)
+                    {
+                        series = new ChartSeriesViewModel
+                        {
+                            Name = currentAbbr + "",
+                            PointWidth = 12
+                        };
+                        chartSeries.Add(series);
+                    }
+
+                    if (series.Data == null)
+                    {
+                        series.Data = new List<ChartIntervalViewModel>();
+                    }
+
+                    //ScheduleAbbreviations abbrValue;
+                    //Enum.TryParse(currentAbbr + "", out abbrValue);
+                    var abbreviations = Enum.GetValues(typeof(ScheduleAbbreviations));
+                    var abbrIndex = Array.IndexOf(abbreviations, (ScheduleAbbreviations)currentAbbr);
+
+                    var interval = new ChartIntervalViewModel
+                    {
+                        X = abbrIndex,
+                        Low = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart, startWeek, 1),
+                        High = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart, currentWeek, 7)
+                    };
+                    series.Data.Add(interval);
+
+                    startWeek = currentWeek;
+                    currentAbbr = nextAbbr;
                 }
             }
 
-            return null;
+            return Json(chartSeries);
         }
     }
 }

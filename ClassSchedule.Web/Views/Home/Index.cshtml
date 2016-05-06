@@ -35,8 +35,9 @@
                 {
                     <span class="students"><i class="fa fa-male"></i> @group.NumberOfStudents</span>
                 }*@
-               
-                <a href="#" class="program" data-bind="click: programInfo, tooltip: { title: 'Информация о группе', trigger: 'hover' }"><i class="fa fa-info"></i><span></span></a>
+
+                @*<a href="#" class="program" data-bind="click: programInfo, tooltip: { title: 'Информация о группе', trigger: 'hover' }"><i class="fa fa-info"></i><span></span></a>*@
+                <a href="@Url.Action("Info", "AcademicPlan", new { groupId = group.GroupId })" class="program" target="_blank" data-bind="tooltip: { title: 'Информация о группе', trigger: 'hover' }"><i class="fa fa-info"></i><span></span></a>
             </div>
         }
     </div>

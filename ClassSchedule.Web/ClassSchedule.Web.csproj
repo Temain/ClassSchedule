@@ -243,6 +243,9 @@
     </Compile>
     <Compile Include="Helpers\Helpers.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\ChartIntervalViewModel.cs" />
+    <Compile Include="Models\ChartSeriesViewModel.cs" />
+    <Compile Include="Models\GroupInfoViewModel.cs" />
     <Compile Include="Models\Schedule\AuditoriumViewModel.cs" />
     <Compile Include="Models\Schedule\HousingViewModel.cs" />
     <Compile Include="Models\Schedule\EditLessonViewModel.cs" />
@@ -508,6 +511,7 @@
     <Content Include="Views\Teacher\_TeacherDailySchedule.cshtml" />
     <Content Include="Views\Account\LoginOld.cshtml" />
     <Content Include="Views\Home\_InfoModal.cshtml" />
+    <Content Include="Views\AcademicPlan\Info.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

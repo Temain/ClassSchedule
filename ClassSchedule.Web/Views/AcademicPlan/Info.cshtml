@@ -1,0 +1,174 @@
+﻿@model ClassSchedule.Web.Models.GroupInfoViewModel
+@{
+    ViewBag.Title = "Информация о группе";
+}
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"></button>
+        <a class="navbar-brand filter" href="@Url.Action("Index", "Home")"></a>
+    </div>
+    <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+            <li>
+                <a href="@Url.Action("Index", "Home")">
+                    <i class="fa fa-arrow-circle-left fa-32px"></i><br>
+                    <span class="nav-icon-text">К расписанию</span>
+                </a>
+            </li>
+        </ul>
+        @if (Request.IsAuthenticated)
+        {
+            using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new {id = "logoutForm", @class = "navbar-right"}))
+            {
+                @Html.AntiForgeryToken()
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-calendar fa-32px"></i><br>
+                            <span class="nav-icon-text"></span>2015/2016 Учебный год<span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">2016/2017</a></li>
+                        </ul>
+                    </li>
+                    <li class="navbar-divider"></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-user fa-32px"></i><br>
+                            <span class="nav-icon-text"></span>Здравствуйте, @(ViewBag.UserName + "!") <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="@Url.Action("Index", "AcademicPlan")"><span class="fa fa-upload"></span> Загрузка учебных планов</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="javascript:document.getElementById('logoutForm').submit()"><span class="fa fa-power-off"></span> Выйти</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            }
+        }
+    </div>
+</div>
+
+<div class="schedule-container">
+    <div class="week-panel text-center"></div>
+
+    <div class="container">
+        <h2>Информация о группе</h2>
+
+
+        <div class="row block">
+            <div class="col-md-4">
+                <div class="title">Основная информация</div>
+            </div>
+            <div class="col-md-8">
+                <dl class="dl-horizontal">
+                    <dt>Группа</dt>
+                    <dd>АШ1401</dd>
+                    <dt>Количество студентов в группе</dt>
+                    <dd><span><i class="fa fa-male"></i> 30</span></dd>
+                    <dt>Направление</dt>
+                    <dd>35.03.05 Агрономия</dd>
+                    <dt>Форма обучения</dt>
+                    <dd>Очная</dd>
+                    <dt>Уровень образования</dt>
+                    <dd>Академический бакалавриат</dd>
+
+                </dl>
+            </div>
+        </div>
+        <div class="row block">
+            <div class="col-md-4">
+                <div class="title mrgbtm12">График учебного процесса</div>
+            </div>
+            <div class="col-md-8">
+                <dl class="dl-horizontal">
+                    <dt>Теоретическое обучение</dt>
+                    <dd>@Model.TheoreticalTrainingWeeks нед.</dd>
+                    <dt>Экзаменационные сессии</dt>
+                    <dd>@Model.ExamSessionWeeks нед.</dd>
+                    <dt>Каникулы</dt>
+                    <dd>@Model.WeeksOfHolidays нед.</dd>
+                    <dt>Научно-исследовательская работа</dt>
+                    <dd>@Model.ResearchWorkWeeks нед.</dd>
+                    <dt>Учебные практики</dt>
+                    <dd>@Model.StudyTrainingWeeks нед.</dd>
+                    <dt>Производственные практики</dt>
+                    <dd>@Model.PracticalTrainingWeeks нед.</dd>
+                    <dt>Выпускная квалификационная работа</dt>
+                    <dd>@Model.FinalQualifyingWorkWeeks нед.</dd>
+                    <dt>Гос. Экзамены и/или защита ВКР</dt>
+                    <dd>@Model.StateExamsWeeks нед.</dd>
+                </dl>
+            </div>
+            <div class="col-md-12">
+                <div id="chart" style="width: 100%; height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/underscore")
+    @Scripts.Render("~/bundles/highcharts")
+    <script>
+        $(function() {
+            $.post('/AcademicPlan/ChartData', { groupId : @Model.GroupId}, function(data) {
+
+                $.each(data, function(i, arr) {
+                    $.each(arr.Data, function(j, obj) {
+                        var lowParsed = new Date(parseInt(obj.Low.replace("/Date(", "").replace(")/",""), 10));
+                        var highParsed = new Date(parseInt(obj.High.replace("/Date(", "").replace(")/",""), 10));
+                        obj.Low = lowParsed;
+                        obj.High = highParsed;
+                    });
+                });
+
+                var parsed = JSON.parse(data);
+
+                $('#chart').highcharts({
+                    credits: {
+                        enabled: false
+                    },
+                    chart: {
+                        type: 'columnrange',
+                        inverted: true
+                    },
+                    title: {
+                        text: ''
+                    },
+                    scrollbar: {
+                        enabled: true
+                    },
+                    xAxis: {
+                        categories: ['Т', 'Э', 'К', 'Н', 'У', 'П', 'Д', 'Г']
+                    },
+                    yAxis: {
+                        type: 'datetime',
+                        title: {
+                            text: ''
+                        }
+                    },
+                    plotOptions: {
+                        columnrange: {
+                            grouping: false
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    tooltip: {
+                        formatter: function() {
+                            return '<b>' + this.x + ' - ' + this.series.name + '</b><br/>' + Highcharts.dateFormat('%e %B %H:%M', this.point.low) +
+                                ' - ' + Highcharts.dateFormat('%B %e %H:%M', this.point.high) + '<br/>';
+                        }
+                    },
+
+                    series: parsed
+                });
+
+            });          
+        });
+    </script>
+}
