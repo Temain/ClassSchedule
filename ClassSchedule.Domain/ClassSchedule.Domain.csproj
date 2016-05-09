@@ -168,6 +168,10 @@
     <Compile Include="Migrations\201605082041196_AddAspNetUserFacultiesTable.Designer.cs">
       <DependentUpon>201605082041196_AddAspNetUserFacultiesTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605090859316_AddGroupSets.cs" />
+    <Compile Include="Migrations\201605090859316_AddGroupSets.Designer.cs">
+      <DependentUpon>201605090859316_AddGroupSets.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AcademicPlan.cs" />
     <Compile Include="Models\Auditorium.cs" />
@@ -181,6 +185,7 @@
     <Compile Include="Models\EducationYear.cs" />
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\EmploymentType.cs" />
+    <Compile Include="Models\GroupSet.cs" />
     <Compile Include="Models\Housing.cs" />
     <Compile Include="Models\Job.cs" />
     <Compile Include="Models\Lesson.cs" />
@@ -287,6 +292,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605082041196_AddAspNetUserFacultiesTable.resx">
       <DependentUpon>201605082041196_AddAspNetUserFacultiesTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605090859316_AddGroupSets.resx">
+      <DependentUpon>201605090859316_AddGroupSets.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

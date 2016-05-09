@@ -57,9 +57,14 @@ namespace ClassSchedule.Domain.Models
         public virtual EducationYear EducationYear { get; set; }
 
         /// <summary>
-        /// Список факультетов за расписание которые ответственнен пользователь
+        /// Список факультетов за расписание которых ответственнен пользователь
         /// </summary>
-        public virtual ICollection<Faculty> Faculties { get; set; } 
+        public virtual ICollection<Faculty> Faculties { get; set; }
+
+        /// <summary>
+        /// Совокупность групп, выбранных пользователем для редактирования расписания
+        /// </summary>
+        public virtual ICollection<GroupSet> GroupSets { get; set; } 
 
         /// <summary>
         /// Инициалы и фамилия: Иванов И.И.

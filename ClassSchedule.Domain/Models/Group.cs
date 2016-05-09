@@ -76,5 +76,10 @@ namespace ClassSchedule.Domain.Models
         /// Пользователи, которые редактируют расписание для этой группы
         /// </summary>
         public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; }
+
+        /// <summary>
+        /// Группа может быть добавлена пользователем в объединение групп для редактирования расписания
+        /// </summary>
+        public virtual ICollection<GroupSet> GroupSets { get; set; } 
     }
 }

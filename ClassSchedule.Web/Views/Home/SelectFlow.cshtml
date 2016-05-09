@@ -1,7 +1,9 @@
-﻿@model ClassSchedule.Web.Models.SelectFlowViewModel
+﻿@model ClassSchedule.Web.Models.SelectFlow.SelectFlowViewModel
 @{
     ViewBag.Title = "Выбор потока";
 }
+
+@Styles.Render("~/Content/checkbox-x")
 
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-header">
@@ -45,182 +47,120 @@
     <div class="week-panel text-center"></div>
 
     <div class="container">
-        @using (Html.BeginForm())
-        {
-            @Html.AntiForgeryToken()
+        <h2>Выбор групп для редактирования расписания</h2>
+        @*<hr/>*@
 
-            <div id="selectFaculty">
-                <h2>Выберите факультет</h2>
-                <hr/>
+        <div class="row inline-block-lg">
+            <div class="col-md-4">
+                <div class="title">Редактировались ранее</div>
+            </div>
+            <div class="col-md-8">
+                
+            </div>
+        </div>
 
-                <div class="row">
-                    <div id="facultyGroup" class="col-md-7 form-group">
-                        @Html.LabelFor(model => model.FacultyId, new {@class = "control-label"})
-                        @Html.DropDownListFor(model => model.FacultyId, (SelectList) ViewBag.Faculties, String.Empty, new {@class = "form-control", @id = "facultyId"})
-                        @Html.ValidationMessageFor(model => model.FacultyId)
-                        <p id="facultyError" class="help-block red" style="display: none;"> <span class="glyphicon glyphicon glyphicon-exclamation-sign form-control-feedback"></span> Выберите факультет из списка
-                        </p>
-                    </div>
-                </div>
-
-                <div class="row mrgtop12">
-                    <div class="col-md-12 form-group">
-                        <label class="control-label">Расписание будет редактироваться для:</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12 form-group">
-                        <label class="radio-inline"><input type="radio" value="1" name="scheduleFor" checked="checked">Потока</label>
-                        <label class="radio-inline"><input type="radio" value="2" name="scheduleFor">Курса/Группы</label>
-                    </div>
-                </div>
-
-                <div class="mrgtop36">
-                    <button id="selectFacultyNext" type="button" value="Далее" class="btn btn-primary btn-lg">
-                        Далее <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
-                    </button>
+        <div class="row inline-block mrgtop24">
+            <div class="col-md-4">
+                <div class="title">Факультет</div>
+            </div>
+            <div class="col-md-8">
+                <div class="form-group col-md-9">
+                    @Html.DropDownListFor(model => model.FacultyId, (SelectList) ViewBag.Faculties, String.Empty, new {@class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.FacultyId)
                 </div>
             </div>
+        </div>
 
-            <div id="selectCourse" style="display: none;">
-                <h2>Выберите курс и/или группу</h2>
-                <hr/>
-
-                <div class="row">
-                    <div class="col-md-3 form-group">
-                        @Html.LabelFor(model => model.CourseId, new {@class = "control-label"})
-                        <select id="courseId" name="CourseId" class="form-control"></select>
-                        @Html.ValidationMessageFor(model => model.CourseId)
-                    </div>
-
-                    <div class="col-md-3 form-group">
-                        @Html.LabelFor(model => model.GroupId, new {@class = "control-label"})
-                        <select id="groupId" name="GroupId" class="form-control"></select>
-                        @Html.ValidationMessageFor(model => model.GroupId)
-                    </div>
-                </div>
-
-                <div class="btn-group mrgtop36" role="group">
-                    <button id="selectCourseBack" type="button" value="Назад" class="btn btn-default btn-lg">
-                        <span class="glyphicon glyphicon-share-alt icon-flipped" aria-hidden="true"></span> Назад
-                    </button>
-                    <button type="submit" class="btn btn-success btn-lg">
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Готово
-                    </button>
+        <div class="row inline-block">
+            <div class="col-md-4">
+                <div class="title">Форма обучения</div>
+            </div>
+            <div class="col-md-8">
+                <div class="form-group col-md-6">
+                    @Html.DropDownListFor(model => model.EducationFormId, (SelectList)ViewBag.EducationForms, String.Empty, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.EducationFormId)
                 </div>
             </div>
+        </div>
 
-            <div id="selectFlow" style="display: none;">
-                <h2>Выберите поток</h2>
-                <hr/>
-
-                <div class="row">
-                    <div class="col-md-3 form-group">
-                        @Html.LabelFor(model => model.FlowId, new {@class = "control-label"})
-                        <select class="form-control"></select>
-                        @Html.ValidationMessageFor(model => model.FlowId)
-                    </div>
-                    <div class="col-md-3 form-group">
-                        @Html.ActionLink("Редактировать потоки", "Index")
-                    </div>
-                </div>
-
-                <div class="btn-group mrgtop36" role="group">
-                    <button id="selectFlowBack" type="button" value="Назад" class="btn btn-default btn-lg">
-                        <span class="glyphicon glyphicon-share-alt icon-flipped" aria-hidden="true"></span> Назад
-                    </button>
-                    <button type="submit" class="btn btn-success btn-lg">
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Готово
-                    </button>
+        <div class="row inline-block">
+            <div class="col-md-4">
+                <div class="title">Уровень образования</div>
+            </div>
+            <div class="col-md-8">
+                <div class="form-group col-md-6">
+                    @Html.DropDownListFor(model => model.EducationLevelId, (SelectList)ViewBag.EducationLevels, String.Empty, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.EducationLevelId)
                 </div>
             </div>
-        }
+        </div>
+
+        <div class="row inline-block">
+            <div class="col-md-4">
+                <div class="title">Курс</div>
+            </div>
+            <div class="col-md-8">
+                <div class="form-group col-md-3">
+                    @Html.DropDownListFor(model => model.FacultyId, (SelectList)ViewBag.Faculties, String.Empty, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.FacultyId)
+                </div>
+            </div>
+        </div>
+
+        <div class="row inline-block">
+            <div class="col-md-4">
+                <div class="title">Группы</div>
+            </div>
+            <div class="col-md-8">
+                <div class="col-md-3">
+                    <div class="col-h2 mrgbtm24">1 поток</div>
+
+                    <div class="mrgbtm24">
+                        <input type="checkbox" id="input-20" data-toggle="checkbox-x" value="1" data-three-state="false">
+                        <label class="cbx-label" for="input-20">ПИ0904</label>
+                    </div>
+
+                    <div class="mrgbtm24">
+                        <input type="checkbox" id="input-21" data-toggle="checkbox-x" value="1" data-three-state="false">
+                        <label class="cbx-label" for="input-21">ПИ0905</label>
+                    </div>
+
+                    <div class="mrgbtm24">
+                        <input type="checkbox" id="input-22" data-toggle="checkbox-x" value="1" data-three-state="false">
+                        <label class="cbx-label" for="input-22">ПИ0906</label>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="col-h2 mrgbtm24">2 поток</div>
+
+                    <div class="mrgbtm24">
+                        <input type="checkbox" id="input-23" data-toggle="checkbox-x" value="1" data-three-state="false">
+                        <label class="cbx-label" for="input-23">ИТ0904</label>
+                    </div>
+
+                    <div class="mrgbtm24">
+                        <input type="checkbox" id="input-24" data-toggle="checkbox-x" value="1" data-three-state="false">
+                        <label class="cbx-label" for="input-24">ИТ0904</label>
+                    </div>
+
+                    <div class="mrgbtm24">
+                        <input type="checkbox" id="input-25" data-toggle="checkbox-x" value="1" data-three-state="false">
+                        <label class="cbx-label" for="input-25">ИТ0904</label>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 @section Scripts
 {
+    @Scripts.Render("~/bundles/checkbox-x")
+
     <script>
         $(function() {
-            $("#facultyId").change(function() {
-                var facultyId = $("#facultyId").val();
-                if (facultyId) {
-                    $("#facultyGroup").removeClass("has-error");
-                    $("#facultyError").hide();
-                }
-            });
-
-            $("#selectFacultyNext").click(function() {
-                // Проверка что факультет выбран
-                var facultyId = $("#facultyId").val();
-                if (!facultyId) {
-                    $("#facultyGroup").addClass("has-error");
-                    $("#facultyError").show();
-
-                    return;
-                }
-                $("#facultyGroup").removeClass("has-error");
-                $("#facultyError").hide();
-
-                // Навигация в зависимости от выбранного варианта
-                var scheduleFor = $('input[name=scheduleFor]:checked').val();
-                if (scheduleFor == '1') { // Расписание для потока
-                    $("#selectFaculty").hide("fast", function() {
-                        $("#selectFlow").show();
-                    });
-                } else { // Расписание для курса/группы
-                    $("#selectFaculty").hide("fast", function () {
-                        loadCourses();
-                        loadGroups();
-                        $("#selectCourse").show();
-                    });
-                }
-            });
-
-            $("#selectCourseBack").click(function() {
-                $("#selectCourse").hide("fast", function() {
-                    $("#selectFaculty").show();
-                });
-            });
-
-            $("#selectFlowBack").click(function() {
-                $("#selectFlow").hide("fast", function() {
-                    $("#selectFaculty").show();
-                });
-            });
-
-            $("#courseId").change(function() {
-                loadGroups();
-            });
+            
         });
-
-        var loadCourses = function () {
-            var facultyId = $("#facultyId").val();
-            $.post('/Dictionary/Course', { facultyId : facultyId }, function(courses) {
-                $("#courseId").html('');
-                $("#courseId").append('<option></option>');
-
-                $.each(courses, function (index, course) {
-                    var option = "<option value='" + course.CourseId + "'>" + course.CourseName + "</option>";
-
-                    $("#courseId").append(option);
-                });
-            });
-        };
-
-        var loadGroups = function () {
-            var facultyId = $("#facultyId").val();
-            var courseId = $("#courseId").val();
-            $.post('/Dictionary/Group', { facultyId: facultyId, courseId : courseId }, function (groups) {
-                $("#groupId").html('');
-                $("#groupId").append('<option></option>');
-
-                $.each(groups, function (index, group) {
-                    var option = "<option value='" + group.GroupId + "'>" + group.GroupName + "</option>";
-
-                    $("#groupId").append(option);
-                });
-            });
-        };
     </script>
 }

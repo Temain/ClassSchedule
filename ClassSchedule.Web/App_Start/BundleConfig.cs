@@ -57,6 +57,11 @@ namespace ClassSchedule.Web
             bundles.Add(new StyleBundle("~/Content/bootstrap-select").Include(
                       "~/Content/bootstrap-select.css"));
 
+            bundles.Add(new ScriptBundle("~/bundles/checkbox-x").Include(
+                       "~/Scripts/checkbox-x.min.js"));
+            bundles.Add(new StyleBundle("~/Content/checkbox-x").Include(
+                      "~/Content/checkbox-x.min.css"));
+
             bundles.Add(new StyleBundle("~/Content/login").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/font-awesome.css",

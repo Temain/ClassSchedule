@@ -869,6 +869,20 @@ html { overflow-y: auto !important; }
     /*border-bottom: 1px solid #E7E7EC;*/
 }
 
+.schedule-container .inline-block {
+    padding-bottom: 10px;
+    padding-top: 10px;
+    /*border-top: 1px solid #E7E7EC;*/
+    /*border-bottom: 1px solid #E7E7EC;*/
+}
+
+.schedule-container .inline-block-lg {
+    padding-bottom: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #E7E7EC;
+    border-bottom: 1px solid #E7E7EC;
+}
+
 /*.schedule-container .block:first-child {
     border-top: none;
 }*/
@@ -880,6 +894,13 @@ html { overflow-y: auto !important; }
 .schedule-container .title {
     font-size: 1.2em;
     font-weight: 200;
+}
+
+.inline-block .col-h2 {
+    font-size: 1.2em;
+    color: #848484;
+    font-weight: normal;
+    border: none;
 }
 
 .block .block-title {

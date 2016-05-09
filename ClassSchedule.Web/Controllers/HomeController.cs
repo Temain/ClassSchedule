@@ -16,6 +16,7 @@ using ClassSchedule.Web.Helpers;
 using ClassSchedule.Web.Models;
 using ClassSchedule.Web.Models.ChangeWeek;
 using ClassSchedule.Web.Models.Schedule;
+using ClassSchedule.Web.Models.SelectFlow;
 using Microsoft.AspNet.Identity;
 using WebGrease.Css.Extensions;
 
@@ -443,6 +444,14 @@ namespace ClassSchedule.Web.Controllers
                 ViewBag.Faculties = new SelectList(faculties, "FacultyId", "FacultyName");
             }
 
+            var educationLevels = UnitOfWork.Repository<EducationLevel>()
+                .Get(x => x.IsDeleted != true);
+            ViewBag.EducationLevels = new SelectList(educationLevels, "EducationlevelId", "EducationLevelName");
+
+            var educationForms = UnitOfWork.Repository<EducationForm>()
+                .Get(x => x.IsDeleted != true);
+            ViewBag.EducationForms = new SelectList(educationForms, "EducationFormId", "EducationFormName");
+
             return View();
         }
 
@@ -454,13 +463,13 @@ namespace ClassSchedule.Web.Controllers
                 return View(viewModel);
             }
 
-            if (viewModel.CourseId != null || viewModel.GroupId != null || viewModel.FlowId != null)
-            {
-                UserProfile.CourseId = viewModel.CourseId;
-                UserProfile.GroupId = viewModel.GroupId;
+            //if (viewModel.CourseId != null || viewModel.GroupId != null || viewModel.FlowId != null)
+            //{
+            //    UserProfile.CourseId = viewModel.CourseId;
+            //    UserProfile.GroupId = viewModel.GroupId;
 
-                UserManager.Update(UserProfile);
-            }
+            //    UserManager.Update(UserProfile);
+            //}
 
             return RedirectToAction("Index");
         }
