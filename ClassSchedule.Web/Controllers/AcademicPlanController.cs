@@ -11,6 +11,7 @@ using ClassSchedule.Domain.DataAccess.Interfaces;
 using ClassSchedule.Domain.Models;
 using ClassSchedule.Web.Helpers;
 using ClassSchedule.Web.Models;
+using ClassSchedule.Web.Models.GroupInfo;
 using AcademicPlan = ClassSchedule.Domain.Models.AcademicPlan;
 using CourseSchedule = ClassSchedule.Domain.Models.CourseSchedule;
 using SemesterSchedule = ClassSchedule.Domain.Models.SemesterSchedule;
@@ -250,8 +251,16 @@ namespace ClassSchedule.Web.Controllers
         [HttpGet]
         public ActionResult Info(int groupId)
         {
+            var group = UnitOfWork.Repository<Group>()
+                .Get(x => x.GroupId == groupId && x.IsDeleted != true)
+                .SingleOrDefault();
+            if (group == null)
+            {
+                return new HttpStatusCodeResult(404, "Группы с данным идентификатором не существует.");
+            }
+
             var academicPlan = UnitOfWork.Repository<Domain.Models.AcademicPlan>()
-                .GetQ(filter: x => x.ProgramOfEducation.Groups.Any(g => g.GroupId == groupId), includeProperties: "CourseSchedules")
+                .GetQ(filter: x => x.ProgramOfEducation.Groups.Any(g => g.GroupId == groupId))
                 .OrderByDescending(d => d.UploadedAt)
                 .FirstOrDefault();
             if (academicPlan == null)
@@ -266,18 +275,77 @@ namespace ClassSchedule.Web.Controllers
                 return new HttpStatusCodeResult(404, "Учебный план загружен некорректно.");
             }
             
+            // Общая информация о группе и график обучения на каждый семестр учебного года
             var viewModel = new GroupInfoViewModel
             {
                 GroupId = groupId,
-                TheoreticalTrainingWeeks = courseSchedule.TheoreticalTrainingWeeks,
-                ExamSessionWeeks = courseSchedule.ExamSessionWeeks,
-                WeeksOfHolidays = courseSchedule.WeeksOfHolidays,
-                FinalQualifyingWorkWeeks = courseSchedule.FinalQualifyingWorkWeeks,
-                StudyTrainingWeeks = courseSchedule.StudyTrainingWeeks,
-                PracticalTrainingWeeks = courseSchedule.PracticalTrainingWeeks,
-                StateExamsWeeks = courseSchedule.StateExamsWeeks,
-                ResearchWorkWeeks = courseSchedule.ResearchWorkWeeks
+                GroupName = group.DivisionName,
+                NumberOfStudents = group.NumberOfStudents,
+                Profile = group.ProgramOfEducation.EducationProfile.EducationDirection.EducationDirectionCode 
+                    + " " + group.ProgramOfEducation.EducationProfile.EducationProfileName,
+                EducationForm = group.ProgramOfEducation.EducationForm.EducationFormName,
+                EducationLevel = group.ProgramOfEducation.EducationLevel.EducationLevelName,
+                NumberOfSemesters = courseSchedule.SemesterSchedules.Count,
+                SemesterSchedules = courseSchedule.SemesterSchedules
+                    .Select(x => new SemesterScheduleViewModel
+                    {
+                        SemesterNumber = x.SemesterNumber,
+                        SemesterStartDate = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart, x.NumberOfFirstWeek, 1),
+                        SemesterEndDate = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart, (x.NumberOfFirstWeek - 1) + x.NumberOfLastWeek, 7),
+                        TheoreticalTrainingWeeks = x.TheoreticalTrainingWeeks,
+                        ExamSessionWeeks = x.ExamSessionWeeks,
+                        WeeksOfHolidays = x.WeeksOfHolidays,
+                        FinalQualifyingWorkWeeks = x.FinalQualifyingWorkWeeks,
+                        StudyTrainingWeeks = x.StudyTrainingWeeks,
+                        PracticalTrainingWeeks = x.PracticalTrainingWeeks,
+                        StateExamsWeeks = x.StateExamsWeeks,
+                        ResearchWorkWeeks = x.ResearchWorkWeeks
+                    })
+                    .OrderBy(n => n.SemesterNumber)
+                    .ToList()
             };
+
+            // План по каждой дисциплине
+            var disciplines = courseSchedule.SemesterSchedules
+                .SelectMany(x => x.DisciplineSemesterPlans)
+                .GroupBy(g => new { g.Discipline })
+                .Select(x => new DisciplineViewModel
+                {
+                    DisciplineId = x.Key.Discipline.DisciplineId,
+                    DisciplineName = x.Key.Discipline.DisciplineName,
+                    ChairId = x.Key.Discipline.ChairId,
+                    ChairName = x.Key.Discipline.Chair.DivisionName,
+                    DisciplineSemesterPlans = x.Select(y => 
+                        new DisciplineSemesterPlanViewModel
+                        {
+                            HoursOfLaboratory = y.HoursOfLaboratory,
+                            HoursOfLectures = y.HoursOfLectures,
+                            HoursOfPractice = y.HoursOfPractice,
+                            //LecturesPerWeek = y.LecturesPerWeek,
+                            //LaboratoryPerWeek = y.LaboratoryPerWeek,
+                            //PracticePerWeek = y.PracticePerWeek,
+                            LecturesPerWeek = (float) Math.Round((double)(y.HoursOfLectures ?? 0) / y.SemesterSchedule.TheoreticalTrainingWeeks, MidpointRounding.AwayFromZero),
+                            LaboratoryPerWeek = (float)Math.Round((double)(y.HoursOfLaboratory ?? 0) / y.SemesterSchedule.TheoreticalTrainingWeeks, MidpointRounding.AwayFromZero),
+                            PracticePerWeek = (float)Math.Round((double)(y.HoursOfPractice ?? 0) / y.SemesterSchedule.TheoreticalTrainingWeeks, MidpointRounding.AwayFromZero),
+                            HoursOfLecturesFilled = y.Discipline.Lessons
+                                .Count(ls => ls.DeletedAt == null && ls.GroupId == groupId && ls.LessonTypeId == (int) LessonTypes.Lection 
+                                    && ls.WeekNumber >= y.SemesterSchedule.NumberOfFirstWeek && ls.WeekNumber <= y.SemesterSchedule.NumberOfLastWeek) * 2,
+                            HoursOfPracticeFilled = y.Discipline.Lessons
+                                .Count(ls => ls.DeletedAt == null && ls.GroupId == groupId 
+                                    && (ls.LessonTypeId == (int)LessonTypes.PracticalLesson || ls.LessonTypeId == (int)LessonTypes.Seminar || ls.LessonTypeId == (int)LessonTypes.Training)
+                                    && ls.WeekNumber >= y.SemesterSchedule.NumberOfFirstWeek && ls.WeekNumber <= y.SemesterSchedule.NumberOfLastWeek) * 2,
+                            HoursOfLaboratoryFilled = y.Discipline.Lessons
+                                .Count(ls => ls.DeletedAt == null && ls.GroupId == groupId && ls.LessonTypeId == (int)LessonTypes.LaboratoryWork
+                                    && ls.WeekNumber >= y.SemesterSchedule.NumberOfFirstWeek && ls.WeekNumber <= y.SemesterSchedule.NumberOfLastWeek) * 2,
+                            SemesterNumber = y.SemesterSchedule.SemesterNumber
+                        })
+                        .OrderBy(n => n.SemesterNumber)
+                    .ToList()
+                })
+                .OrderBy(x => x.DisciplineName)
+                .ToList();
+
+            viewModel.Disciplines = disciplines;
           
             return View(viewModel);    
         }
@@ -291,7 +359,7 @@ namespace ClassSchedule.Web.Controllers
             }
 
             var academicPlan = UnitOfWork.Repository<Domain.Models.AcademicPlan>()
-                .GetQ(filter: x => x.ProgramOfEducation.Groups.Any(g => g.GroupId == groupId), includeProperties: "CourseSchedules")
+                .GetQ(filter: x => x.ProgramOfEducation.Groups.Any(g => g.GroupId == groupId))
                 .OrderByDescending(d => d.UploadedAt)
                 .FirstOrDefault();
             if (academicPlan == null)
@@ -309,48 +377,59 @@ namespace ClassSchedule.Web.Controllers
             var chartSeries = new List<ChartSeriesViewModel>();
 
             // Вычисляем периоды в графике обучения
-            int startWeek = 0;
-            for (int currentWeek = 0; currentWeek < courseSchedule.Schedule.Length - 1; currentWeek++)
+            int startWeek = 1;
+            for (int currentWeek = 1; currentWeek <= courseSchedule.Schedule.Length - 1; currentWeek++)
             {
-                var currentAbbr = courseSchedule.Schedule[currentWeek];
-                var nextAbbr = courseSchedule.Schedule[currentWeek + 1];
-                if (currentAbbr != nextAbbr)
+                var currentAbbr = courseSchedule.Schedule[currentWeek - 1];
+                var nextAbbr = courseSchedule.Schedule[currentWeek];
+                if (currentAbbr != nextAbbr || currentWeek == courseSchedule.Schedule.Length - 1)
                 {
-                    var series = chartSeries.SingleOrDefault(x => x.Name == currentAbbr + "");
+                    var series = chartSeries.SingleOrDefault(x => x.name == currentAbbr + "");
                     if (series == null)
                     {
+                        var scheduleType = ScheduleHelpers.ScheduleTypeByAbbr(currentAbbr);
                         series = new ChartSeriesViewModel
                         {
-                            Name = currentAbbr + "",
-                            PointWidth = 12
+                            name = scheduleType["Name"],
+                            color = scheduleType["Color"],
+                            pointWidth = 12,
+                            pointRange = 24 * 3600 * 1000 
                         };
                         chartSeries.Add(series);
                     }
 
-                    if (series.Data == null)
+                    if (series.data == null)
                     {
-                        series.Data = new List<ChartIntervalViewModel>();
+                        series.data = new List<ChartIntervalViewModel>();
                     }
 
-                    //ScheduleAbbreviations abbrValue;
-                    //Enum.TryParse(currentAbbr + "", out abbrValue);
-                    var abbreviations = Enum.GetValues(typeof(ScheduleAbbreviations));
-                    var abbrIndex = Array.IndexOf(abbreviations, (ScheduleAbbreviations)currentAbbr);
+                    // Т.к. индексация массива начинается с 0, чтобы перейти к последней неделе
+                    if (currentWeek == courseSchedule.Schedule.Length - 1) currentWeek++;
+
+                    var low = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart, startWeek, 1);
+                    var high = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart, currentWeek, 7).AddDays(1).AddSeconds(-1);
 
                     var interval = new ChartIntervalViewModel
                     {
-                        X = abbrIndex,
-                        Low = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart, startWeek, 1),
-                        High = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart, currentWeek, 7)
+                        x = 0,
+                        low = (long)(low - new DateTime(1970, 1, 1)).TotalMilliseconds,
+                        high = (long)(high - new DateTime(1970, 1, 1)).TotalMilliseconds,
+                        lowWeek = startWeek,
+                        highWeek = currentWeek
                     };
-                    series.Data.Add(interval);
+                    series.data.Add(interval);
 
-                    startWeek = currentWeek;
+                    startWeek = currentWeek + 1;
                     currentAbbr = nextAbbr;
                 }
             }
 
-            return Json(chartSeries);
+            return Json(
+                new
+                {
+                    educationYear = UserProfile.EducationYear.YearStart + "/" + UserProfile.EducationYear.YearEnd, 
+                    chartSeries = chartSeries
+                });
         }
     }
 }

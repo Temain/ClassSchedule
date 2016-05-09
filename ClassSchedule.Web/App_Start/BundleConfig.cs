@@ -46,12 +46,11 @@ namespace ClassSchedule.Web
 
             bundles.Add(new ScriptBundle("~/bundles/edit-lesson").Include(
                        "~/Scripts/lesson.edit.js",
-                       "~/Scripts/programinfo.js"));
+                       "~/Scripts/changeweek.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/highcharts").Include(
                        "~/Scripts/highcharts/highcharts.js",
-                       "~/Scripts/highcharts/highcharts-more.js",
-                       "~/Scripts/highcharts/themes/grid-light.js"));
+                       "~/Scripts/highcharts/highcharts-more.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap-select").Include(
                        "~/Scripts/bootstrap-select.js"));

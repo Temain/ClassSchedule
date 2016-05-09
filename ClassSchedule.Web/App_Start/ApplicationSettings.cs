@@ -33,6 +33,31 @@ namespace ClassSchedule.Web
         /// <summary>
         /// Лекция
         /// </summary>
-        Lection = 1
+        Lection = 1,
+
+        /// <summary>
+        /// Семинар
+        /// </summary>
+        Seminar = 2,
+
+        /// <summary>
+        /// Лабораторная работа
+        /// </summary>
+        LaboratoryWork = 3,
+
+        /// <summary>
+        /// Тренировка
+        /// </summary>
+        Training = 4,
+
+        /// <summary>
+        /// Практическое занятие
+        /// </summary>
+        PracticalLesson = 5,
+
+        /// <summary>
+        /// Консультация
+        /// </summary>
+        Consultation = 6
     }
 }

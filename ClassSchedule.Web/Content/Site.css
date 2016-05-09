@@ -101,7 +101,7 @@ textarea {
 .week-panel {
     background-color: #2E7F3E;
     color: white;
-    font-weight: bold;
+    font-weight: 500;
     font-size: 1.1em;
     line-height: 1.6em;
     height: 1.6em;
@@ -110,6 +110,23 @@ textarea {
     right: 0;
     top: 5.55em;
     z-index: 100;
+}
+
+.week-panel .number {
+    display: inline-block;
+    /*font-weight: 400;
+    font-size: 1.05em;*/
+}
+
+.week-panel .change {
+    display: inline-block;
+    position: absolute;
+    color: white;
+    margin-left: 1em;
+}
+
+.week-panel .change > a {
+    color: white;
 }
 
 .group-panel {
@@ -133,17 +150,9 @@ textarea {
     height: 1.7em;
 }
 
-.group-panel .students {
-    font-weight: normal;
-    margin-left: 0.8em;
-    position: absolute;
-}
-
-.group-panel .program {
-    font-weight: normal;
-    margin-left: 0.8em;
-    position: absolute;
-    font-size: 1.1em;    
+.group-panel .group-info {
+    /*display: block;*/
+    color: black;
 }
 
 .days-panel {
@@ -554,6 +563,10 @@ transform: scaleX(-1);
     color: white;
 }
 
+.custom-modal-header.primary {
+   background-color: #286090;
+}
+
 .custom-modal-header.success {
    background-color: #2E7F3E; 
 }
@@ -845,7 +858,7 @@ html { overflow-y: auto !important; }
     color: #848484;
     font-size: 1em;
     text-align: left;
-    width: 250px;
+    width: 35%;
     margin-bottom: 5px;
 }
 
@@ -867,4 +880,136 @@ html { overflow-y: auto !important; }
 .schedule-container .title {
     font-size: 1.2em;
     font-weight: 200;
+}
+
+.block .block-title {
+    margin-left: 0;
+    padding-left: 0;
+    vertical-align: top;
+    font-size: 1.2em;
+    font-weight: 200;
+    border: none;
+}
+
+.block tbody > tr > td.small,
+.block thead > tr > th.small {
+    width: 35% !important;
+    color: #848484;
+    font-size: 1em;
+    padding-left: 0;
+}
+
+.block .table-header {
+    font-size: 1.1em;
+    color: #848484;
+    font-weight: normal;
+    border: none;
+}
+
+.block .table-header .sub-header {
+    font-size: 0.8em;
+}
+
+.block tbody > tr > td {
+    border: none;
+}
+
+.block tbody > tr > td:first-child {
+    width: 56.66666666%;
+}
+
+.block tbody > tr:first-child {
+    /*border-top: 1px #F1F1F1 solid;*/
+}
+
+.br-right {
+    /*border-right: 1px #F1F1F1 solid !important;*/
+}
+
+.br-left {
+    /*border-left: 1px #F1F1F1 solid !important;*/
+}
+
+.disciplines .name {
+    font-size: 1em;
+}
+
+.disciplines .filled {
+    font-size: 1.1em;
+}
+
+.disciplines .plan {
+    font-size: 0.8em;
+}
+
+.disciplines .recommended {
+    font-size: 0.8em;
+    color: #848484;
+}
+
+.disciplines .chair {
+    font-size: 0.8em;
+    color: #848484;
+}
+
+.legend {
+    /*width: 1em;
+    height: 1em;*/
+    padding: 0.5em;
+    border: none;
+    /*background: #7cb5ec;*/
+    display: inline-block;
+    margin-right: 3px;
+    vertical-align: middle;
+    margin-bottom: 0;
+    border-radius: 0;
+}
+
+.semester {
+    display: inline-block;
+    Width: 120px;
+    font-size: 1.1em;
+    color: #848484;
+    padding-bottom: 10px;
+}
+
+/*@media only screen and (max-width: 1026px) {
+    .schedule-container {
+        display: none;
+    }
+}*/
+
+/* Выбор недели
+------------------------------------------------*/
+#change-week dl > dt {
+    font-weight: normal;
+    color: #848484;
+    font-size: 1em;
+    text-align: left;
+    width: 35%;
+    margin-bottom: 5px;
+}
+
+.modal-container {
+    padding: 20px;
+}
+
+#change-week .week {
+    /*border-top: 1px solid #E7E7EC;
+    padding-top: 20px;*/
+}
+
+#change-week .week-label {
+    width: 35%;
+    display: inline-block;
+}
+
+#change-week .week-select {
+    width: 60%;
+    display: inline-block;
+}
+
+#change-week .schedule-type {
+    font-weight: bold;
+    font-size: 1.1em;
 }

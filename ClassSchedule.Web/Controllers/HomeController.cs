@@ -5,13 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using System.Web.SessionState;
 using System.Web.UI;
 using ClassSchedule.Domain.DataAccess.Interfaces;
 using ClassSchedule.Domain.DataAccess.Repositories;
+using ClassSchedule.Domain.Helpers;
 using ClassSchedule.Domain.Models;
 using ClassSchedule.Web.Helpers;
 using ClassSchedule.Web.Models;
+using ClassSchedule.Web.Models.ChangeWeek;
 using ClassSchedule.Web.Models.Schedule;
 using Microsoft.AspNet.Identity;
 using WebGrease.Css.Extensions;
@@ -101,7 +104,7 @@ namespace ClassSchedule.Web.Controllers
             DateTime yearStartDate = UserProfile.EducationYear.DateStart;
             int delta = DayOfWeek.Monday - yearStartDate.DayOfWeek;
             DateTime firstMonday = yearStartDate.AddDays(delta);
-            viewModel.FirstDayOfWeek = firstMonday.AddDays(UserProfile.WeekNumber * 7);
+            viewModel.FirstDayOfWeek = firstMonday.AddDays((UserProfile.WeekNumber - 1) * 7);
             viewModel.LastDayOfWeek = viewModel.FirstDayOfWeek.AddDays(6);
 
             return View(viewModel);
@@ -425,10 +428,20 @@ namespace ClassSchedule.Web.Controllers
         [HttpGet]
         public ActionResult SelectFlow()
         {
-            var faculties = UnitOfWork.Repository<Faculty>()
-                .GetQ(f => f.IsDeleted != true, orderBy: o => o.OrderBy(n => n.DivisionName))
-                .Select(x => new {x.FacultyId, FacultyName = x.DivisionName});
-            ViewBag.Faculties = new SelectList(faculties, "FacultyId", "FacultyName");
+            if (User.IsInRole("Administrator"))
+            {
+                var faculties = UnitOfWork.Repository<Faculty>()
+                    .GetQ(f => f.IsDeleted != true, orderBy: o => o.OrderBy(n => n.DivisionName))
+                    .Select(x => new {x.FacultyId, FacultyName = x.DivisionName});
+                ViewBag.Faculties = new SelectList(faculties, "FacultyId", "FacultyName");
+            }
+            else
+            {
+                var faculties = UserProfile.Faculties
+                    .Select(x => new { x.FacultyId, FacultyName = x.DivisionName })
+                    .OrderBy(n => n.FacultyName);
+                ViewBag.Faculties = new SelectList(faculties, "FacultyId", "FacultyName");
+            }
 
             return View();
         }
@@ -448,6 +461,113 @@ namespace ClassSchedule.Web.Controllers
 
                 UserManager.Update(UserProfile);
             }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public ActionResult EditableWeeks()
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var groups = GetEditableGroups()
+                    .ToList();
+
+                var yearStartDate = UserProfile.EducationYear.DateStart;
+                var currentWeek = ScheduleHelpers.WeekOfLesson(yearStartDate, DateTime.Now);
+
+                var viewModel = new ChangeWeekViewModel
+                {
+                    EditedWeek = UserProfile.WeekNumber,
+                    EditedWeekStartDate = ScheduleHelpers.DateOfLesson(yearStartDate, UserProfile.WeekNumber, 1).ToShortDateString(),
+                    EditedWeekEndDate = ScheduleHelpers.DateOfLesson(yearStartDate, UserProfile.WeekNumber, 7).ToShortDateString(),
+                    CurrentWeek = currentWeek,
+                    CurrentWeekStartDate = ScheduleHelpers.DateOfLesson(yearStartDate, currentWeek, 1).ToShortDateString(),
+                    CurrentWeekEndDate = ScheduleHelpers.DateOfLesson(yearStartDate, currentWeek, 7).ToShortDateString(),
+                    Weeks = new List<WeekViewModel>()
+                };
+
+                // Необходим график учебного процесса чтобы узнать количество недель
+                var courseSchedules = new List<CourseSchedule>();
+                foreach (var group in groups)
+                {
+                    var courseNumber = group.Course.CourseNumber;
+                    var academicPlan = group.ProgramOfEducation.AcademicPlans
+                        .OrderByDescending(d => d.UploadedAt)
+                        .FirstOrDefault();
+
+                    if (academicPlan != null)
+                    {
+                        var courseSchedule = academicPlan.CourseSchedules
+                            .SingleOrDefault(x => x.CourseNumber == courseNumber);
+
+                        courseSchedules.Add(courseSchedule);
+                    }
+                }
+
+                // Если для всех групп загружен учебный план
+                if (groups.Count == courseSchedules.Count)
+                {
+                    var allEquals = courseSchedules.All(o => o.Schedule == courseSchedules[0].Schedule);
+                    if (allEquals)
+                    {
+                        var courseSchedule = courseSchedules.First();
+                        for (int index = 1; index <= courseSchedule.Schedule.Length; index++)
+                        {
+                            var weekStartDate = ScheduleHelpers.DateOfLesson(yearStartDate, index, 1);
+                            var weekEndDate = ScheduleHelpers.DateOfLesson(yearStartDate, index, 7);
+
+                            var currentAbbr = courseSchedule.Schedule[index - 1];
+                            var scheduleType = ScheduleHelpers.ScheduleTypeByAbbr(currentAbbr);
+
+                            var week = new WeekViewModel
+                            {
+                                WeekNumber = index,
+                                WeekStartDate = weekStartDate.ToShortDateString(),
+                                WeekEndDate = weekEndDate.ToShortDateString(),
+                                ScheduleTypeName = scheduleType["Name"],
+                                ScheduleTypeColor = scheduleType["Color"]
+                            };
+
+                            viewModel.Weeks.Add(week);
+                        }
+                    }
+                }
+                else
+                {
+                    int index = 1;
+                    while (true)
+                    {
+                        var weekStartDate = ScheduleHelpers.DateOfLesson(yearStartDate, index, 1);
+                        var weekEndDate = ScheduleHelpers.DateOfLesson(yearStartDate, index, 7);
+
+                        var weekInEducationYear = DateHelpers.DatesIsActual(UserProfile.EducationYear, weekStartDate, weekEndDate);
+                        if (!weekInEducationYear) break;
+
+                        var week = new WeekViewModel
+                        {
+                            WeekNumber = index,
+                            WeekStartDate = weekStartDate.ToShortDateString(), 
+                            WeekEndDate = weekEndDate.ToShortDateString()
+                        };
+
+                        viewModel.Weeks.Add(week);                    
+
+                        index++;
+                    }
+                }            
+
+                return Json(viewModel);
+            }
+
+            return null;
+        }
+
+        [HttpGet]
+        public ActionResult ChangeWeek(int weekNumber)
+        {
+            UserProfile.WeekNumber = weekNumber;
+            UserManager.Update(UserProfile);
 
             return RedirectToAction("Index");
         }

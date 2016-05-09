@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -54,6 +55,11 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         public int? EducationYearId { get; set; }
         public virtual EducationYear EducationYear { get; set; }
+
+        /// <summary>
+        /// Список факультетов за расписание которые ответственнен пользователь
+        /// </summary>
+        public virtual ICollection<Faculty> Faculties { get; set; } 
 
         /// <summary>
         /// Инициалы и фамилия: Иванов И.И.

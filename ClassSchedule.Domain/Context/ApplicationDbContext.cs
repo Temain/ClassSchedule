@@ -70,6 +70,16 @@ namespace ClassSchedule.Domain.Context
                         c.ToTable("DisciplineSemesterPlanJob");
                     });
 
+            modelBuilder.Entity<Faculty>()
+                .HasMany(p => p.ApplicationUsers)
+                .WithMany(s => s.Faculties)
+                .Map(c =>
+                {
+                    c.MapLeftKey("FacultyId");
+                    c.MapRightKey("Id");
+                    c.ToTable("AspNetUserFaculties");
+                });
+
             base.OnModelCreating(modelBuilder);
         }
     }

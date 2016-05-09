@@ -243,9 +243,14 @@
     </Compile>
     <Compile Include="Helpers\Helpers.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\ChartIntervalViewModel.cs" />
-    <Compile Include="Models\ChartSeriesViewModel.cs" />
-    <Compile Include="Models\GroupInfoViewModel.cs" />
+    <Compile Include="Models\ChangeWeek\ChangeWeekViewModel.cs" />
+    <Compile Include="Models\ChangeWeek\WeekViewModel.cs" />
+    <Compile Include="Models\GroupInfo\ChartIntervalViewModel.cs" />
+    <Compile Include="Models\GroupInfo\ChartSeriesViewModel.cs" />
+    <Compile Include="Models\GroupInfo\DisciplineSemesterPlanViewModel.cs" />
+    <Compile Include="Models\GroupInfo\DisciplineViewModel.cs" />
+    <Compile Include="Models\GroupInfo\GroupInfoViewModel.cs" />
+    <Compile Include="Models\GroupInfo\SemesterScheduleViewModel.cs" />
     <Compile Include="Models\Schedule\AuditoriumViewModel.cs" />
     <Compile Include="Models\Schedule\HousingViewModel.cs" />
     <Compile Include="Models\Schedule\EditLessonViewModel.cs" />
@@ -333,6 +338,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\bootstrap3-typeahead.js" />
     <Content Include="Scripts\bootstrap3-typeahead.min.js" />
+    <Content Include="Scripts\changeweek.js" />
     <Content Include="Scripts\highcharts\adapters\standalone-framework.js" />
     <Content Include="Scripts\highcharts\adapters\standalone-framework.src.js" />
     <Content Include="Scripts\highcharts\highcharts-3d.js" />
@@ -453,7 +459,6 @@
     <Content Include="Scripts\lesson.edit.js" />
     <Content Include="Scripts\logging.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
-    <Content Include="Scripts\programinfo.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\underscore.js" />
@@ -471,8 +476,6 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
@@ -510,8 +513,8 @@
     <Content Include="Views\Home\_ActionModal.cshtml" />
     <Content Include="Views\Teacher\_TeacherDailySchedule.cshtml" />
     <Content Include="Views\Account\LoginOld.cshtml" />
-    <Content Include="Views\Home\_InfoModal.cshtml" />
     <Content Include="Views\AcademicPlan\Info.cshtml" />
+    <Content Include="Views\Home\_ChangeWeek.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

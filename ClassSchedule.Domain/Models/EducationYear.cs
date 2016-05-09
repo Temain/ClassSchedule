@@ -57,6 +57,7 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
 
+        public virtual ICollection<Lesson> Lessons { get; set; } 
         public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; } 
     }
 }

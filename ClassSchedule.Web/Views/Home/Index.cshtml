@@ -20,8 +20,8 @@
     @Html.Partial("_Navbar")
 
     <div class="week-panel text-center" data-week="@Model.WeekNumber">
-        @(Model.WeekNumber%2 == 0 ? "Вторая" : "Первая") [@Model.WeekNumber] неделя (@Model.FirstDayOfWeek.ToString("dd.MM") - @Model.LastDayOfWeek.ToString("dd.MM"))
-        @*<a href="#"><i class="fa fa-pencil"></i> Изменить</a>*@
+        <div class="number">@(Model.WeekNumber%2 == 0 ? "Вторая" : "Первая") [@Model.WeekNumber] неделя (@Model.FirstDayOfWeek.ToString("dd.MM") - @Model.LastDayOfWeek.ToString("dd.MM"))</div>
+        <div class="change"><a href="#" data-bind="click: changeWeek, tooltip: { title: 'Изменить редактируемую неделю', trigger: 'hover' }"><i class="fa fa-pencil"></i> Изменить</a></div>
     </div>
 
     <div class="group-panel">
@@ -30,14 +30,17 @@
         @foreach (var group in Model.GroupLessons)
         {
             <div class="group bordered-rb text-center" data-group-id="@group.GroupId" style="width: @widthOfGroupColumn%; float: left">
-                <span>@group.GroupName</span>
+                @*<span>@group.GroupName</span>*@
                 @*@if (group.NumberOfStudents.HasValue && group.NumberOfStudents.Value != 0)
                 {
                     <span class="students"><i class="fa fa-male"></i> @group.NumberOfStudents</span>
                 }*@
 
                 @*<a href="#" class="program" data-bind="click: programInfo, tooltip: { title: 'Информация о группе', trigger: 'hover' }"><i class="fa fa-info"></i><span></span></a>*@
-                <a href="@Url.Action("Info", "AcademicPlan", new { groupId = group.GroupId })" class="program" target="_blank" data-bind="tooltip: { title: 'Информация о группе', trigger: 'hover' }"><i class="fa fa-info"></i><span></span></a>
+                <a href="@Url.Action("Info", "AcademicPlan", new {groupId = group.GroupId})" class="group-info" target="_blank" data-bind="tooltip: { title: 'Информация о группе', trigger: 'hover' }">
+                    @*<i class="fa fa-info"></i>*@
+                    <span>@group.GroupName</span>
+                </a>
             </div>
         }
     </div>
@@ -98,7 +101,7 @@
 
 @Html.Partial("_EditLesson")
 @Html.Partial("_ActionModal")
-@Html.Partial("_InfoModal")
+@Html.Partial("_ChangeWeek")
 
 @section Scripts {
     @Scripts.Render("~/bundles/underscore")
@@ -189,8 +192,8 @@
             self.SelectedLessonCell = ko.observable();
             self.CopiedLessonCell = ko.observable();
 
+            self.ChangeWeekViewModel = ko.observable(new ChangeWeekViewModel());
             self.EditLessonViewModel = ko.observable(new EditLessonViewModel());
-            self.ProgramInfo = ko.observable(new ProgramInfo());
 
             self.editLesson = function( /*lessonCell*/) {
                 var lessonCell = self.SelectedLessonCell();
@@ -496,53 +499,62 @@
             }
 
             self.actionModal = {
-                    lastStyle: null,
-                    clear: function() {
-                        if (this.lastStyle) {
-                            $('#action-modal .custom-modal-header').removeClass(this.lastStyle);
-                            $('#modal-confirm').removeClass('btn-' + this.lastStyle);
-                        }
-                    },
-
-                    setSucessStyle: function() {
-                        this.clear();
-                        $('#action-modal .custom-modal-header').addClass('success');
-                        $('#modal-confirm').addClass('btn-success');
-                        this.lastStyle = 'success';
-                    },
-
-                    setWarningStyle: function() {
-                        this.clear();
-                        $('#action-modal .custom-modal-header').addClass('warning');
-                        $('#modal-confirm').addClass('btn-warning');
-                        this.lastStyle = 'warning';
-                    },
-
-                    setDangerStyle: function() {
-                        this.clear();
-                        $('#action-modal .custom-modal-header').addClass('danger');
-                        $('#modal-confirm').addClass('btn-danger');
-                        this.lastStyle = 'danger';
-                    },
-
-                    content: function(modalContent) {
-                        $('#action-modal .modal-body').html(modalContent);
+                lastStyle: null,
+                clear: function() {
+                    if (this.lastStyle) {
+                        $('#action-modal .custom-modal-header').removeClass(this.lastStyle);
+                        $('#modal-confirm').removeClass('btn-' + this.lastStyle);
                     }
                 },
-                self.programInfo = function(data, event) {
-                    var element = $(event.target);
-                    var groupId = element.closest('.group').attr('data-group-id');
 
-                    $.post('/AcademicPlan/Info', { groupId: groupId }, function (data) {
-                        self.ProgramInfo(new ProgramInfo(data));
-                        self.ProgramInfo().highcharts();
+                setSucessStyle: function() {
+                    this.clear();
+                    $('#action-modal .custom-modal-header').addClass('success');
+                    $('#modal-confirm').addClass('btn-success');
+                    this.lastStyle = 'success';
+                },
 
-                        $('#info-modal').modal({
-                            backdrop: 'static',
-                            keyboard: false
-                        });
-                    });
+                setWarningStyle: function() {
+                    this.clear();
+                    $('#action-modal .custom-modal-header').addClass('warning');
+                    $('#modal-confirm').addClass('btn-warning');
+                    this.lastStyle = 'warning';
+                },
+
+                setDangerStyle: function() {
+                    this.clear();
+                    $('#action-modal .custom-modal-header').addClass('danger');
+                    $('#modal-confirm').addClass('btn-danger');
+                    this.lastStyle = 'danger';
+                },
+
+                content: function(modalContent) {
+                    $('#action-modal .modal-body').html(modalContent);
                 }
+            }
+
+            self.changeWeek = function () {
+                $.post('/Home/EditableWeeks', {}, function (data) {
+                    self.ChangeWeekViewModel(new ChangeWeekViewModel(data));
+
+                    $('#change-week').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+
+                    //$('#change-week').on('click', '#modal-confirm', function () {
+                    //    $.post('/Home/ChangeWeek',{ weekNumber: self.ChangeWeekViewModel().SelectedWeek() }, function () { });
+
+                    //    $('#change-week').modal('hide');
+                    //});
+
+                    //$('#change-week').on('click', '#modal-cancel', function () {
+                    //    $('#change-week').modal('hide');
+                    //    $('#change-week').unbind('click');
+                    //});
+                });
+            }
+
         };
 
         ko.bindingHandlers.tooltip = {

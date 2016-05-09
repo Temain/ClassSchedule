@@ -44,6 +44,6 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         public string FilePath { get; set; }
 
-        public List<CourseSchedule> CourseSchedules { get; set; }
+        public virtual List<CourseSchedule> CourseSchedules { get; set; }
     }
 }

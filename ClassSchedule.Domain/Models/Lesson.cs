@@ -74,6 +74,12 @@ namespace ClassSchedule.Domain.Models
         public virtual LessonType LessonType { get; set; }
 
         /// <summary>
+        /// Учебный год
+        /// </summary>
+        public int? EducationYearId { get; set; }
+        public virtual EducationYear EducationYear { get; set; }
+
+        /// <summary>
         /// Неактивно
         /// </summary>
         public bool IsNotActive { get; set; }

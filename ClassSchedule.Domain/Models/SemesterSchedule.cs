@@ -26,8 +26,6 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         public int NumberOfFirstWeek { get; set; }
 
-        // public int NumberOfFirstElement { get; set; }
-
         /// <summary>
         /// Теоретическое обучение, недель
         /// </summary>
@@ -72,6 +70,11 @@ namespace ClassSchedule.Domain.Models
         /// График учебного процесса
         /// </summary>
         public string Schedule { get; set; }
+
+        public int NumberOfLastWeek
+        {
+            get { return Schedule.Length; }
+        }
 
 
         public int CourseScheduleId { get; set; }

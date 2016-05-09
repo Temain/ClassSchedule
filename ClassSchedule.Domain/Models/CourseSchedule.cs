@@ -75,6 +75,11 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         public string Schedule { get; set; }
 
+        public int NumberOfLastWeek
+        {
+            get { return Schedule.Length; }
+        }
+
         /// <summary>
         /// Учебный план
         /// </summary>
@@ -86,6 +91,6 @@ namespace ClassSchedule.Domain.Models
         /// Детализация графика учебного процесса
         /// для конкретного курса по семестрам
         /// </summary>
-        public List<SemesterSchedule> SemesterSchedules { get; set; } 
+        public virtual List<SemesterSchedule> SemesterSchedules { get; set; } 
     }
 }

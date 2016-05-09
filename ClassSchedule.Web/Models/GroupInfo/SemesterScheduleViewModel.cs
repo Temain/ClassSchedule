@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace ClassSchedule.Web.Models
+namespace ClassSchedule.Web.Models.GroupInfo
 {
-    public class GroupInfoViewModel
+    public class SemesterScheduleViewModel
     {
-        public int GroupId { get; set; }
+        public int SemesterNumber { get; set; }
 
-        public int ProgramOfEducationId { get; set; }
+        public DateTime SemesterStartDate { get; set; }
+        public DateTime SemesterEndDate { get; set; }
 
         /// <summary>
         /// Теоретическое обучение, недель
@@ -50,5 +51,6 @@ namespace ClassSchedule.Web.Models
         /// Научно-исследовательская работа, недель
         /// </summary>
         public int ResearchWorkWeeks { get; set; }
+
     }
 }

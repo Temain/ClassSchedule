@@ -52,5 +52,10 @@ namespace ClassSchedule.Domain.Models
         /// Курсы на факультете
         /// </summary>
         public virtual ICollection<Course> Courses { get; set; }
+
+        /// <summary>
+        /// Пользователи, ответственные за расписание данного факультета
+        /// </summary>
+        public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; } 
     }
 }

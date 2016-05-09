@@ -160,6 +160,14 @@
     <Compile Include="Migrations\201605060400118_AddResearchWorkWeeksToSchedule.Designer.cs">
       <DependentUpon>201605060400118_AddResearchWorkWeeksToSchedule.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605082015198_AddEducationYearToLessonTable.cs" />
+    <Compile Include="Migrations\201605082015198_AddEducationYearToLessonTable.Designer.cs">
+      <DependentUpon>201605082015198_AddEducationYearToLessonTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605082041196_AddAspNetUserFacultiesTable.cs" />
+    <Compile Include="Migrations\201605082041196_AddAspNetUserFacultiesTable.Designer.cs">
+      <DependentUpon>201605082041196_AddAspNetUserFacultiesTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AcademicPlan.cs" />
     <Compile Include="Models\Auditorium.cs" />
@@ -273,6 +281,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605060400118_AddResearchWorkWeeksToSchedule.resx">
       <DependentUpon>201605060400118_AddResearchWorkWeeksToSchedule.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605082015198_AddEducationYearToLessonTable.resx">
+      <DependentUpon>201605082015198_AddEducationYearToLessonTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605082041196_AddAspNetUserFacultiesTable.resx">
+      <DependentUpon>201605082041196_AddAspNetUserFacultiesTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

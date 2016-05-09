@@ -65,7 +65,17 @@ namespace ClassSchedule.Web.Helpers
         {
             int delta = System.DayOfWeek.Monday - yearStartDate.DayOfWeek;
             DateTime firstMonday = yearStartDate.AddDays(delta);
-            return firstMonday.AddDays((weekNumber * 7) + dayNumber - 1);
+            return firstMonday.AddDays(((weekNumber - 1) * 7) + dayNumber - 1);
+        }
+
+        /// <summary>
+        /// Определение недели занятия по дате
+        /// </summary>
+        public static int WeekOfLesson(DateTime yearStartDate, DateTime date)
+        {
+            int delta = System.DayOfWeek.Monday - yearStartDate.DayOfWeek;
+            DateTime firstMonday = yearStartDate.AddDays(delta);
+            return (date - firstMonday).Days / 7 + 1;
         }
 
         /// <summary>
@@ -107,6 +117,27 @@ namespace ClassSchedule.Web.Helpers
             }
 
             return shortName;
+        }
+
+        /// <summary>
+        /// Возвращает тип расписания в графике учебного плана по сокращению
+        /// Например, Т - Теоретическое обучение, К - Каникулы и т.д.
+        /// </summary>
+        public static Dictionary<string, string> ScheduleTypeByAbbr(char abbreviation)
+        {
+            var types = new Dictionary<char, Dictionary<string,string>>
+            {
+                {'Т', new Dictionary<string, string> { {"Name" , "Теоретическое обучение"}, { "Color" , "#7cb5ec"} } },
+                {'Э', new Dictionary<string, string> { {"Name" , "Экзаменационные сессии"}, { "Color" , "#7798BF"} } },
+                {'К', new Dictionary<string, string> { {"Name" , "Каникулы"}, { "Color" , "#f7a35c"} } },
+                {'Н', new Dictionary<string, string> { {"Name" , "Научно-исследовательская работа"}, { "Color" , "#DDDF00"} } },
+                {'У', new Dictionary<string, string> { {"Name" , "Учебная практика"}, { "Color" , "#90ee7e"} } },
+                {'П', new Dictionary<string, string> { {"Name" , "Производственная практика"}, { "Color" , "#eeaaee"} } },
+                {'Д', new Dictionary<string, string> { {"Name" , "Выпускная квалификационная работа"}, { "Color" , "#FF9655"} } },
+                {'Г', new Dictionary<string, string> { {"Name" , "Гос. Экзамены и/или защита ВКР"}, { "Color" , "#FFF263"} } }
+            };
+
+            return types[abbreviation];
         }
     }
 }
