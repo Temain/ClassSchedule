@@ -44,7 +44,7 @@ namespace ClassSchedule.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Group(int facultyId, int? courseId)
+        public ActionResult Group(int facultyId, int? courseId, int? educationFormId, int? educationLevelId, int? courseNumber)
         {
             if (Request.IsAjaxRequest())
             {
@@ -56,23 +56,6 @@ namespace ClassSchedule.Web.Controllers
                 {
                     groups = groups.Where(x => x.CourseId == courseId);
                 }
-
-                var result = groups.Select(x => new {x.GroupId, GroupName = x.DivisionName});
-
-                return Json(result);
-            }
-
-            return null;
-        }
-
-        [HttpPost]
-        public ActionResult Group(int facultyId, int? educationFormId, int? educationLevelId, int? courseNumber)
-        {
-            if (Request.IsAjaxRequest())
-            {
-                var groups = UnitOfWork.Repository<Group>()
-                    .GetQ(x => x.IsDeleted != true && x.Course.FacultyId == facultyId,
-                        orderBy: o => o.OrderBy(n => n.DivisionName));
 
                 if (educationFormId != null)
                 {
@@ -86,10 +69,11 @@ namespace ClassSchedule.Web.Controllers
 
                 if (courseNumber != null)
                 {
-                    groups = groups.Where(g => g.Course.CourseNumber == courseNumber);
+                    groups = groups.Where(g => UserProfile.EducationYear.YearStart - g.Course.YearStart + 1 == courseNumber);
                 }
 
-                var result = groups.Select(x => new { x.GroupId, GroupName = x.DivisionName });
+                var result = groups.Select(x => new { x.GroupId, GroupName = x.DivisionName })
+                    .ToList();
 
                 return Json(result);
             }

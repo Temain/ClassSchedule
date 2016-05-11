@@ -42,7 +42,8 @@ namespace ClassSchedule.Web
             bundles.Add(new ScriptBundle("~/bundles/knockout").Include(
                       "~/Scripts/knockout-3.4.0.js",
                       "~/Scripts/knockout.mapping-latest.js",
-                      "~/Scripts/knockout.validation.js"));
+                      "~/Scripts/knockout.validation.js",
+                      "~/Scripts/knockout.bindings.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/edit-lesson").Include(
                        "~/Scripts/lesson.edit.js",

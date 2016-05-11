@@ -9,5 +9,7 @@ namespace ClassSchedule.Web.Models.SelectFlow
     {
         public int GroupId { get; set; }
         public string GroupName { get; set; }
+
+        public bool IsSelected { get; set; }
     }
 }

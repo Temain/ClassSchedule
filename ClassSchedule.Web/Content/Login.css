@@ -9,6 +9,10 @@ html, body {
     margin-bottom: -100px;
 }
 
+.panel-footer {
+    height: 3em;
+}
+
 .container {
     position: relative;
     height: 100%;

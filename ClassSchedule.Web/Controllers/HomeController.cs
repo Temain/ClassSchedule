@@ -429,30 +429,50 @@ namespace ClassSchedule.Web.Controllers
         [HttpGet]
         public ActionResult SelectFlow()
         {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult SelectFlowData()
+        {
+            if (!Request.IsAjaxRequest())
+            {
+                return new HttpStatusCodeResult(404);
+            }
+
+            var viewModel = new SelectFlowViewModel
+            {
+                EducationFormId = (int)EducationForms.FullTime,
+                CourseNumbers = new List<int> { 1,2,3,4,5 },
+                Groups = new List<GroupViewModel>()
+            };
+
             if (User.IsInRole("Administrator"))
             {
-                var faculties = UnitOfWork.Repository<Faculty>()
+                viewModel.Faculties = UnitOfWork.Repository<Faculty>()
                     .GetQ(f => f.IsDeleted != true, orderBy: o => o.OrderBy(n => n.DivisionName))
-                    .Select(x => new {x.FacultyId, FacultyName = x.DivisionName});
-                ViewBag.Faculties = new SelectList(faculties, "FacultyId", "FacultyName");
+                    .Select(x => new FacultyViewModel { FacultyId = x.FacultyId, FacultyName = x.DivisionName })
+                    .ToList();
             }
             else
             {
-                var faculties = UserProfile.Faculties
-                    .Select(x => new { x.FacultyId, FacultyName = x.DivisionName })
-                    .OrderBy(n => n.FacultyName);
-                ViewBag.Faculties = new SelectList(faculties, "FacultyId", "FacultyName");
+                viewModel.Faculties = UserProfile.Faculties
+                    .Select(x => new FacultyViewModel { FacultyId = x.FacultyId, FacultyName = x.DivisionName })
+                    .OrderBy(n => n.FacultyName)
+                    .ToList();
             }
 
-            var educationLevels = UnitOfWork.Repository<EducationLevel>()
-                .Get(x => x.IsDeleted != true);
-            ViewBag.EducationLevels = new SelectList(educationLevels, "EducationlevelId", "EducationLevelName");
+            viewModel.EducationLevels = UnitOfWork.Repository<EducationLevel>()
+                .Get(x => x.IsDeleted != true)
+                .Select(x => new EducationLevelViewModel { EducationLevelId = x.EducationLevelId, EducationLevelName = x.EducationLevelName })
+                .ToList();
+           
+            viewModel.EducationForms = UnitOfWork.Repository<EducationForm>()
+                .GetQ(x => x.IsDeleted != true)
+                .Select(x => new EducationFormViewModel { EducationFormId = x.EducationFormId, EducationFormName = x.EducationFormName})
+                .ToList();
 
-            var educationForms = UnitOfWork.Repository<EducationForm>()
-                .Get(x => x.IsDeleted != true);
-            ViewBag.EducationForms = new SelectList(educationForms, "EducationFormId", "EducationFormName");
-
-            return View();
+            return Json(viewModel);
         }
 
         [HttpPost]
@@ -488,11 +508,11 @@ namespace ClassSchedule.Web.Controllers
                 var viewModel = new ChangeWeekViewModel
                 {
                     EditedWeek = UserProfile.WeekNumber,
-                    EditedWeekStartDate = ScheduleHelpers.DateOfLesson(yearStartDate, UserProfile.WeekNumber, 1).ToShortDateString(),
-                    EditedWeekEndDate = ScheduleHelpers.DateOfLesson(yearStartDate, UserProfile.WeekNumber, 7).ToShortDateString(),
+                    EditedWeekStartDate = ScheduleHelpers.DateOfLesson(yearStartDate, UserProfile.WeekNumber, 1).ToString("dd.MM.yyyy"),//.ToShortDateString("dd.mm.yyyy"),
+                    EditedWeekEndDate = ScheduleHelpers.DateOfLesson(yearStartDate, UserProfile.WeekNumber, 7).ToString("dd.MM.yyyy"), //.ToShortDateString(),
                     CurrentWeek = currentWeek,
-                    CurrentWeekStartDate = ScheduleHelpers.DateOfLesson(yearStartDate, currentWeek, 1).ToShortDateString(),
-                    CurrentWeekEndDate = ScheduleHelpers.DateOfLesson(yearStartDate, currentWeek, 7).ToShortDateString(),
+                    CurrentWeekStartDate = ScheduleHelpers.DateOfLesson(yearStartDate, currentWeek, 1).ToString("dd.MM.yyyy"), //.ToShortDateString(),
+                    CurrentWeekEndDate = ScheduleHelpers.DateOfLesson(yearStartDate, currentWeek, 7).ToString("dd.MM.yyyy"), //.ToShortDateString(),
                     Weeks = new List<WeekViewModel>()
                 };
 
@@ -532,8 +552,8 @@ namespace ClassSchedule.Web.Controllers
                             var week = new WeekViewModel
                             {
                                 WeekNumber = index,
-                                WeekStartDate = weekStartDate.ToShortDateString(),
-                                WeekEndDate = weekEndDate.ToShortDateString(),
+                                WeekStartDate = weekStartDate.ToString("dd.MM.yyyy"), //.ToShortDateString(),
+                                WeekEndDate = weekEndDate.ToString("dd.MM.yyyy"), //.ToShortDateString(),
                                 ScheduleTypeName = scheduleType["Name"],
                                 ScheduleTypeColor = scheduleType["Color"]
                             };
@@ -556,8 +576,8 @@ namespace ClassSchedule.Web.Controllers
                         var week = new WeekViewModel
                         {
                             WeekNumber = index,
-                            WeekStartDate = weekStartDate.ToShortDateString(), 
-                            WeekEndDate = weekEndDate.ToShortDateString()
+                            WeekStartDate = weekStartDate.ToString("dd.MM.yyyy"), //ToShortDateString(), 
+                            WeekEndDate = weekEndDate.ToString("dd.MM.yyyy") //.ToShortDateString()
                         };
 
                         viewModel.Weeks.Add(week);                    

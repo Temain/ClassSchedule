@@ -261,6 +261,9 @@
     <Compile Include="Models\Schedule\RefreshCellViewModel.cs" />
     <Compile Include="Models\Schedule\ScheduleViewModel.cs" />
     <Compile Include="Models\Schedule\LessonViewModel.cs" />
+    <Compile Include="Models\SelectFlow\EducationFormViewModel.cs" />
+    <Compile Include="Models\SelectFlow\EducationLevelViewModel.cs" />
+    <Compile Include="Models\SelectFlow\FacultyViewModel.cs" />
     <Compile Include="Models\SelectFlow\GroupViewModel.cs" />
     <Compile Include="Models\Teacher\TeacherDiscipline.cs" />
     <Compile Include="Models\Teacher\TeacherDisciplineAuditorium.cs" />
@@ -456,6 +459,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\knockout-3.4.0.debug.js" />
     <Content Include="Scripts\knockout-3.4.0.js" />
+    <Content Include="Scripts\knockout.bindings.js" />
     <Content Include="Scripts\knockout.mapping-latest.debug.js" />
     <Content Include="Scripts\knockout.mapping-latest.js" />
     <Content Include="Scripts\knockout.validation.js" />

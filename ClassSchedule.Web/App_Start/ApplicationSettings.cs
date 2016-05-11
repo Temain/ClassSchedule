@@ -60,4 +60,20 @@ namespace ClassSchedule.Web
         /// </summary>
         Consultation = 6
     }
+
+    /// <summary>
+    /// Формы обучения
+    /// </summary>
+    public enum EducationForms
+    {
+        /// <summary>
+        /// Очная
+        /// </summary>
+        FullTime = 5,
+
+        /// <summary>
+        /// Заочная
+        /// </summary>
+        Extramural = 3
+    }
 }

@@ -878,7 +878,7 @@ html { overflow-y: auto !important; }
 
 .schedule-container .inline-block-lg {
     padding-bottom: 20px;
-    padding-top: 20px;
+    padding-top: 30px;
     border-top: 1px solid #E7E7EC;
     border-bottom: 1px solid #E7E7EC;
 }
@@ -894,6 +894,12 @@ html { overflow-y: auto !important; }
 .schedule-container .title {
     font-size: 1.2em;
     font-weight: 200;
+}
+
+.schedule-container .subtitle {
+    font-size: 0.8em;
+    color: #848484;
+    margin-top: 5px;
 }
 
 .inline-block .col-h2 {

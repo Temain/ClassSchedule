@@ -1,9 +1,10 @@
-﻿@model ClassSchedule.Web.Models.SelectFlow.SelectFlowViewModel
+﻿@*@model ClassSchedule.Web.Models.SelectFlow.SelectFlowViewModel*@
 @{
     ViewBag.Title = "Выбор потока";
 }
 
 @Styles.Render("~/Content/checkbox-x")
+@Styles.Render("~/Content/bootstrap-select")
 
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-header">
@@ -26,6 +27,18 @@
                 @Html.AntiForgeryToken()
 
                 <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-calendar fa-32px"></i><br>
+                            <span class="nav-icon-text"></span>2015/2016 Учебный год<span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">2016/2017</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="navbar-divider"></li>
+
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                             <i class="fa fa-user fa-32px"></i><br>
@@ -53,9 +66,28 @@
         <div class="row inline-block-lg">
             <div class="col-md-4">
                 <div class="title">Редактировались ранее</div>
+                <br />
+                <div class="subtitle"></div>
             </div>
             <div class="col-md-8">
-                
+                <div class="form-group col-md-12">
+                    <select class="form-control"></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row inline-block mrgtop24">
+            <div class="col-md-4">
+                <div class="title">
+                    Наименование
+                    <br />
+                    <div class="subtitle">Выбранные группы будут отображаться в пункте "Редактировались ранее" под данным наименованием. Если оставить поле пустым, наименование будет выдано автоматически.</div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="form-group col-md-9">
+                    <input class="form-control" type="text" data-bind="value: ViewData().GroupSetName" />
+                </div>
             </div>
         </div>
 
@@ -65,8 +97,7 @@
             </div>
             <div class="col-md-8">
                 <div class="form-group col-md-9">
-                    @Html.DropDownListFor(model => model.FacultyId, (SelectList) ViewBag.Faculties, String.Empty, new {@class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.FacultyId)
+                    <select class="form-control" title="" data-size="12" data-bind="selectPicker: ViewData().FacultyId, options: ViewData().Faculties, optionsValue: 'FacultyId', optionsText: 'FacultyName', optionsCaption: '', event : { change: facultyChanged }"></select>
                 </div>
             </div>
         </div>
@@ -77,8 +108,7 @@
             </div>
             <div class="col-md-8">
                 <div class="form-group col-md-6">
-                    @Html.DropDownListFor(model => model.EducationFormId, (SelectList)ViewBag.EducationForms, String.Empty, new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.EducationFormId)
+                    <select class="form-control" title="" data-size="12" data-bind="selectPicker: ViewData().EducationFormId, options: ViewData().EducationForms, optionsValue: 'EducationFormId', optionsText: 'EducationFormName', optionsCaption: ''"></select>
                 </div>
             </div>
         </div>
@@ -89,8 +119,7 @@
             </div>
             <div class="col-md-8">
                 <div class="form-group col-md-6">
-                    @Html.DropDownListFor(model => model.EducationLevelId, (SelectList)ViewBag.EducationLevels, String.Empty, new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.EducationLevelId)
+                    <select class="form-control" title="" data-size="12" data-bind="selectPicker: ViewData().EducationLevelId, options: ViewData().EducationLevels, optionsValue: 'EducationLevelId', optionsText: 'EducationLevelName', optionsCaption: ''"></select>
                 </div>
             </div>
         </div>
@@ -101,8 +130,7 @@
             </div>
             <div class="col-md-8">
                 <div class="form-group col-md-3">
-                    @Html.DropDownListFor(model => model.FacultyId, (SelectList)ViewBag.Faculties, String.Empty, new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.FacultyId)
+                    <select class="form-control" title="" data-size="12" data-bind="selectPicker: ViewData().CourseNumber, options: ViewData().CourseNumbers, optionsCaption: '', event: { change : courseNumberChanged }"></select>
                 </div>
             </div>
         </div>
@@ -112,42 +140,30 @@
                 <div class="title">Группы</div>
             </div>
             <div class="col-md-8">
+
+                @*<div class="col-h2 mrgbtm24">1 поток</div>*@
+
+                <div class="col-md-9" data-bind="visible: $root.ViewData().Groups().length < 1">
+                    <div class="alert alert-info" role="alert">Выберите факультет, форму обучения, уровень образования и курс.</div>
+                </div>               
+
+                <!-- ko foreach: ViewData().Groups -->
                 <div class="col-md-3">
-                    <div class="col-h2 mrgbtm24">1 поток</div>
-
                     <div class="mrgbtm24">
-                        <input type="checkbox" id="input-20" data-toggle="checkbox-x" value="1" data-three-state="false">
-                        <label class="cbx-label" for="input-20">ПИ0904</label>
-                    </div>
-
-                    <div class="mrgbtm24">
-                        <input type="checkbox" id="input-21" data-toggle="checkbox-x" value="1" data-three-state="false">
-                        <label class="cbx-label" for="input-21">ПИ0905</label>
-                    </div>
-
-                    <div class="mrgbtm24">
-                        <input type="checkbox" id="input-22" data-toggle="checkbox-x" value="1" data-three-state="false">
-                        <label class="cbx-label" for="input-22">ПИ0906</label>
+                        <input type="checkbox" class="checkbox-x" data-three-state="false" data-bind="checkbox: $data">
+                        <label class="cbx-label" data-bind="text: GroupName, attr: { for: 'group-' + GroupId }">ПИ0904</label>
                     </div>
                 </div>
+                <!-- /ko -->
+            </div>
+        </div>
 
+        <div class="row inline-block">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-8">
                 <div class="col-md-3">
-                    <div class="col-h2 mrgbtm24">2 поток</div>
-
-                    <div class="mrgbtm24">
-                        <input type="checkbox" id="input-23" data-toggle="checkbox-x" value="1" data-three-state="false">
-                        <label class="cbx-label" for="input-23">ИТ0904</label>
-                    </div>
-
-                    <div class="mrgbtm24">
-                        <input type="checkbox" id="input-24" data-toggle="checkbox-x" value="1" data-three-state="false">
-                        <label class="cbx-label" for="input-24">ИТ0904</label>
-                    </div>
-
-                    <div class="mrgbtm24">
-                        <input type="checkbox" id="input-25" data-toggle="checkbox-x" value="1" data-three-state="false">
-                        <label class="cbx-label" for="input-25">ИТ0904</label>
-                    </div>
+                    <button class="btn btn-success btn-lg" data-bind="click: selectFlow, enable: $root.ViewData().SelectedGroups().length > 0"><i class="fa fa-check-square" aria-hidden="true"></i> Выбрать</button>
                 </div>
             </div>
         </div>
@@ -156,11 +172,195 @@
 
 @section Scripts
 {
+    @Scripts.Render("~/bundles/bootstrap-select")
+    @Scripts.Render("~/bundles/knockout")
     @Scripts.Render("~/bundles/checkbox-x")
 
     <script>
-        $(function() {
-            
+        $(function () {
+            viewModel.loadViewData();
+
+            ko.applyBindings(viewModel);
         });
+
+        var viewModel = new MainViewModel();
+
+        function MainViewModel() {
+            var self = this;
+
+            self.ViewData = ko.observable(new SelectFlowViewModel());
+
+            self.loadViewData = function () {
+                $.post('/Home/SelectFlowData', {}, function (data) {
+                    self.ViewData(new SelectFlowViewModel(data));
+                });
+            };
+
+            self.loadCourseNumbers = function () {
+                var parameters = {
+                    facultyId: self.ViewData.FacultyId(),
+                    educationFormId: self.ViewData.EducationFormId(),
+                    educationLevelId: self.ViewData.EducationLevelId(),
+                    courseNumber: self.ViewData.CourseNumber()
+                };
+
+                $.post('/Dictionary/CourseNumber', parameters, function (data) {
+
+                });
+            };
+
+            self.loadGroups = function () {
+                var parameters = {
+                    facultyId: self.ViewData().FacultyId(),
+                    educationFormId: self.ViewData().EducationFormId(),
+                    educationLevelId: self.ViewData().EducationLevelId(),
+                    courseNumber: self.ViewData().CourseNumber()
+                };
+
+                if (parameters.facultyId && parameters.educationFormId
+                    && parameters.educationLevelId && parameters.courseNumber) {
+
+                    $.post('/Dictionary/Group', parameters, function (data) {
+                        var groupMapping = {
+                            create: function (options) {
+                                return new GroupViewModel(options.data);
+                            }
+                        };
+
+                        ko.mapping.fromJS(data, groupMapping, self.ViewData().Groups);
+                    });
+
+                }
+            };
+
+            self.facultyChanged = function () {
+                //self.ViewData().CourseNumber('');
+                //self.ViewData().Groups([]);
+            };
+
+            self.courseNumberChanged = function () {
+                self.loadGroups();
+            };
+
+            self.selectFlow = function () {
+                var selectFlowViewModel = ko.toJS(self.ViewData());
+
+                var postData = {
+                    GroupSetId: selectFlowViewModel.GroupSetId,
+                    GroupSetName: selectFlowViewModel.GroupSetName,
+                    FacultyId: selectFlowViewModel.FacultyId,
+                    EducationLevelId: selectFlowViewModel.EducationLevelId,
+                    EducationFormId: selectFlowViewModel.EducationFormId,
+                    CourseNumber: selectFlowViewModel.CourseNumber,
+                    Groups: ko.toJS(selectFlowViewModel.SelectedGroups)
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/SelectFlow",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({ viewModel: postData }),
+                    dataType: "html",
+                    success: function (result) {
+                        var i = 0;
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert(xhr.status);
+                        alert(thrownError);
+                    }
+                });
+            };
+        }
+
+        ko.bindingHandlers.checkbox = {
+            init: function (element, valueAccessor) {
+                var item = valueAccessor();
+                var value = item.IsSelected() ? '1' : '0';
+                $(element).val(value);
+
+                $(element).change(function () {
+                    item.IsSelected(!item.IsSelected());
+                });
+
+                $(element).checkboxX();
+            }
+        };
+
+        function SelectFlowViewModel(data) {
+            var self = this;
+            if (!data) {
+                self.GroupSetId = ko.observable('');
+                self.GroupSetName = ko.observable('');
+                self.FacultyId = ko.observable('');
+                self.Faculties = ko.observableArray([]);
+                self.EducationLevelId = ko.observable('');
+                self.EducationLevels = ko.observableArray([]);
+                self.EducationFormId = ko.observable('');
+                self.EducationForms = ko.observableArray([]);
+                self.CourseNumber = ko.observable('');
+                self.CourseNumbers = ko.observableArray([]);
+                self.Groups = ko.observableArray([]);
+            }
+
+            var selectFlowMapping = {
+                'Groups': {
+                    create: function (options) {
+                        return new GroupViewModel(options.data);
+                    }
+                },
+                'Faculties': {
+                    create: function (options) {
+                        return new FacultyViewModel(options.data);
+                    }
+                },
+                'EducationForms': {
+                    create: function (options) {
+                        return new EducationFormViewModel(options.data);
+                    }
+                },
+                'EducationLevels': {
+                    create: function (options) {
+                        return new EducationLevelViewModel(options.data);
+                    }
+                }
+            };
+
+            ko.mapping.fromJS(data, selectFlowMapping, self);
+
+            self.SelectedGroups = ko.computed(function () {
+                return ko.utils.arrayFilter(self.Groups(), function (value) {
+                    return value.IsSelected();
+                });
+            });
+
+            return self;
+        }
+
+        function GroupViewModel(data) {
+            var self = this;
+            if (!data) {
+                self.GroupId = ko.observable('');
+                self.GroupName = ko.observable('');
+                self.IsSelected = ko.observable('');
+            }
+
+            self.IsSelected = ko.observable(false);
+
+            ko.mapping.fromJS(data, {}, self);
+
+            return self;
+        }
+
+        function FacultyViewModel(data) {
+            ko.mapping.fromJS(data, {}, this);
+        }
+
+        function EducationFormViewModel(data) {
+            ko.mapping.fromJS(data, {}, this);
+        }
+
+        function EducationLevelViewModel(data) {
+            ko.mapping.fromJS(data, {}, this);
+        }
     </script>
 }
