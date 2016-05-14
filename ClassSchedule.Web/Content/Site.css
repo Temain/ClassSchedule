@@ -1040,3 +1040,11 @@ html { overflow-y: auto !important; }
     font-weight: bold;
     font-size: 1.1em;
 }
+
+/* Checkbox-x
+--------------------------------------*/
+.cbx-label > .order {
+    vertical-align: top;
+    font-size: 0.8em;
+    color: #848484;
+}

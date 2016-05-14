@@ -71,7 +71,8 @@
             </div>
             <div class="col-md-8">
                 <div class="form-group col-md-12">
-                    <select class="form-control"></select>
+                    <select class="form-control" title="" data-size="12" data-bind="selectPicker: ViewData().GroupSetId, options: ViewData().GroupSets, optionsValue: 'GroupSetId',
+                        optionsText: 'GroupSetName', optionsCaption: 'Новый список групп...', event : { change: groupSetChanged }, optionsAfterRender: $root.groupSetOptionContent"></select>
                 </div>
             </div>
         </div>
@@ -108,7 +109,7 @@
             </div>
             <div class="col-md-8">
                 <div class="form-group col-md-6">
-                    <select class="form-control" title="" data-size="12" data-bind="selectPicker: ViewData().EducationFormId, options: ViewData().EducationForms, optionsValue: 'EducationFormId', optionsText: 'EducationFormName', optionsCaption: ''"></select>
+                    <select class="form-control" title="" data-size="12" data-bind="selectPicker: ViewData().EducationFormId, options: ViewData().EducationForms, optionsValue: 'EducationFormId', optionsText: 'EducationFormName', optionsCaption: '', event : { change: educationFormChanged }"></select>
                 </div>
             </div>
         </div>
@@ -119,7 +120,7 @@
             </div>
             <div class="col-md-8">
                 <div class="form-group col-md-6">
-                    <select class="form-control" title="" data-size="12" data-bind="selectPicker: ViewData().EducationLevelId, options: ViewData().EducationLevels, optionsValue: 'EducationLevelId', optionsText: 'EducationLevelName', optionsCaption: ''"></select>
+                    <select class="form-control" title="" data-size="12" data-bind="selectPicker: ViewData().EducationLevelId, options: ViewData().EducationLevels, optionsValue: 'EducationLevelId', optionsText: 'EducationLevelName', optionsCaption: '', event : { change: educationLevelChanged }"></select>
                 </div>
             </div>
         </div>
@@ -130,7 +131,7 @@
             </div>
             <div class="col-md-8">
                 <div class="form-group col-md-3">
-                    <select class="form-control" title="" data-size="12" data-bind="selectPicker: ViewData().CourseNumber, options: ViewData().CourseNumbers, optionsCaption: '', event: { change : courseNumberChanged }"></select>
+                    <select id="courseNumber" class="form-control" title="" data-size="12" data-bind="selectPicker: ViewData().CourseNumber, options: ViewData().CourseNumbers, optionsCaption: '', event: { change : courseNumberChanged }"></select>
                 </div>
             </div>
         </div>
@@ -149,9 +150,13 @@
 
                 <!-- ko foreach: ViewData().Groups -->
                 <div class="col-md-3">
+                    @*<div>1</div>*@
                     <div class="mrgbtm24">
-                        <input type="checkbox" class="checkbox-x" data-three-state="false" data-bind="checkbox: $data">
-                        <label class="cbx-label" data-bind="text: GroupName, attr: { for: 'group-' + GroupId }">ПИ0904</label>
+                        <input type="checkbox" class="checkbox-x" data-three-state="false" data-bind="checkbox: { item: $data, selectedItems: $root.ViewData().SelectedGroups }, attr: { id: 'group-' + GroupId() }">
+                        <label class="cbx-label" data-bind="attr: { for: 'group-' + GroupId() }">
+                            <span data-bind="text: GroupName"></span>
+                            <span class="order" data-bind="text: Order"></span>
+                        </label>
                     </div>
                 </div>
                 <!-- /ko -->
@@ -172,12 +177,13 @@
 
 @section Scripts
 {
+    @Scripts.Render("~/bundles/underscore")
     @Scripts.Render("~/bundles/bootstrap-select")
     @Scripts.Render("~/bundles/knockout")
     @Scripts.Render("~/bundles/checkbox-x")
 
     <script>
-        $(function () {
+        $(function() {
             viewModel.loadViewData();
 
             ko.applyBindings(viewModel);
@@ -190,26 +196,26 @@
 
             self.ViewData = ko.observable(new SelectFlowViewModel());
 
-            self.loadViewData = function () {
-                $.post('/Home/SelectFlowData', {}, function (data) {
+            self.loadViewData = function() {
+                $.post('/Home/SelectFlowData', {}, function(data) {
                     self.ViewData(new SelectFlowViewModel(data));
                 });
             };
 
-            self.loadCourseNumbers = function () {
+            self.loadCourseNumbers = function() {
                 var parameters = {
-                    facultyId: self.ViewData.FacultyId(),
-                    educationFormId: self.ViewData.EducationFormId(),
-                    educationLevelId: self.ViewData.EducationLevelId(),
-                    courseNumber: self.ViewData.CourseNumber()
+                    facultyId: self.ViewData().FacultyId(),
+                    educationFormId: self.ViewData().EducationFormId(),
+                    educationLevelId: self.ViewData().EducationLevelId()
                 };
 
-                $.post('/Dictionary/CourseNumber', parameters, function (data) {
-
+                $.post('/Dictionary/CourseNumber', parameters, function(data) {
+                    self.ViewData().CourseNumbers(data);
+                    $('#courseNumber').selectpicker('refresh');
                 });
             };
 
-            self.loadGroups = function () {
+            self.loadGroups = function() {
                 var parameters = {
                     facultyId: self.ViewData().FacultyId(),
                     educationFormId: self.ViewData().EducationFormId(),
@@ -220,9 +226,9 @@
                 if (parameters.facultyId && parameters.educationFormId
                     && parameters.educationLevelId && parameters.courseNumber) {
 
-                    $.post('/Dictionary/Group', parameters, function (data) {
+                    $.post('/Dictionary/Group', parameters, function(data) {
                         var groupMapping = {
-                            create: function (options) {
+                            create: function(options) {
                                 return new GroupViewModel(options.data);
                             }
                         };
@@ -233,16 +239,83 @@
                 }
             };
 
-            self.facultyChanged = function () {
-                //self.ViewData().CourseNumber('');
-                //self.ViewData().Groups([]);
+            self.groupSetChanged = function () {
+                var viewData = self.ViewData();
+                var groupSetId = viewData.GroupSetId();
+                if (!groupSetId) {
+
+                    viewData.GroupSetName('');
+                    viewData.FacultyId('');
+                    viewData.EducationFormId('');
+                    viewData.EducationLevelId('');
+                    viewData.CourseNumber('');
+                    viewData.CourseNumbers([]);
+                    viewData.Groups([]);
+
+                } else {
+                    var parameters = { groupSetId: groupSetId };
+
+                    $.post('/Home/SelectFlowData', parameters, function (data) {
+                        if (data) {
+                            viewData.GroupSetName(data.GroupSetName);
+                            viewData.FacultyId(data.FacultyId);
+                            viewData.EducationFormId(data.EducationFormId);
+                            viewData.EducationLevelId(data.EducationLevelId);
+                            viewData.CourseNumbers(data.CourseNumbers);
+                            viewData.CourseNumber(data.CourseNumber);                            
+
+                            $('select').selectpicker('refresh');
+
+                            var groupMapping = {
+                                create: function (options) {
+                                    return new GroupViewModel(options.data);
+                                }
+                            };
+
+                            ko.mapping.fromJS(data.Groups, groupMapping, viewData.Groups);
+                        }
+                    });
+                }
             };
 
-            self.courseNumberChanged = function () {
+            self.groupSetOptionContent = function (option, item) {
+                if (!item) return;
+
+                $(option).text(item.GroupSetName());
+                $(option).attr('data-subtext', "<span class='description'>" + item.GroupNames() + "</span>");
+                $(option).attr('title', item.GroupSetName());
+
+                ko.applyBindingsToNode(option, {}, item);
+            };
+
+            self.facultyChanged = function () {
+                var viewData = self.ViewData();
+                viewData.EducationLevelId('');
+                viewData.CourseNumber('');
+                viewData.Groups([]);
+
+                self.loadCourseNumbers();
+            };
+
+            self.educationFormChanged = function() {
+                self.loadCourseNumbers();
+                var viewData = self.ViewData();
+                viewData.CourseNumber('');
+                viewData.Groups([]);
+            };
+
+            self.educationLevelChanged = function() {
+                self.loadCourseNumbers();
+                var viewData = self.ViewData();
+                viewData.CourseNumber('');
+                viewData.Groups([]);
+            };
+
+            self.courseNumberChanged = function() {
                 self.loadGroups();
             };
 
-            self.selectFlow = function () {
+            self.selectFlow = function() {
                 var selectFlowViewModel = ko.toJS(self.ViewData());
 
                 var postData = {
@@ -261,10 +334,15 @@
                     contentType: "application/json; charset=utf-8",
                     data: JSON.stringify({ viewModel: postData }),
                     dataType: "html",
-                    success: function (result) {
-                        var i = 0;
+                    success: function(response) {
+                        response = JSON.parse(response);
+                        if (response.result == 'Redirect') {
+                            window.location = response.url;
+                        } else if (response.result == 'Error') {
+
+                        }
                     },
-                    error: function (xhr, ajaxOptions, thrownError) {
+                    error: function(xhr, ajaxOptions, thrownError) {
                         alert(xhr.status);
                         alert(thrownError);
                     }
@@ -273,13 +351,31 @@
         }
 
         ko.bindingHandlers.checkbox = {
-            init: function (element, valueAccessor) {
-                var item = valueAccessor();
+            init: function(element, valueAccessor) {
+                var parameters = valueAccessor();
+                var item = parameters.item;               
                 var value = item.IsSelected() ? '1' : '0';
                 $(element).val(value);
 
-                $(element).change(function () {
+                $(element).change(function() {
                     item.IsSelected(!item.IsSelected());
+
+                    var selectedItems = parameters.selectedItems();
+                    var sortedItems = _.sortBy(selectedItems, function (item) {
+                        var order = item.Order();
+                        if (!order) {
+                            return selectedItems.length;
+                        }
+
+                        return order;
+                    });
+                    $.each(sortedItems, function (index, item) {
+                        item.Order(index + 1);
+                    });
+
+                    if (!item.IsSelected()) {
+                        item.Order('');
+                    }
                 });
 
                 $(element).checkboxX();
@@ -290,6 +386,7 @@
             var self = this;
             if (!data) {
                 self.GroupSetId = ko.observable('');
+                self.GroupSets = ko.observableArray([]);
                 self.GroupSetName = ko.observable('');
                 self.FacultyId = ko.observable('');
                 self.Faculties = ko.observableArray([]);
@@ -303,23 +400,28 @@
             }
 
             var selectFlowMapping = {
+                'GroupSets': {
+                    create: function(options) {
+                        return new GroupSetViewModel(options.data);
+                    }
+                },
                 'Groups': {
-                    create: function (options) {
+                    create: function(options) {
                         return new GroupViewModel(options.data);
                     }
                 },
                 'Faculties': {
-                    create: function (options) {
+                    create: function(options) {
                         return new FacultyViewModel(options.data);
                     }
                 },
                 'EducationForms': {
-                    create: function (options) {
+                    create: function(options) {
                         return new EducationFormViewModel(options.data);
                     }
                 },
                 'EducationLevels': {
-                    create: function (options) {
+                    create: function(options) {
                         return new EducationLevelViewModel(options.data);
                     }
                 }
@@ -327,8 +429,8 @@
 
             ko.mapping.fromJS(data, selectFlowMapping, self);
 
-            self.SelectedGroups = ko.computed(function () {
-                return ko.utils.arrayFilter(self.Groups(), function (value) {
+            self.SelectedGroups = ko.computed(function() {
+                return ko.utils.arrayFilter(self.Groups(), function(value) {
                     return value.IsSelected();
                 });
             });
@@ -336,14 +438,20 @@
             return self;
         }
 
+        function GroupSetViewModel(data) {
+            ko.mapping.fromJS(data, {}, this);
+        }
+
         function GroupViewModel(data) {
             var self = this;
             if (!data) {
                 self.GroupId = ko.observable('');
                 self.GroupName = ko.observable('');
-                self.IsSelected = ko.observable('');
+                //self.Order = ko.observable('');
+                //self.IsSelected = ko.observable('');
             }
 
+            self.Order = ko.observable('');
             self.IsSelected = ko.observable(false);
 
             ko.mapping.fromJS(data, {}, self);

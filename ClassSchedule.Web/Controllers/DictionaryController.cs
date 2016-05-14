@@ -44,6 +44,38 @@ namespace ClassSchedule.Web.Controllers
         }
 
         [HttpPost]
+        public ActionResult CourseNumber(int facultyId, int? educationFormId, int? educationLevelId)
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var courses = UnitOfWork.Repository<Course>()
+                    .GetQ(
+                        filter: x => x.IsDeleted != true && x.FacultyId == facultyId && x.YearStart != null
+                            && x.YearStart + x.CourseNumber == UserProfile.EducationYear.YearEnd,
+                        orderBy: o => o.OrderBy(n => n.CourseName));
+
+                if (educationFormId != null)
+                {
+                    courses = courses.Where(x => x.Groups.Any(g => g.ProgramOfEducation.EducationFormId == educationFormId && g.IsDeleted != true));
+                }
+
+                if (educationLevelId != null)
+                {
+                    courses = courses.Where(x => x.Groups.Any(g => g.ProgramOfEducation.EducationLevelId == educationLevelId && g.IsDeleted != true));
+                }
+
+                var courseNumbers = courses
+                    .Select(x => x.CourseNumber)
+                    .Distinct()
+                    .ToList();
+
+                return Json(courseNumbers);
+            }
+
+            return null;
+        }
+
+        [HttpPost]
         public ActionResult Group(int facultyId, int? courseId, int? educationFormId, int? educationLevelId, int? courseNumber)
         {
             if (Request.IsAjaxRequest())

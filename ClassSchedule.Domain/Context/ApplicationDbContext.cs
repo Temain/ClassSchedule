@@ -80,16 +80,6 @@ namespace ClassSchedule.Domain.Context
                     c.ToTable("AspNetUserFaculties");
                 });
 
-            modelBuilder.Entity<GroupSet>()
-                .HasMany(p => p.Groups)
-                .WithMany(s => s.GroupSets)
-                .Map(c =>
-                {
-                    c.MapLeftKey("GroupSetId");
-                    c.MapRightKey("GroupId");
-                    c.ToTable("GroupSetGroup");
-                });
-
             base.OnModelCreating(modelBuilder);
         }
     }

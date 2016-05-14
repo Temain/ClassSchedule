@@ -433,7 +433,7 @@ namespace ClassSchedule.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult SelectFlowData()
+        public ActionResult SelectFlowData(int? groupSetId)
         {
             if (!Request.IsAjaxRequest())
             {
@@ -442,56 +442,153 @@ namespace ClassSchedule.Web.Controllers
 
             var viewModel = new SelectFlowViewModel
             {
-                EducationFormId = (int)EducationForms.FullTime,
-                CourseNumbers = new List<int> { 1,2,3,4,5 },
+                GroupSets = new List<GroupSetViewModel>(),
                 Groups = new List<GroupViewModel>()
             };
 
-            if (User.IsInRole("Administrator"))
+            if (groupSetId != null)
             {
-                viewModel.Faculties = UnitOfWork.Repository<Faculty>()
-                    .GetQ(f => f.IsDeleted != true, orderBy: o => o.OrderBy(n => n.DivisionName))
-                    .Select(x => new FacultyViewModel { FacultyId = x.FacultyId, FacultyName = x.DivisionName })
-                    .ToList();
+                var groupsSet = UserProfile.GroupSets
+                    .SingleOrDefault(x => x.GroupSetId == groupSetId);
+                if (groupsSet != null)
+                {
+                    viewModel.GroupSetName = groupsSet.GroupSetName;
+
+                    var firstGroup = groupsSet.GroupSetGroups.First();
+                    var facultyId = firstGroup.Group.Course.FacultyId;
+                    var educationFormId = firstGroup.Group.ProgramOfEducation.EducationFormId;
+                    var educationLevelId = firstGroup.Group.ProgramOfEducation.EducationLevelId;
+                    var courseNumber = firstGroup.Group.Course.CourseNumber;
+
+                    viewModel.FacultyId = facultyId;
+                    viewModel.EducationFormId = educationFormId;
+                    viewModel.EducationLevelId = educationLevelId;
+                    viewModel.CourseNumber = courseNumber;
+
+                    viewModel.CourseNumbers = UnitOfWork.Repository<Course>()
+                        .GetQ(
+                            filter: x => x.IsDeleted != true && x.FacultyId == facultyId && x.YearStart != null
+                                && x.Groups.Any(g => g.ProgramOfEducation.EducationFormId == educationFormId
+                                    && g.ProgramOfEducation.EducationLevelId == educationLevelId
+                                    && g.IsDeleted != true)
+                                && x.YearStart + x.CourseNumber == UserProfile.EducationYear.YearEnd,
+                            orderBy: o => o.OrderBy(n => n.CourseNumber))
+                        .Select(x => x.CourseNumber)
+                        .Distinct()
+                        .ToList();
+
+                    var groups = UnitOfWork.Repository<Group>()
+                        .GetQ(
+                            filter: x => x.IsDeleted != true && x.Course.FacultyId == facultyId
+                                && x.ProgramOfEducation.EducationFormId == educationFormId 
+                                && x.ProgramOfEducation.EducationLevelId == educationLevelId &&
+                                UserProfile.EducationYear.YearStart - x.Course.YearStart + 1 == courseNumber,
+                            orderBy: o => o.OrderBy(n => n.DivisionName));
+                    foreach (var group in groups)
+                    {
+                        var groupViewModel = new GroupViewModel
+                        {
+                            GroupId = group.GroupId,
+                            GroupName = group.DivisionName
+                        };
+
+                        var groupSetGroup = groupsSet.GroupSetGroups.SingleOrDefault(g => g.GroupId == group.GroupId);
+                        if (groupSetGroup != null)
+                        {
+                            groupViewModel.IsSelected = true;
+                            groupViewModel.Order = groupSetGroup.Order;
+                        }
+
+                        viewModel.Groups.Add(groupViewModel);
+                    }    
+                }
             }
             else
             {
-                viewModel.Faculties = UserProfile.Faculties
-                    .Select(x => new FacultyViewModel { FacultyId = x.FacultyId, FacultyName = x.DivisionName })
-                    .OrderBy(n => n.FacultyName)
+                viewModel.EducationFormId = (int)EducationForms.FullTime;
+
+                var groupSets = UserProfile.GroupSets
+                    .Select(x => new GroupSetViewModel
+                    {
+                        GroupSetId = x.GroupSetId,
+                        GroupSetName = x.GroupSetName,
+                        GroupNames = String.Join(", ", x.GroupSetGroups.OrderBy(o => o.Order).Select(g => g.Group.DivisionName))
+                    })
+                    .ToList();
+                viewModel.GroupSets = groupSets;
+
+                if (User.IsInRole("Administrator"))
+                {
+                    viewModel.Faculties = UnitOfWork.Repository<Faculty>()
+                        .GetQ(f => f.IsDeleted != true, orderBy: o => o.OrderBy(n => n.DivisionName))
+                        .Select(x => new FacultyViewModel { FacultyId = x.FacultyId, FacultyName = x.DivisionName })
+                        .ToList();
+                }
+                else
+                {
+                    viewModel.Faculties = UserProfile.Faculties
+                        .Select(x => new FacultyViewModel { FacultyId = x.FacultyId, FacultyName = x.DivisionName })
+                        .OrderBy(n => n.FacultyName)
+                        .ToList();
+                }
+
+                viewModel.EducationLevels = UnitOfWork.Repository<EducationLevel>()
+                    .Get(x => x.IsDeleted != true)
+                    .Select(x => new EducationLevelViewModel { EducationLevelId = x.EducationLevelId, EducationLevelName = x.EducationLevelName })
+                    .ToList();
+
+                viewModel.EducationForms = UnitOfWork.Repository<EducationForm>()
+                    .GetQ(x => x.IsDeleted != true)
+                    .Select(x => new EducationFormViewModel { EducationFormId = x.EducationFormId, EducationFormName = x.EducationFormName })
                     .ToList();
             }
-
-            viewModel.EducationLevels = UnitOfWork.Repository<EducationLevel>()
-                .Get(x => x.IsDeleted != true)
-                .Select(x => new EducationLevelViewModel { EducationLevelId = x.EducationLevelId, EducationLevelName = x.EducationLevelName })
-                .ToList();
-           
-            viewModel.EducationForms = UnitOfWork.Repository<EducationForm>()
-                .GetQ(x => x.IsDeleted != true)
-                .Select(x => new EducationFormViewModel { EducationFormId = x.EducationFormId, EducationFormName = x.EducationFormName})
-                .ToList();
-
+            
             return Json(viewModel);
         }
 
         [HttpPost]
         public ActionResult SelectFlow(SelectFlowViewModel viewModel)
         {
-            if (!ModelState.IsValid)
+            var groupSets = UnitOfWork.Repository<GroupSet>()
+                .Get(x => x.ApplicationUserId == UserProfile.Id)
+                .ToList();
+            foreach (var groupSet in groupSets)
             {
-                return View(viewModel);
+                groupSet.IsSelected = false;
+                UnitOfWork.Repository<GroupSet>().Update(groupSet);
             }
 
-            //if (viewModel.CourseId != null || viewModel.GroupId != null || viewModel.FlowId != null)
-            //{
-            //    UserProfile.CourseId = viewModel.CourseId;
-            //    UserProfile.GroupId = viewModel.GroupId;
+            var groupSetGroups = viewModel.Groups
+                .Select(x => new GroupSetGroup
+                {
+                    GroupSetId = viewModel.GroupSetId, 
+                    GroupId = x.GroupId, 
+                    Order = x.Order ?? 0
+                })
+                .ToList();
 
-            //    UserManager.Update(UserProfile);
-            //}
+            var currentGroupSet = groupSets.SingleOrDefault(x => x.GroupSetId == viewModel.GroupSetId);
+            if (currentGroupSet == null)
+            {
+                currentGroupSet = new GroupSet
+                {
+                    ApplicationUserId = UserProfile.Id,
+                    GroupSetName = viewModel.GroupSetName
+                };
+               
+                UnitOfWork.Repository<GroupSet>().Insert(currentGroupSet);
+            }
+            else
+            {
+                UnitOfWork.Repository<GroupSetGroup>().DeleteRange(x => x.GroupSetId == currentGroupSet.GroupSetId);
+                UnitOfWork.Repository<GroupSet>().Update(currentGroupSet);
+            }
 
-            return RedirectToAction("Index");
+            currentGroupSet.GroupSetGroups = groupSetGroups;
+            currentGroupSet.IsSelected = true;
+            UnitOfWork.Save();
+
+            return Json(new { result = "Redirect", url = Url.Action("Index", "Home") });
         }
 
         [HttpPost]
@@ -508,11 +605,11 @@ namespace ClassSchedule.Web.Controllers
                 var viewModel = new ChangeWeekViewModel
                 {
                     EditedWeek = UserProfile.WeekNumber,
-                    EditedWeekStartDate = ScheduleHelpers.DateOfLesson(yearStartDate, UserProfile.WeekNumber, 1).ToString("dd.MM.yyyy"),//.ToShortDateString("dd.mm.yyyy"),
-                    EditedWeekEndDate = ScheduleHelpers.DateOfLesson(yearStartDate, UserProfile.WeekNumber, 7).ToString("dd.MM.yyyy"), //.ToShortDateString(),
+                    EditedWeekStartDate = ScheduleHelpers.DateOfLesson(yearStartDate, UserProfile.WeekNumber, 1).ToString("dd.MM.yyyy"),
+                    EditedWeekEndDate = ScheduleHelpers.DateOfLesson(yearStartDate, UserProfile.WeekNumber, 7).ToString("dd.MM.yyyy"), 
                     CurrentWeek = currentWeek,
-                    CurrentWeekStartDate = ScheduleHelpers.DateOfLesson(yearStartDate, currentWeek, 1).ToString("dd.MM.yyyy"), //.ToShortDateString(),
-                    CurrentWeekEndDate = ScheduleHelpers.DateOfLesson(yearStartDate, currentWeek, 7).ToString("dd.MM.yyyy"), //.ToShortDateString(),
+                    CurrentWeekStartDate = ScheduleHelpers.DateOfLesson(yearStartDate, currentWeek, 1).ToString("dd.MM.yyyy"), 
+                    CurrentWeekEndDate = ScheduleHelpers.DateOfLesson(yearStartDate, currentWeek, 7).ToString("dd.MM.yyyy"), 
                     Weeks = new List<WeekViewModel>()
                 };
 
@@ -552,8 +649,8 @@ namespace ClassSchedule.Web.Controllers
                             var week = new WeekViewModel
                             {
                                 WeekNumber = index,
-                                WeekStartDate = weekStartDate.ToString("dd.MM.yyyy"), //.ToShortDateString(),
-                                WeekEndDate = weekEndDate.ToString("dd.MM.yyyy"), //.ToShortDateString(),
+                                WeekStartDate = weekStartDate.ToString("dd.MM.yyyy"), 
+                                WeekEndDate = weekEndDate.ToString("dd.MM.yyyy"), 
                                 ScheduleTypeName = scheduleType["Name"],
                                 ScheduleTypeColor = scheduleType["Color"]
                             };
@@ -576,8 +673,8 @@ namespace ClassSchedule.Web.Controllers
                         var week = new WeekViewModel
                         {
                             WeekNumber = index,
-                            WeekStartDate = weekStartDate.ToString("dd.MM.yyyy"), //ToShortDateString(), 
-                            WeekEndDate = weekEndDate.ToString("dd.MM.yyyy") //.ToShortDateString()
+                            WeekStartDate = weekStartDate.ToString("dd.MM.yyyy"), 
+                            WeekEndDate = weekEndDate.ToString("dd.MM.yyyy") 
                         };
 
                         viewModel.Weeks.Add(week);                    
@@ -608,17 +705,11 @@ namespace ClassSchedule.Web.Controllers
         /// </summary>
         public IQueryable<Group> GetEditableGroups()
         {
-            var groups = UnitOfWork.Repository<Group>()
-                .GetQ(g => g.IsDeleted != true, orderBy: o => o.OrderBy(n => n.DivisionName));
-
-            if (UserProfile.GroupId != null)
-            {
-                groups = groups.Where(g => g.GroupId == UserProfile.GroupId);
-            }
-            else if (UserProfile.CourseId != null)
-            {
-                groups = groups.Where(g => g.CourseId == UserProfile.CourseId);             
-            }
+            var groups = UnitOfWork.Repository<GroupSet>()
+                .GetQ(x => x.IsSelected && x.ApplicationUserId == UserProfile.Id)
+                .SelectMany(x => x.GroupSetGroups)
+                .OrderBy(x => x.Order)
+                .Select(x => x.Group);
 
             return groups;
         } 

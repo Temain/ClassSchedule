@@ -264,6 +264,7 @@
     <Compile Include="Models\SelectFlow\EducationFormViewModel.cs" />
     <Compile Include="Models\SelectFlow\EducationLevelViewModel.cs" />
     <Compile Include="Models\SelectFlow\FacultyViewModel.cs" />
+    <Compile Include="Models\SelectFlow\GroupSetViewModel.cs" />
     <Compile Include="Models\SelectFlow\GroupViewModel.cs" />
     <Compile Include="Models\Teacher\TeacherDiscipline.cs" />
     <Compile Include="Models\Teacher\TeacherDisciplineAuditorium.cs" />

@@ -25,6 +25,8 @@ namespace ClassSchedule.Domain.Models
         [ForeignKey("ApplicationUserId")]
         public virtual ApplicationUser ApplicationUser { get; set; }
 
-        public virtual ICollection<Group> Groups { get; set; } 
+        public bool IsSelected { get; set; }
+
+        public virtual ICollection<GroupSetGroup> GroupSetGroups { get; set; } 
     }
 }

@@ -38,17 +38,17 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         public int WeekNumber { get; set; }
 
-        /// <summary>
-        /// Курс для которого редактируется расписание
-        /// </summary>
-        public int? CourseId { get; set; }
-        public virtual Course Course { get; set; }
+        ///// <summary>
+        ///// Курс для которого редактируется расписание
+        ///// </summary>
+        //public int? CourseId { get; set; }
+        //public virtual Course Course { get; set; }
 
-        /// <summary>
-        /// Группа для которой редактируется расписание
-        /// </summary>
-        public int? GroupId { get; set; }
-        public virtual Group Group { get; set; }
+        ///// <summary>
+        ///// Группа для которой редактируется расписание
+        ///// </summary>
+        //public int? GroupId { get; set; }
+        //public virtual Group Group { get; set; }
 
         /// <summary>
         /// Учебный год
