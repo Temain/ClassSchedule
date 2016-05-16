@@ -36,6 +36,12 @@ namespace ClassSchedule.Web
             bundles.Add(new ScriptBundle("~/bundles/typeahead").Include(
                        "~/Scripts/bootstrap3-typeahead.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/bootstrap-datetimepicker").Include(
+                        "~/Scripts/moment-with-locales.min.js",
+                        "~/Scripts/bootstrap-datetimepicker.js"));
+            bundles.Add(new StyleBundle("~/Content/bootstrap-datetimepicker").Include(
+                        "~/Content/bootstrap-datetimepicker.css"));
+
             bundles.Add(new ScriptBundle("~/bundles/underscore").Include(
                        "~/Scripts/underscore.js"));
 

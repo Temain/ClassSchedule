@@ -3,6 +3,9 @@
     ViewBag.Title = "Поиск свободных аудиторий";
 }
 
+@Styles.Render("~/Content/bootstrap-select")
+@Styles.Render("~/Content/bootstrap-datetimepicker")
+
 @Html.Partial("_NavbarLight")
 
 <div class="schedule-container">
@@ -10,17 +13,97 @@
 
     <div class="container">
         <h2>Поиск свободных аудиторий</h2>
+        <hr/>
 
-        <div class="row block">
+        <div class="row inline-block mrgtop24">
             <div class="col-md-4">
-                <div class="title">Основная информация</div>
+                <div class="title">
+                    Дата занятия
+                </div>
             </div>
-            <div class="col-md-8">
-                <dl class="dl-horizontal">
-                    <dt>Группа</dt>
-                    <dd>-</dd>
-                </dl>
+            <div class="col-md-5">
+                <div class="form-group col-md-9">
+                    <div class='input-group date' id='class-date'>
+                        <input type='text' class="form-control" data-bind="datepicker: SelectedClassDate, datepickerOptions : { locale: 'ru', format: 'DD.MM.YYYY' }" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <div class="row inline-block">
+            <div class="col-md-4">
+                <div class="title">
+                    Номер занятия
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="form-group col-md-4">
+                    <select class="week form-control" title="" data-bind="selectPicker: SelectedClassNumber, options: ClassNumbers"></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row inline-block mrgbtm12">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-8">
+                <div class="col-md-3">
+                    <button class="btn btn-success btn-lg" data-bind="click: loadAvailableAuditoriums, enable: SelectedClassDate() != ''"><i class="fa fa-check-square" aria-hidden="true"></i> Выбрать</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ko foreach: AvailableAuditoriums -->
+        <div class="row block">
+            <div class="col-md-4">
+                <div class="major" data-bind="text: HousingName"></div>
+            </div>
+            <div class="col-md-8">
+                <!-- ko foreach: Auditoriums -->
+                <div class="col-md-12 minor">
+                    <span class="key" data-bind="text: $data.Key"></span><span class="description" data-bind="text: $data.Floors"></span>
+                </div>
+                <!-- /ko -->
+            </div>
+        </div>
+        <!-- /ko -->
     </div>
 </div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/underscore")
+    @Scripts.Render("~/bundles/knockout")
+    @Scripts.Render("~/bundles/bootstrap-select")
+    @Scripts.Render("~/bundles/bootstrap-datetimepicker")
+    
+
+    <script>
+        $(function () {
+            ko.applyBindings(viewModel);
+        });
+
+        var viewModel = new MainViewModel();
+
+        function MainViewModel() {
+            var self = this;
+            
+            self.ClassNumbers = [1, 2, 3, 4, 5, 6];
+            self.SelectedClassNumber = ko.observable('');
+            self.SelectedClassDate = ko.observable('');
+            self.AvailableAuditoriums = ko.observableArray([]);
+
+            self.loadAvailableAuditoriums = function () {
+                $.post('/Auditorium/Available', {
+                    classDate: self.SelectedClassDate().toDate().toISOString(),
+                    classNumber: self.SelectedClassNumber()
+                }, function (data) {
+                    self.AvailableAuditoriums(data);
+                });
+            };
+        }   
+    </script>
+}

@@ -63,5 +63,31 @@ namespace ClassSchedule.Web.Controllers
 
             return PartialView("_AuditoriumWeekSchedule", schedule);
         }
+
+        [HttpPost]
+        public ActionResult Available(DateTime classDate, int classNumber)
+        {
+            var availableAuditoriums = UnitOfWork.Repository<Auditorium>()
+                .GetQ(x => x.IsDeleted != true
+                    && !x.Lessons.Any(l => l.DeletedAt == null && l.ClassDate == classDate && l.ClassNumber == classNumber))
+                .ToList() // Вынужденная мера
+                .GroupBy(g => new { g.HousingId, g.Housing.HousingName })
+                .Select(x => new
+                {
+                    HousingId = x.Key.HousingId,
+                    HousingName = x.Key.HousingName,
+                    Auditoriums = x.GroupBy(f => f.AuditoriumNumber[0])
+                        .Select(y => new
+                        {
+                            y.Key,
+                            Floors = String.Join(", ", y.Select(z => z.AuditoriumNumber))
+                        })
+                        .OrderBy(f => f.Key)
+                })
+                .OrderBy(n => n.HousingId)
+                .ToList();
+
+            return Json(availableAuditoriums);
+        }
     }
 }

@@ -918,6 +918,25 @@ html { overflow-y: auto !important; }
     border: none;
 }
 
+.block .major {
+    font-size: 1.1em;
+    color: #848484;
+    font-weight: normal;
+}
+
+.block .minor .key {
+    font-size: 1em;
+    font-weight: bold;
+    padding-right: 1em;
+    text-transform: capitalize;
+    /*color: #848484;*/
+}
+
+.block .minor .description {
+    font-size: 1em;
+    font-weight: normal;
+}
+
 .block tbody > tr > td.small,
 .block thead > tr > th.small {
     width: 35% !important;
