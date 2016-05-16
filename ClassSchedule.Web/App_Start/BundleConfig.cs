@@ -46,7 +46,9 @@ namespace ClassSchedule.Web
                       "~/Scripts/knockout.bindings.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/edit-lesson").Include(
-                       "~/Scripts/lesson.edit.js",
+                       "~/Scripts/lesson.edit.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/changeweek").Include(
                        "~/Scripts/changeweek.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/highcharts").Include(

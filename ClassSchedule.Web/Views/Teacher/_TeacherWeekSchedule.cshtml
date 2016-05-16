@@ -1,0 +1,73 @@
+﻿@using ClassSchedule.Web.Helpers
+@using ClassSchedule.Web.Models.Schedule
+@model List<ClassSchedule.Web.Models.Teacher.TeacherLesson>
+
+<div class="week-schedule">
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th class="day-number">День</th>
+                <th class="class-number">Пара</th>
+                @foreach (int weekNumber in ViewBag.WeekNumbers)
+                {
+                    <th class="lesson">@(weekNumber % 2 == 0 ? "Вторая" : "Первая") [@weekNumber] неделя</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+        @{
+            var dayNumberViewed = false;
+            for (int dayNumber = 1; dayNumber <= 6; dayNumber++)
+            {
+                for (int classNumber = 1; classNumber <= 6; classNumber++)
+                {
+                    <tr>
+                        @if (!dayNumberViewed)
+                        {
+                            <td rowspan="6" class="day-number">
+                                @ScheduleHelpers.DayOfWeek(dayNumber - 1)                               
+                            </td>
+                            dayNumberViewed = true;
+                        }
+
+                        <td class="class-number">
+                            <span>@classNumber</span> <br>
+                            <p>@ScheduleHelpers.TimeOfLesson(dayNumber - 1, classNumber - 1)</p>
+                        </td>
+
+                        @foreach (int weekNumber in ViewBag.WeekNumbers)
+                        {
+                            var lesson = Model.SingleOrDefault(x => x.DayNumber == dayNumber && x.ClassNumber == classNumber && x.WeekNumber % 2 == weekNumber % 2);
+                            <td class="lesson">
+                                @if (lesson != null)
+                                {
+                                    if (lesson.IsDowntime)
+                                    {
+                                        <div class="downtime-mark bcg-danger"><span></span></div>
+                                        @*<span>Окно</span>*@
+
+                                        continue;
+                                    }
+
+                                    foreach (var discipline in lesson.Disciplines)
+                                    {
+                                        <span class="discipline @(discipline.IsLection ? "red" : "")">@discipline.DisciplineName</span>
+                                        <span class="lesson-type">@(discipline.IsLection ? " (лекция)" : "")</span>
+                                        <span class="auditorium"> - @String.Join(", ", discipline.Auditoriums.Select(x => String.Join(", ", x.Groups) + " (" + x.AuditoriumNumber + ")"))</span><br />
+                                    }
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+
+                dayNumberViewed = false;
+
+                <tr class="day-divider">
+                    <td colspan="4"></td>
+                </tr>
+            }
+}
+        </tbody>
+    </table>
+</div>

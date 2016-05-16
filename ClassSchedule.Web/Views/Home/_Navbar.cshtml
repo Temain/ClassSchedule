@@ -18,8 +18,8 @@
                     <span class="nav-icon-text"></span>Печать расписания<span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a href="@Url.Action("Index", "Home")"> Печать расписания потока</a></li>
-                    <li><a href="@Url.Action("Index", "Home")"> Печать расписания кафедры</a></li>
+                    <li><a href="@Url.Action("GroupSetSchedule", "Print")" target="_blank"> Печать расписания групп</a></li>
+                    <li><a href="@Url.Action("ChairSchedule", "Print")" target="_blank"> Печать расписания кафедры</a></li>
                 </ul>
             </li>
 
@@ -31,9 +31,12 @@
                     <span class="nav-icon-text"></span>Сервис <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a href="@Url.Action("Index", "Home")"> Просмотр расписания преподавателя</a></li>
-                    <li><a href="@Url.Action("Index", "Home")"> Просмотр расписания аудитории</a></li>
-                    <li><a href="@Url.Action("Index", "Home")"> Поиск свободных аудиторий</a></li>
+                    <li><a href="#" data-bind="click: copySchedule"> Копирование расписания</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="@Url.Action("TeacherSchedule", "Service")" target="_blank"> Просмотр расписания преподавателя</a></li>
+                    <li><a href="@Url.Action("AuditoriumSchedule", "Service")" target="_blank"> Просмотр расписания аудитории</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="@Url.Action("AvailableAuditoriums", "Service")" target="_blank"> Поиск свободных аудиторий</a></li>
                 </ul>
             </li>
 
@@ -43,7 +46,7 @@
                     <span class="nav-icon-text"></span>Отчеты <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a href="#"> Степень заполнения расписания</a></li>
+                    <li><a href="@Url.Action("FillingPercentage", "Report")" target="_blank"> Степень заполнения расписания</a></li>
                 </ul>
             </li>
 
@@ -58,7 +61,7 @@
         </ul>
         @if (Request.IsAuthenticated)
         {
-            using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+            using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new {id = "logoutForm", @class = "navbar-right"}))
             {
                 @Html.AntiForgeryToken()
 
@@ -92,3 +95,5 @@
         }
     </div>
 </div>
+
+@Html.Partial("_CopySchedule")

@@ -231,11 +231,15 @@
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="Controllers\AcademicPlanController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AuditoriumController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\DictionaryController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\PrintController.cs" />
+    <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\ServiceController.cs" />
     <Compile Include="Controllers\TeacherController.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Global.asax.cs">
@@ -243,6 +247,9 @@
     </Compile>
     <Compile Include="Helpers\Helpers.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Auditorium\AuditoriumDiscipline.cs" />
+    <Compile Include="Models\Auditorium\AuditoriumDisciplineTeacher.cs" />
+    <Compile Include="Models\Auditorium\AuditoriumLesson.cs" />
     <Compile Include="Models\ChangeWeek\ChangeWeekViewModel.cs" />
     <Compile Include="Models\ChangeWeek\WeekViewModel.cs" />
     <Compile Include="Models\GroupInfo\ChartIntervalViewModel.cs" />
@@ -524,7 +531,14 @@
     <Content Include="Views\Account\LoginOld.cshtml" />
     <Content Include="Views\AcademicPlan\Info.cshtml" />
     <Content Include="Views\Home\_ChangeWeek.cshtml" />
-    <Content Include="Views\Home\SelectFlowOld.cshtml" />
+    <Content Include="Views\Report\FillingPercentage.cshtml" />
+    <Content Include="Views\Shared\_NavbarLight.cshtml" />
+    <Content Include="Views\Service\AuditoriumSchedule.cshtml" />
+    <Content Include="Views\Service\TeacherSchedule.cshtml" />
+    <Content Include="Views\Service\AvailableAuditoriums.cshtml" />
+    <Content Include="Views\Home\_CopySchedule.cshtml" />
+    <Content Include="Views\Teacher\_TeacherWeekSchedule.cshtml" />
+    <Content Include="Views\Auditorium\_AuditoriumWeekSchedule.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

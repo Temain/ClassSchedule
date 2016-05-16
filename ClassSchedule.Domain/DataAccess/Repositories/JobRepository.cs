@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using ClassSchedule.Domain.Context;
@@ -21,28 +22,29 @@ namespace ClassSchedule.Domain.DataAccess.Repositories
         /// <summary>
         /// Преподаватели, работающие в определенном учебном году
         /// </summary>
-        public List<KeyValueDictionary> ActualTeachers(EducationYear educationYear, int? chairId)
+        public List<TeacherQueryResult> ActualTeachers(EducationYear educationYear, int? chairId, string query = "")
         {
             var parameters = new object[]
             {
-                new SqlParameter("@chairId", chairId),
+                new SqlParameter("@chairId", chairId ?? 0),
+                new SqlParameter("@query", query),
                 new SqlParameter("@startDate", educationYear.DateStart),
                 new SqlParameter("@endDate", educationYear.DateEnd)
             };
 
-            var query = @"
-                SELECT t0.JobId AS [Key], t0.LastName + COALESCE(' ' + t0.FirstName, '') + COALESCE(' ' + t0.MiddleName, '') AS [Value]
+            var sql = @"
+                SELECT t0.PersonId, t0.JobId, t0.FullName
                 FROM (
-                  SELECT  j.JobId, p.LastName, p.FirstName, p.MiddleName,
+                  SELECT p.PersonId, j.JobId, p.LastName + COALESCE(' ' + p.FirstName, '') + COALESCE(' ' + p.MiddleName, '') AS FullName,
                     ROW_NUMBER() OVER(PARTITION BY e.PersonId ORDER BY j.JobDateStart DESC) as Rn 
                   FROM Job j 
                   LEFT JOIN Employee e ON j.EmployeeId = e.EmployeeId
                   LEFT JOIN Person p ON e.PersonId = p.PersonId
-                  WHERE j.ChairId = @chairId 
+                  WHERE j.ChairId = CASE WHEN @chairId = 0 THEN j.ChairId ELSE @chairId END 
                     AND (j.IsDeleted = 0 OR j.IsDeleted IS NULL)
                     AND (e.IsDeleted = 0 OR e.IsDeleted IS NULL)
                     AND (p.IsDeleted = 0 OR p.IsDeleted IS NULL)
-  
+
                     -- Проверка что преподаватель работал в определенном учебном году
                     AND (
                       (j.JobDateEnd IS NULL AND (j.JobDateStart < @startDate OR (j.JobDateStart >= @startDate AND j.JobDateStart <= @endDate))) 
@@ -52,8 +54,9 @@ namespace ClassSchedule.Domain.DataAccess.Repositories
                     )
                 ) AS t0
                 WHERE t0.Rn = 1
-                ORDER BY t0.LastName, t0.FirstName, t0.MiddleName;";
-            var teachers = _context.Database.SqlQuery<KeyValueDictionary>(query, parameters).ToList();
+                  AND t0.FullName LIKE (CASE WHEN @query = '' THEN t0.FullName ELSE @query + '%' END)
+                ORDER BY t0.FullName";
+            var teachers = _context.Database.SqlQuery<TeacherQueryResult>(sql, parameters).ToList();
 
             return teachers;
         }
@@ -147,7 +150,8 @@ namespace ClassSchedule.Domain.DataAccess.Repositories
         }
 
         /// <summary>
-        /// Окна между занятиями у преподавателей
+        /// Окна между занятиями у преподавателей на определённую неделю
+        /// Преподаватели выбираются в соотвествии с редактируемой пользователем неделей и группами
         /// </summary>
         /// <param name="weekNumber">Номер недели</param>
         /// <param name="teacherId">Идентификатор преподавателя (JobId)</param>
@@ -179,6 +183,7 @@ namespace ClassSchedule.Domain.DataAccess.Repositories
                       AND tls.GroupId IN (233,309,500)
                   )
                   AND ls.JobId = CASE WHEN @teacherId <> 0 THEN @teacherId ELSE ls.JobId END
+                  AND ls.WeekNumber = @weekNumber
                   AND ls.DeletedAt IS NULL
                 )
                 SELECT 
@@ -195,6 +200,55 @@ namespace ClassSchedule.Domain.DataAccess.Repositories
                   AND (w2.ClassNumber = t0.ClassNumber OR w2.ClassNumber = t0.ClassNumber - t0.ClassDiff - 1)
                 WHERE t0.PersonId IS NOT NULL
                 ORDER BY w2.PersonId, w2.DayNumber, w2.ClassNumber;";
+            var downtimes = _context.Database.SqlQuery<TeacherDowntimeQueryResult>(query, parameters).ToList();
+
+            return downtimes;
+        }
+
+        /// <summary>
+        /// Окна между занятиями у преподавателей на несколько недель
+        /// Преподаватели выбираются независимо от редактируемой пользователем недели и групп
+        /// </summary>
+        /// <param name="weeks">Номера недель</param>
+        /// <param name="teacherId">Идентификатор преподавателя (JobId)</param>
+        /// <param name="maxDiff">Размер окна (количество занятий)</param>
+        public List<TeacherDowntimeQueryResult> TeachersDowntime(int[] weeks, int? teacherId = 0, int maxDiff = 1)
+        {
+            var weeksStr = String.Join(",", weeks);
+            var parameters = new object[]
+            {
+                // new SqlParameter("@weekNumber", weekNumber), 
+                new SqlParameter("@teacherId", teacherId ?? 0),
+                new SqlParameter("@maxDiff", maxDiff)
+            };
+
+            var query = String.Format(@"
+                WITH WeekLessons AS (
+                  SELECT j.JobId, ls.GroupId, e.PersonId, ls.WeekNumber, ls.DayNumber, ls.ClassNumber, 
+                    ROW_NUMBER() OVER(PARTITION BY e.PersonId, ls.WeekNumber, ls.DayNumber ORDER BY e.PersonId, ls.DayNumber, ls.ClassNumber) AS Drn,
+                    ROW_NUMBER() OVER(PARTITION BY ls.WeekNumber ORDER BY e.PersonId, ls.WeekNumber, ls.DayNumber, ls.ClassNumber) AS Crn
+                  FROM Lesson ls
+                  LEFT JOIN Job j ON ls.JobId = j.JobId
+                  LEFT JOIN Employee e ON j.EmployeeId = e.EmployeeId
+                  WHERE ls.JobId = CASE WHEN @teacherId <> 0 THEN @teacherId ELSE ls.JobId END
+                    AND ls.WeekNumber IN ({0})
+                    AND ls.DeletedAt IS NULL
+                )
+
+                SELECT 
+                  w2.PersonId, w2.JobId, w2.GroupId, w2.WeekNumber,
+                  w2.DayNumber, w2.ClassNumber, t0.ClassDiff 
+                FROM WeekLessons w2
+                LEFT JOIN (
+                  SELECT w.PersonId, w.JobId, w.GroupId, w.WeekNumber, w.DayNumber, w.ClassNumber, /*prev.*,*/ 
+                    w.ClassNumber - prev.ClassNumber - 1 AS ClassDiff
+                  FROM WeekLessons w
+                  LEFT JOIN WeekLessons prev ON prev.PersonId = w.PersonId AND prev.WeekNumber = w.WeekNumber AND prev.Drn = w.Drn - 1 AND prev.Crn = w.Crn - 1
+                  WHERE w.ClassNumber - prev.ClassNumber - 1 >= @maxDiff
+                ) AS t0 ON w2.PersonId = t0.PersonId AND w2.WeekNumber = t0.WeekNumber AND w2.DayNumber = t0.DayNumber 
+                  AND (w2.ClassNumber = t0.ClassNumber OR w2.ClassNumber = t0.ClassNumber - t0.ClassDiff - 1)
+                WHERE t0.PersonId IS NOT NULL
+                ORDER BY w2.PersonId, w2.DayNumber, w2.ClassNumber;", weeksStr);
             var downtimes = _context.Database.SqlQuery<TeacherDowntimeQueryResult>(query, parameters).ToList();
 
             return downtimes;

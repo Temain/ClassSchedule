@@ -10,7 +10,7 @@ namespace ClassSchedule.Domain.DataAccess.Interfaces
         /// <summary>
         /// Преподаватели, работающие в определенном учебном году
         /// </summary>
-        List<KeyValueDictionary> ActualTeachers(EducationYear educationYear, int? chairId);
+        List<TeacherQueryResult> ActualTeachers(EducationYear educationYear, int? chairId, string query);
 
         /// <summary>
         /// Преподаватели, работающие в определенном учебном году

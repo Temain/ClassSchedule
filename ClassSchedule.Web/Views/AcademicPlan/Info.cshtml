@@ -3,53 +3,7 @@
     ViewBag.Title = "Информация о группе";
 }
 
-<div class="navbar navbar-inverse navbar-fixed-top">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"></button>
-        <a class="navbar-brand filter" href="@Url.Action("Index", "Home")"></a>
-    </div>
-    <div class="navbar-collapse collapse">
-        <ul class="nav navbar-nav">
-            <li>
-                <a href="@Url.Action("Index", "Home")">
-                    <i class="fa fa-arrow-circle-left fa-32px"></i><br>
-                    <span class="nav-icon-text">К расписанию</span>
-                </a>
-            </li>
-        </ul>
-        @if (Request.IsAuthenticated)
-        {
-            using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new {id = "logoutForm", @class = "navbar-right"}))
-            {
-                @Html.AntiForgeryToken()
-
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-calendar fa-32px"></i><br>
-                            <span class="nav-icon-text"></span>2015/2016 Учебный год<span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">2016/2017</a></li>
-                        </ul>
-                    </li>
-                    <li class="navbar-divider"></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-user fa-32px"></i><br>
-                            <span class="nav-icon-text"></span>Профиль [@(ViewBag.UserName)] <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="@Url.Action("Index", "AcademicPlan")"><span class="fa fa-upload"></span> Загрузка учебных планов</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="javascript:document.getElementById('logoutForm').submit()"><span class="fa fa-power-off"></span> Выйти</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            }
-        }
-    </div>
-</div>
+@Html.Partial("_NavbarLight")
 
 <div class="schedule-container">
     <div class="week-panel text-center"></div>

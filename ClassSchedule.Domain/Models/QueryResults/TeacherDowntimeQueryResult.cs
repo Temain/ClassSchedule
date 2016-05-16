@@ -11,6 +11,7 @@ namespace ClassSchedule.Domain.Models.QueryResults
         public int PersonId { get; set; }
         public int JobId { get; set; }
         public int GroupId { get; set; }
+        public int WeekNumber { get; set; }
         public int DayNumber { get; set; }
         public int ClassNumber { get; set; }
 

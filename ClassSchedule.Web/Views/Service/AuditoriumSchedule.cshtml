@@ -1,0 +1,203 @@
+﻿
+@{
+    ViewBag.Title = "Расписание аудитории";
+}
+
+@Styles.Render("~/Content/bootstrap-select")
+
+@Html.Partial("_NavbarLight")
+
+<div class="schedule-container">
+    <div class="week-panel text-center"></div>
+
+    <div class="container">
+        <h2>Расписание аудитории</h2>
+        <hr/>
+
+        <div class="row inline-block mrgtop24">
+            <div class="col-md-4">
+                <div class="title">
+                    Аудитория
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="form-group col-md-9">
+                    <input type="text" class="auditorium form-control" data-bind="typeahead: $data, textInput: AuditoriumNumber" data-provide="typeahead" placeholder="Введите номер аудитории" autocomplete="off" value=""/>
+                    <input type="hidden" class="auditorium-id" data-bind="value: AuditoriumId"/>
+                    <div class="text-danger msg-text" style="display: none">
+                        <span class="glyphicon glyphicon glyphicon-exclamation-sign form-control-feedback"></span>Аудитория не найдена
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row inline-block">
+            <div class="col-md-4">
+                <div class="title">
+                    Недели
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="form-group col-md-4">
+                    <select class="week form-control" title="" data-bind="selectPicker: $root.SelectedOddWeek, options: $root.ChangeWeekViewModel().Weeks, optionsValue: 'WeekNumber', optionsText: 'WeekNumber', optionsAfterRender: $root.ChangeWeekViewModel().setWeekOptionContent"></select>
+                </div>
+                <div class="form-group col-md-4">
+                    <select class="week form-control" title="" data-bind="selectPicker: $root.SelectedEvenWeek, options: $root.ChangeWeekViewModel().Weeks, optionsValue: 'WeekNumber', optionsText: 'WeekNumber', optionsAfterRender: $root.ChangeWeekViewModel().setWeekOptionContent"></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row inline-block">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-8">
+                <div class="col-md-3">
+                    <button class="btn btn-success btn-lg" data-bind="click: loadAuditoriumLessons, enable: $root.AuditoriumId() > 0"><i class="fa fa-check-square" aria-hidden="true"></i> Выбрать</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row inline-block">
+            <div id="schedule" class="col-md-12"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/underscore")
+    @Scripts.Render("~/bundles/bootstrap-select")
+    @Scripts.Render("~/bundles/knockout")
+    @Scripts.Render("~/bundles/typeahead")
+    @Scripts.Render("~/bundles/checkbox-x")
+    @Scripts.Render("~/bundles/changeweek")
+
+    <script>
+        $(function () {
+            viewModel.loadEditableWeeks();
+
+            ko.applyBindings(viewModel);
+        });
+
+        var viewModel = new MainViewModel();
+
+        function MainViewModel() {
+            var self = this;
+
+            self.AuditoriumId = ko.observable('');
+            self.AuditoriumNumber = ko.observable('');
+            self.AuditoriumLessons = ko.observableArray([]);
+            self.SelectedOddWeek = ko.observable('');
+            self.SelectedEvenWeek = ko.observable('');
+            self.ChangeWeekViewModel = ko.observable(new ChangeWeekViewModel());
+
+            self.loadAuditoriumLessons = function () {
+                $.post('/Auditorium/Schedule', { auditoriumId: self.AuditoriumId(), weekNumbers: [self.SelectedOddWeek(), self.SelectedEvenWeek()] }, function (data) {
+                    $('#schedule').html(data);
+                });
+            };
+
+            self.loadEditableWeeks = function () {
+                $.post('/Home/EditableWeeks', { showWeekType: false }, function (data) {
+                    self.ChangeWeekViewModel(new ChangeWeekViewModel(data));
+
+                    // Неделя, которую редактирует пользователь в данный момент
+                    var editedWeek = self.ChangeWeekViewModel().EditedWeek();
+                    if (editedWeek % 2 == 1) {
+                        self.SelectedOddWeek(editedWeek);
+                        self.SelectedEvenWeek(editedWeek + 1);
+                    } else {
+                        self.SelectedEvenWeek(editedWeek);
+                        self.SelectedOddWeek(editedWeek - 1);
+                    }
+
+                    $('.week').selectpicker('refresh');
+                });
+            };
+        }
+
+        /* Биндинги
+        ------------------------------------------------------------*/
+        ko.bindingHandlers.typeahead = {
+            init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+                var $element = $(element);
+                // var allBindings = allBindingsAccessor();
+                var elementData = ko.utils.unwrapObservable(valueAccessor());
+
+                var auditoriums = {};
+                var auditoriumNumbers = [];
+
+                var searchAuditorium = _.debounce(function (query, process) {
+                    $.post('/Dictionary/Auditorium', { query: query, shortResult: true }, function (data) {
+
+                        auditoriums = {};
+                        auditoriumNumbers = [];
+
+                        // if (query.length > 2) {
+
+                        _.each(data, function (item, ix, list) {
+                            if (_.contains(auditoriums, item.AuditoriumNumber)) {
+                                item.AuditoriumNumber = item.AuditoriumNumber + ' #' + item.AuditoriumId;
+                            }
+                            auditoriumNumbers.push(item.AuditoriumNumber);
+                            auditoriums[item.AuditoriumNumber] = {
+                                AuditoriumId: item.AuditoriumId,
+                                AuditoriumNumber: item.AuditoriumNumber
+                            };
+                        });
+
+                        var labelsCount = Object.keys(auditoriumNumbers).length;
+                        if (labelsCount === 0) {
+                            $element.closest(".auditorium").siblings('.msg-text').slideDown(250);
+                            elementData.AuditoriumId("");
+                        } else {
+                            $element.closest(".auditorium").siblings('.msg-text').slideUp(250);
+                        }
+
+                        process(auditoriumNumbers);
+                        // }
+
+                        if (query.length === 0) $element.closest(".auditorium").siblings('.msg-text').slideUp(250);
+                    });
+                }, 300);
+
+                var options = {
+                    source: function (query, process) {
+                        searchAuditorium(query, process);
+                    },
+                    items: 15,
+                    updater: function (item) {
+                        elementData.AuditoriumId(auditoriums[item].AuditoriumId);
+
+                        return item;
+                    },
+                    matcher: function (item) {
+                        if (item.toLowerCase().indexOf(this.query.trim().toLowerCase()) !== -1) {
+                            elementData.AuditoriumId(auditoriums[item].AuditoriumId);
+
+                            return item;
+                        }
+
+                        elementData.AuditoriumId("");
+                        return this.query;
+                    },
+                    highlighter: function (item) {
+                        var auditorium = auditoriums[item];
+                        var template = ''
+                            + "<div class='typeahead_wrapper'>"
+                            + "<div class='typeahead_labels'>"
+                            + "<div class='typeahead_primary'>" + auditorium.AuditoriumNumber + "</div>"
+                            //+ "<div class='typeahead_secondary'>" + discipline.ChairName + "</div>"
+                            + "</div>"
+                            + "</div>";
+                        return template;
+                    }
+                };
+
+                $element
+                    .attr('autocomplete', 'off')
+                    .typeahead(options);
+            }
+        };
+    </script>
+}

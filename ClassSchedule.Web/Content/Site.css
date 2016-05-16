@@ -1042,9 +1042,99 @@ html { overflow-y: auto !important; }
 }
 
 /* Checkbox-x
---------------------------------------*/
+-----------------------------------------------------*/
 .cbx-label > .order {
     vertical-align: top;
     font-size: 0.8em;
     color: #848484;
+}
+
+/* Расписание преподавателя и аудитории на 2 недели
+-----------------------------------------------------*/
+.week-schedule {
+    border-top: 1px solid #E7E7EC;
+    padding-top: 40px;
+}
+
+.week-schedule thead > tr > th.day-number {
+    width: 5%;
+    text-align: center;
+}
+
+.week-schedule thead > tr > th.class-number {
+    width: 5%;
+    text-align: center;
+    border-left: 1px #ddd solid;
+}
+
+.week-schedule thead > tr > th.lesson {
+    width: 45%;
+    text-align: center;
+    border-left: 1px #ddd solid;
+}
+
+.week-schedule tbody > tr > td.day-number {
+    width: 5%;
+    text-align: center;
+}
+
+.week-schedule tbody > tr > td.class-number {
+    width: 5%;
+    text-align: center;
+    border-left: 1px #ddd solid;
+}
+
+.week-schedule tbody > tr > td.class-number > p {
+    color: #999999;
+    font-size: .7em;
+    margin: 0;
+}
+
+.week-schedule tbody > tr > td.lesson {
+    width: 45%;
+    border-left: 1px #ddd solid;
+    position: relative;
+}
+
+.week-schedule tbody > tr > td.lesson > .discipline {
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.week-schedule tbody > tr > td.lesson > .lesson-type {
+    font-size: 0.9em;  
+    font-weight: bold; 
+}
+
+.week-schedule tbody > tr > td.lesson > .auditorium,
+.week-schedule tbody > tr > td.lesson > .teacher
+{
+    font-size: 0.9em;   
+}
+
+
+.week-schedule tbody > tr.day-divider > td {
+    background: #F5F5F5;
+    border-bottom: 1px #ddd solid;
+    border-top: 1px #ddd solid;
+    padding: 0.1em 0;
+}
+
+.week-schedule tbody > tr.day-divider:last-child > td {
+    background: white;
+    border-bottom: none;
+    border-top: 1px #ddd solid;
+}
+
+.week-schedule .downtime-mark {
+    font-size: 0.5em;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    color: white;
+    font-weight: bold;
+    border-style: solid;
+    border-width: 0 2.6em 2.2em 0;
 }

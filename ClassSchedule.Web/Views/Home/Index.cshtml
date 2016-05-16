@@ -29,16 +29,8 @@
         <div class="bordered-rb text-center" style="width: 3%; float: left">Пара</div>
         @foreach (var group in Model.GroupLessons)
         {
-            <div class="group bordered-rb text-center" data-group-id="@group.GroupId" style="width: @widthOfGroupColumn%; float: left">
-                @*<span>@group.GroupName</span>*@
-                @*@if (group.NumberOfStudents.HasValue && group.NumberOfStudents.Value != 0)
-                {
-                    <span class="students"><i class="fa fa-male"></i> @group.NumberOfStudents</span>
-                }*@
-
-                @*<a href="#" class="program" data-bind="click: programInfo, tooltip: { title: 'Информация о группе', trigger: 'hover' }"><i class="fa fa-info"></i><span></span></a>*@
+            <div class="group bordered-rb text-center" data-group-id="@group.GroupId" style="width: @widthOfGroupColumn%; float: left">               
                 <a href="@Url.Action("Info", "AcademicPlan", new {groupId = group.GroupId})" class="group-info" target="_blank" data-bind="tooltip: { title: 'Информация о группе', trigger: 'hover' }">
-                    @*<i class="fa fa-info"></i>*@
                     <span>@group.GroupName</span>
                 </a>
             </div>
@@ -46,7 +38,7 @@
     </div>
 
     <div class="days-panel" style="width: 3%; float: left">
-        @for (int i = 0; i < 6; i++)
+        @for (int i = 0; i < numberOfDays; i++)
         {
             <div class="bordered-rb day-cell text-center">
                 <span>@ScheduleHelpers.DayOfWeek(i) <br><small>@Model.FirstDayOfWeek.AddDays(i).ToString("dd.MM")</small></span>
@@ -109,6 +101,7 @@
     @Scripts.Render("~/bundles/typeahead")
     @Scripts.Render("~/bundles/bootstrap-select")
     @Scripts.Render("~/bundles/edit-lesson")
+    @Scripts.Render("~/bundles/changeweek")
     @Scripts.Render("~/bundles/highcharts")
 
     <script>
@@ -555,6 +548,27 @@
                 });
             }
 
+            self.copySchedule = function() {
+                // $.post('/Home/EditableWeeks', {}, function (data) {
+                    // self.ChangeWeekViewModel(new ChangeWeekViewModel(data));
+
+                    $('#copy-schedule').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+
+                    //$('#change-week').on('click', '#modal-confirm', function () {
+                    //    $.post('/Home/ChangeWeek',{ weekNumber: self.ChangeWeekViewModel().SelectedWeek() }, function () { });
+
+                    //    $('#change-week').modal('hide');
+                    //});
+
+                    //$('#change-week').on('click', '#modal-cancel', function () {
+                    //    $('#change-week').modal('hide');
+                    //    $('#change-week').unbind('click');
+                    //});
+                // });
+            }
         };
     </script>
 }

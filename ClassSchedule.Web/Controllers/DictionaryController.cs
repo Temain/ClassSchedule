@@ -244,21 +244,22 @@ namespace ClassSchedule.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Teacher(int chairId)
+        public ActionResult Teacher(int? chairId, string query)
         {
             if (Request.IsAjaxRequest())
             {
                 var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
                 if (jobRepository != null)
                 {
-                    var chairTeachers = jobRepository.ActualTeachers(UserProfile.EducationYear, chairId);
-                    var result = chairTeachers
+                    var teachers = jobRepository.ActualTeachers(UserProfile.EducationYear, chairId, query);
+                    var result = teachers
                         .Select(
                             x =>
                                 new TeacherViewModel
                                 {
-                                    TeacherId = x.Key,
-                                    TeacherFullName = x.Value
+                                    PersonId = x.PersonId,
+                                    TeacherId = x.JobId,
+                                    TeacherFullName = x.FullName
                                 });
 
                     return Json(result);
@@ -342,23 +343,59 @@ namespace ClassSchedule.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Auditorium(int chairId, int housingId)
+        public ActionResult Auditorium(int? chairId, int? housingId, string query, bool shortResult = false)
         {
             if (Request.IsAjaxRequest())
             {
                 var auditoriums = UnitOfWork.Repository<Auditorium>()
-                    .GetQ(filter: x => (x.ChairId == chairId || x.ChairId == null) && x.HousingId == housingId,
+                    .GetQ(filter: x => x.IsDeleted != true,
                         orderBy: o => o.OrderByDescending(n => n.ChairId)
-                            .ThenBy(n => n.AuditoriumNumber))
+                            .ThenBy(n => n.AuditoriumNumber));
+
+                if (housingId != null)
+                {
+                    auditoriums = auditoriums.Where(x => x.HousingId == housingId);
+                }
+
+                if (chairId != null)
+                {
+                    auditoriums = auditoriums.Where(x => x.ChairId == chairId || x.ChairId == null);
+                }
+
+                if (query != null)
+                {
+                    auditoriums = auditoriums.Where(x => x.AuditoriumNumber.StartsWith(query));
+                }
+
+                List<AuditoriumViewModel> result;
+                if (shortResult)
+                {
+                    result = auditoriums
+                    .Select(x => new AuditoriumViewModel
+                    {
+                        AuditoriumId = x.AuditoriumId,
+                        AuditoriumNumber = x.AuditoriumNumber + x.Housing.Abbreviation,
+                        AuditoriumTypeName = x.AuditoriumType.AuditoriumTypeName,
+                        Places = x.Places ?? 0
+                    })
+                    .ToList();
+                }
+                else
+                {
+                    result = auditoriums
                     .Select(x => new AuditoriumViewModel
                     {
                         AuditoriumId = x.AuditoriumId,
                         AuditoriumNumber = x.AuditoriumNumber,
                         AuditoriumTypeName = x.AuditoriumType.AuditoriumTypeName,
+                        // HousingId = x.HousingId,
+                        // HousingAbbreviation = x.Housing.Abbreviation,
                         Places = x.Places ?? 0
-                    }).ToList();
+                    })
+                    .ToList();
+                }
 
-                return Json(auditoriums);
+                return Json(result);
             }
 
             return null;

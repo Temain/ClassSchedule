@@ -171,8 +171,8 @@ namespace ClassSchedule.Web.Controllers
                             x =>
                                 new TeacherViewModel
                                 {
-                                    TeacherId = x.Key,
-                                    TeacherFullName = x.Value
+                                    TeacherId = x.JobId,
+                                    TeacherFullName = x.FullName
                                 })
                         .ToList();
                 }                   
@@ -592,7 +592,7 @@ namespace ClassSchedule.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditableWeeks()
+        public ActionResult EditableWeeks(bool showWeekType = true)
         {
             if (Request.IsAjaxRequest())
             {
@@ -632,7 +632,7 @@ namespace ClassSchedule.Web.Controllers
                 }
 
                 // Если для всех групп загружен учебный план
-                if (groups.Count == courseSchedules.Count)
+                if (groups.Count == courseSchedules.Count && showWeekType)
                 {
                     var allEquals = courseSchedules.All(o => o.Schedule == courseSchedules[0].Schedule);
                     if (allEquals)

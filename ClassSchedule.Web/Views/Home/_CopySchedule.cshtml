@@ -1,0 +1,37 @@
+﻿<!-- Modal -->
+<div id="copy-schedule" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content custom-modal-content">
+            <div class="modal-header custom-modal-header primary">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Копирование расписания</h4>
+            </div>
+            <div class="modal-body">
+                @*<div class="row modal-container">
+                    <dl class="dl-horizontal">
+                        <dt>Сегодня</dt>
+                        <dd data-bind="text: CurrentWeek() + ' неделя (' + CurrentWeekStartDate() + 'г. - ' + CurrentWeekEndDate() + 'г.)'"></dd>
+                        <dt>Редактируется</dt>
+                        <dd data-bind="text: EditedWeek() + ' неделя (' + EditedWeekStartDate() + 'г. - ' + EditedWeekEndDate() + 'г.)'"></dd>
+                    </dl>
+
+                    <div class="week">
+                        <div class="week-label"><label class="control-label">Выберите неделю</label></div>
+                        <div class="week-select ">
+                            <select class="form-control" data-bind="selectPicker: SelectedWeek, options: $root.ChangeWeekViewModel().Weeks, optionsValue: 'WeekNumber', optionsText: 'WeekNumber', optionsAfterRender: $root.ChangeWeekViewModel().setWeekOptionContent"></select>
+                        </div>
+                    </div>
+                </div>*@
+            </div>
+            <div class="custom-modal-footer modal-footer">
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" id="modal-cancel" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                    <a id="modal-confirm-copy" class="btn btn-primary">Копировать</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
