@@ -39,6 +39,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FastReport, Version=2015.1.4.0, Culture=neutral, PublicKeyToken=db7e5ce63278458c, processorArchitecture=MSIL" />
+    <Reference Include="FastReport.Web, Version=2015.1.4.0, Culture=neutral, PublicKeyToken=db7e5ce63278458c, processorArchitecture=MSIL" />
     <Reference Include="Glimpse.Ado, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Glimpse.Ado.1.7.3\lib\net45\Glimpse.Ado.dll</HintPath>
       <Private>True</Private>
@@ -347,6 +349,8 @@
     <Content Include="Scripts\bootstrap-select.js" />
     <Content Include="Scripts\bootstrap-select.js.map" />
     <Content Include="Content\bootstrap-select.css.map" />
+    <Content Include="App_Data\Reports\GroupSetSchedule.frx" />
+    <Content Include="App_Data\Reports\GroupSchedule.frx" />
     <None Include="Properties\PublishProfiles\smarterasp.net.pubxml" />
     <None Include="Properties\PublishProfiles\somee.com.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -544,9 +548,7 @@
     <Content Include="Views\Teacher\_TeacherWeekSchedule.cshtml" />
     <Content Include="Views\Auditorium\_AuditoriumWeekSchedule.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />

@@ -12,7 +12,7 @@
 
     int totalWidthOfColumns = 100;
     int widthOfInfoColumn = 3;
-    string widthOfGroupColumn = Math.Round((totalWidthOfColumns - widthOfInfoColumn * 2f) / numberOfGroups, 2).ToString(CultureInfo.GetCultureInfo("en-US"));
+    string widthOfGroupColumn = Math.Round((totalWidthOfColumns - widthOfInfoColumn * 2f) / numberOfGroups, 3).ToString(CultureInfo.GetCultureInfo("en-US"));
 }
 @Styles.Render("~/Content/bootstrap-select")
 

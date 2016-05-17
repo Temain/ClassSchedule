@@ -1,0 +1,274 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="01/05/2013 16:51:10" ReportInfo.Modified="05/16/2016 22:37:13" ReportInfo.CreatorVersion="2015.1.4.0" PrintSettings.PrintOnSheetWidth="297" PrintSettings.PrintOnSheetHeight="420">
+  <ScriptText>using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows.Forms;
+using System.Drawing;
+using System.Data;
+using FastReport;
+using FastReport.Data;
+using FastReport.Dialog;
+using FastReport.Barcode;
+using FastReport.Table;
+using FastReport.Utils;
+
+namespace FastReport
+{
+  public class ReportScript
+  {
+    float bw=237.76f;
+    int gcn;
+    static TextObject []to;
+    private void Customize()
+    {
+      float gcnt=(float)gcn;
+      if(gcnt&gt;0)
+      {                                           //
+        g1t.Visible=true;
+        r1.Visible=true;
+        
+        r1.Width=bw*6.0f/gcnt;///gcnt;
+        g1t.Width=bw*6.0f/gcnt;///gcnt;
+      //  MessageBox.Show(g1t.Left.ToString());
+      //  MessageBox.Show(g1t.Width.ToString());
+        
+      }
+      if(gcnt&gt;1)
+      {
+        
+        g2t.Left=g1t.Left+g1t.Width;
+        r2.Left=r1.Left+r1.Width;
+        g2t.Visible=true;
+        r2.Visible=true;
+        g2t.Width=bw*6.0f/gcnt;
+        r2.Width=bw*6.0f/gcnt;
+      }
+      if(gcnt&gt;2)
+      {
+        g3t.Left=g2t.Left+g2t.Width;
+        r3.Left=r2.Left+r2.Width;
+        g3t.Visible=true;
+        r3.Visible=true;
+        g3t.Width=bw*6.0f/gcnt;
+        r3.Width=bw*6.0f/gcnt;
+      }
+      if(gcnt&gt;3)
+      {
+        g4t.Left=g3t.Left+g3t.Width;
+        r4.Left=r3.Left+r3.Width;
+        g4t.Visible=true;
+        r4.Visible=true;
+        g4t.Width=bw*6.0f/gcnt;
+        r4.Width=bw*6.0f/gcnt;
+      }
+      if(gcnt&gt;4)
+      {
+        g5t.Left=g4t.Left+g4t.Width;
+        r5.Left=r4.Left+r4.Width;
+        g5t.Visible=true;
+        r5.Visible=true;
+        g5t.Width=bw*6.0f/gcnt;
+        r5.Width=bw*6.0f/gcnt;
+      }
+      if(gcnt&gt;5)
+      {
+        g6t.Left=g5t.Left+g5t.Width;
+        r6.Left=r5.Left+r5.Width;
+        g6t.Visible=true;
+        r6.Visible=true;
+        g6t.Width=bw*6.0f/gcnt;
+        r6.Width=bw*6.0f/gcnt;
+      }
+      
+    }
+    private void Page1_StartPage(object sender, EventArgs e)
+    {
+      to=new TextObject[6]{r1,r2,r3,r4,r5,r6};
+      gcn =(int)Report.GetParameterValue(&quot;GRC&quot;);
+      
+     // MessageBox.Show(g1t.Left.ToString());
+       Customize();
+      
+      
+      
+    //   MessageBox.Show(bw.ToString());
+      
+   /*   switch(gcn)
+      {
+        case 1:g1t.Border.RightLine.Style=LineStyle.Solid;r1.Border.RightLine.Style=LineStyle.Solid;break;
+        case 2:g2t.Border.RightLine.Style=LineStyle.Solid;r2.Border.RightLine.Style=LineStyle.Solid;break;
+        case 3:g3t.Border.RightLine.Style=LineStyle.Solid;r3.Border.RightLine.Style=LineStyle.Solid;break;
+        case 4:g4t.Border.RightLine.Style=LineStyle.Solid;r4.Border.RightLine.Style=LineStyle.Solid;break;
+        case 5:g5t.Border.RightLine.Style=LineStyle.Solid;r5.Border.RightLine.Style=LineStyle.Solid;break;
+        case 6:g6t.Border.RightLine.Style=LineStyle.Solid;r6.Border.RightLine.Style=LineStyle.Solid;break;
+      } */
+    }
+
+    private void Data2_BeforePrint(object sender, EventArgs e)
+    {
+     
+   /*   gcn =(int)Report.GetParameterValue(&quot;GRC&quot;);
+      float gcnt=(float)gcn;
+      MessageBox.Show(g1t.Left.ToString());
+      if(gcnt&gt;0)
+      {
+        g1t.Visible=true;
+        r1.Visible=true;
+        g1t.Width=bw*6.0f/gcnt;
+        r1.Width=bw*6.0f/gcnt;
+      }
+      if(gcnt&gt;1)
+      {
+        g2t.Left=r1.Left+r1.Width;
+        r2.Left=r1.Left+r1.Width;
+        g2t.Visible=true;
+        r2.Visible=true;
+        g2t.Width=bw*6.0f/gcnt;
+        r2.Width=bw*6.0f/gcnt;
+      }
+      if(gcnt&gt;2)
+      {
+        g3t.Left=r2.Left+r2.Width;
+        r3.Left=r2.Left+r2.Width;
+        g3t.Visible=true;
+        r3.Visible=true;
+        g3t.Width=bw*6.0f/gcnt;
+        r3.Width=bw*6.0f/gcnt;
+      }
+      if(gcnt&gt;3)
+      {
+        g4t.Left=r3.Left+r3.Width;
+        r4.Left=r3.Left+r3.Width;
+        g4t.Visible=true;
+        r4.Visible=true;
+        g4t.Width=bw*6.0f/gcnt;
+        r4.Width=bw*6.0f/gcnt;
+      }
+      if(gcnt&gt;4)
+      {
+        g5t.Left=r4.Left+r4.Width;
+        r5.Left=r4.Left+r4.Width;
+        g5t.Visible=true;
+        r5.Visible=true;
+        g5t.Width=bw*6.0f/gcnt;
+        r5.Width=bw*6.0f/gcnt;
+      }
+      if(gcnt&gt;5)
+      {
+        g6t.Left=r5.Left+r5.Width;
+        r6.Left=r5.Left+r5.Width;
+        g6t.Visible=true;
+        r6.Visible=true;
+        g6t.Width=bw*6.0f/gcnt;
+        r6.Width=bw*6.0f/gcnt;
+      } */
+      Customize();
+      if (((Int32)Report.GetVariableValue(&quot;Row#&quot;))%6== 0 )
+      {
+        Chas.Border.BottomLine.Width=2;
+        Data2.Border.BottomLine.Width=2;
+        r1.Border.BottomLine.Width=2;
+        r2.Border.BottomLine.Width=2;
+        r3.Border.BottomLine.Width=2;
+        r4.Border.BottomLine.Width=2;
+        r5.Border.BottomLine.Width=2;
+        r6.Border.BottomLine.Width=2;
+      }
+      else{
+        Chas.Border.BottomLine.Width=1;
+        Data2.Border.BottomLine.Width=1;
+        r1.Border.BottomLine.Width=1;
+        r2.Border.BottomLine.Width=1;
+        r3.Border.BottomLine.Width=1;
+        r4.Border.BottomLine.Width=1;
+        r5.Border.BottomLine.Width=1;
+        r6.Border.BottomLine.Width=1;
+      }
+      string []mas=new string[6];
+      
+     
+      mas[0]=(string)Report.GetColumnValue(&quot;Potok.rasp1&quot;);
+      mas[1]=(string)Report.GetColumnValue(&quot;Potok.rasp2&quot;);
+      mas[2]=(string)Report.GetColumnValue(&quot;Potok.rasp3&quot;);
+      mas[3]=(string)Report.GetColumnValue(&quot;Potok.rasp4&quot;);
+      mas[4]=(string)Report.GetColumnValue(&quot;Potok.rasp5&quot;);
+      mas[5]=(string)Report.GetColumnValue(&quot;Potok.rasp6&quot;);
+      for(int i=0;i&lt;6;i++)
+      {
+        to[i].Font=new Font(to[i].Font.FontFamily,7);
+        to[i].HorzAlign=HorzAlign.Left;
+      }
+     //MessageBox.Show(r1.Width.ToString());
+      for(int i=1;i&lt;6;i++)
+        for(int j=i-1;j&gt;=0;j--)
+        {
+          if(mas[i]!=mas[j])
+            break;
+          if(mas[i]==mas[j]  &amp;&amp;mas[i].Length&gt;6&amp;&amp;to[j].Visible)
+          {
+            to[i].Visible=false;
+            to[j].Width+=to[i].Width;
+            to[j].Font=new Font(to[j].Font.FontFamily,10,FontStyle.Bold);
+            to[j].HorzAlign=HorzAlign.Center;
+           // MessageBox.Show(r1.Width.ToString());
+            
+          }
+        }                                  
+      
+        
+        
+    }
+  }
+}
+</ScriptText>
+  <Dictionary>
+    <Parameter Name="KURS" DataType="System.String"/>
+    <Parameter Name="NEDEL" DataType="System.String"/>
+    <Parameter Name="FAK" DataType="System.String"/>
+    <Parameter Name="GR1" DataType="System.Int32" Expression="1"/>
+    <Parameter Name="GR2" DataType="System.Int32" Expression="2"/>
+    <Parameter Name="GR3" DataType="System.Int32" Expression="3"/>
+    <Parameter Name="GR4" DataType="System.Int32" Expression="4"/>
+    <Parameter Name="GR5" DataType="System.Int32" Expression="5"/>
+    <Parameter Name="GR6" DataType="System.Int32" Expression="6"/>
+    <Parameter Name="GRC" DataType="System.Int32" Expression="3"/>
+  </Dictionary>
+  <ReportPage Name="Page1" Landscape="true" PaperWidth="420" PaperHeight="210" LeftMargin="5" TopMargin="6" BottomMargin="6" FirstPageSource="15" OtherPagesSource="15" StartPageEvent="Page1_StartPage">
+    <ReportTitleBand Name="ReportTitle1" Width="1530.9" Height="71.49">
+      <TextObject Name="Text2" Top="52.54" Width="26.84" Height="18.9" Border.Lines="All" Border.Width="2" Text="Дни" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 8pt"/>
+      <TextObject Name="Text4" Left="26.84" Top="52.54" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="2" Text="Часы" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text1" Width="1538.46" Height="52.54" Text="РАСПИСАНИЕ УЧЕБНЫХ ЗАНЯТИЙ [KURS] КУРСА ФАКУЛЬТЕТА [FAK] НА [NEDEL] НЕДЕЛЮ" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 14pt, style=Bold"/>
+      <TextObject Name="g1t" Left="111.89" Top="52.54" Width="237.76" Height="18.9" Visible="false" Border.Lines="All" Border.Width="2" CanBreak="false" Text="[GR1]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="g2t" Left="349.66" Top="52.54" Width="237.76" Height="18.9" Visible="false" Border.Lines="All" Border.Width="2" CanBreak="false" Text="[GR2]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="g3t" Left="587.41" Top="52.54" Width="237.76" Height="18.9" Visible="false" Border.Lines="All" Border.Width="2" CanBreak="false" Text="[GR3]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="g4t" Left="825.17" Top="52.54" Width="237.76" Height="18.9" Visible="false" Border.Lines="All" Border.Width="2" CanBreak="false" Text="[GR4]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="g5t" Left="1062.94" Top="52.59" Width="237.76" Height="18.9" Visible="false" Border.Lines="All" Border.Width="2" CanBreak="false" Text="[GR5]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="g6t" Left="1301.08" Top="52.59" Width="237.76" Height="18.9" Visible="false" Border.Lines="All" Border.Width="2" CanBreak="false" Text="[GR6]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+    </ReportTitleBand>
+    <DataBand Name="Data1" Top="74.94" Width="1530.9" Height="936.68">
+      <TextObject Name="Text11" Left="0.02" Width="26.84" Height="156.11" GroupIndex="1" Border.Lines="All" Border.Width="2" Text="понедельник" HorzAlign="Center" VertAlign="Center" Angle="270" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Text12" Top="156.11" Width="26.84" Height="156.11" GroupIndex="1" Border.Lines="All" Border.Width="2" Text="вторник" HorzAlign="Center" VertAlign="Center" Angle="270" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Text13" Left="0.03" Top="312.23" Width="26.84" Height="156.11" GroupIndex="1" Border.Lines="All" Border.Width="2" Text="среда" HorzAlign="Center" VertAlign="Center" Angle="270" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Text14" Left="0.01" Top="468.34" Width="26.84" Height="156.11" GroupIndex="1" Border.Lines="All" Border.Width="2" Text="четверг" HorzAlign="Center" VertAlign="Center" Angle="270" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Text15" Top="624.46" Width="26.84" Height="156.11" GroupIndex="1" Border.Lines="All" Border.Width="2" Text="пятница&#13;&#10;" HorzAlign="Center" VertAlign="Center" Angle="270" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Text16" Top="780.57" Width="26.84" Height="156.11" GroupIndex="1" Border.Lines="All" Border.Width="2" Text="суббота" HorzAlign="Center" VertAlign="Center" Angle="270" Font="Times New Roman, 12pt"/>
+      <SubreportObject Name="Subreport1" Left="26.84" Width="75.6" Height="18.9" GrowToBottom="true" ReportPage="Page2" PrintOnParent="true"/>
+    </DataBand>
+    <PageFooterBand Name="PageFooter1" Top="1015.07" Width="1530.9" Height="37.8">
+      <TextObject Name="Text3" Width="1538.46" Height="37.8" Text="Начальник УМУ _________________________  Декан_______________________" Font="Times New Roman, 12pt, style=Bold"/>
+    </PageFooterBand>
+  </ReportPage>
+  <ReportPage Name="Page2" Landscape="true" PaperWidth="420" PaperHeight="210" LeftMargin="5" TopMargin="6" BottomMargin="6" FirstPageSource="15" OtherPagesSource="15">
+    <DataBand Name="Data2" Width="1530.9" Height="26.01" CanGrow="true" BeforePrintEvent="Data2_BeforePrint" CanBreak="true" RowCount="0" MaxRows="36" PrintIfDatasourceEmpty="true">
+      <TextObject Name="Chas" Left="0.04" Width="85.05" Height="26.01" Border.Lines="All" Border.RightLine.Width="2" Text="[Potok.num]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 9pt"/>
+      <TextObject Name="r1" Left="85.09" Width="237.76" Height="26.01" Visible="false" Border.Lines="All" Border.RightLine.Width="2" CanBreak="false" Text="[Potok.rasp1]" VertAlign="Center" Font="Times New Roman, 7pt" HtmlTags="true"/>
+      <TextObject Name="r2" Left="322.86" Width="237.76" Height="26.01" Visible="false" Border.Lines="All" Border.RightLine.Width="2" CanBreak="false" Text="[Potok.rasp2]" VertAlign="Center" Font="Times New Roman, 7pt" HtmlTags="true"/>
+      <TextObject Name="r3" Left="560.61" Width="237.76" Height="26.01" Visible="false" Border.Lines="All" Border.RightLine.Width="2" CanBreak="false" Text="[Potok.rasp3]" VertAlign="Center" Font="Times New Roman, 7pt" HtmlTags="true"/>
+      <TextObject Name="r4" Left="798.37" Width="237.76" Height="26.01" Visible="false" Border.Lines="All" Border.RightLine.Width="2" CanBreak="false" Text="[Potok.rasp4]" VertAlign="Center" Font="Times New Roman, 7pt" HtmlTags="true"/>
+      <TextObject Name="r5" Left="1036.14" Width="237.76" Height="26.01" Visible="false" Border.Lines="All" Border.RightLine.Width="2" CanBreak="false" Text="[Potok.rasp5]" VertAlign="Center" Font="Times New Roman, 7pt" HtmlTags="true"/>
+      <TextObject Name="r6" Left="1274.28" Width="237.76" Height="26.01" Visible="false" Border.Lines="All" Border.RightLine.Width="2" CanBreak="false" Text="[Potok.rasp6]" VertAlign="Center" Font="Times New Roman, 7pt" HtmlTags="true"/>
+    </DataBand>
+  </ReportPage>
+</Report>

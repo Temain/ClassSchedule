@@ -37,8 +37,8 @@ namespace ClassSchedule.Domain.Context
         public DbSet<ProgramOfEducation> ProgramOfEducations { get; set; }
         public DbSet<SemesterSchedule> SemesterSchedules { get; set; }
         public DbSet<SessionControlType> SessionControlTypes { get; set; }
-        public DbSet<TempDiscipline> TempDisciplines { get; set; }   
-
+        public DbSet<TempDiscipline> TempDisciplines { get; set; }
+        public DbSet<ClassTime> ClassTimes { get; set; }   
 
         public ApplicationDbContext()
             : base("ClassScheduleConnection", throwIfV1Schema: false)

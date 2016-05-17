@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="01/05/2013 16:51:10" ReportInfo.Modified="05/17/2016 11:38:56" ReportInfo.CreatorVersion="2015.1.4.0" PrintSettings.PrintOnSheetWidth="297" PrintSettings.PrintOnSheetHeight="420">
+  <ScriptText>using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows.Forms;
+using System.Drawing;
+using System.Data;
+using FastReport;
+using FastReport.Data;
+using FastReport.Dialog;
+using FastReport.Barcode;
+using FastReport.Table;
+using FastReport.Utils;
+
+namespace FastReport
+{
+  public class ReportScript
+  {
+    
+      
+   
+  }
+}
+</ScriptText>
+  <Dictionary>
+    <Parameter Name="KURS" DataType="System.String"/>
+    <Parameter Name="NEDEL" DataType="System.String"/>
+    <Parameter Name="FAK" DataType="System.String"/>
+    <Parameter Name="GR1" DataType="System.String" Expression="1"/>
+    <Parameter Name="GR2" DataType="System.String" Expression="2"/>
+    <Parameter Name="GR3" DataType="System.String" Expression="3"/>
+    <Parameter Name="GR4" DataType="System.String" Expression="4"/>
+    <Parameter Name="GR5" DataType="System.String" Expression="5"/>
+    <Parameter Name="GR6" DataType="System.String" Expression="6"/>
+    <Parameter Name="GRC" DataType="System.Int32" Expression="3"/>
+  </Dictionary>
+  <ReportPage Name="Page1" RawPaperSize="9" LeftMargin="6" TopMargin="5" RightMargin="6" FirstPageSource="15" OtherPagesSource="15" StartPageEvent="Page1_StartPage">
+    <ReportTitleBand Name="ReportTitle1" Width="748.44" Height="71.49">
+      <TextObject Name="Text2" Top="52.54" Width="26.84" Height="18.9" Border.Lines="All" Border.Width="2" Text="Дни" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 8pt"/>
+      <TextObject Name="Text4" Left="26.84" Top="52.54" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="2" Text="Часы" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+      <TextObject Name="Text1" Width="754.11" Height="52.54" Text="РАСПИСАНИЕ УЧЕБНЫХ ЗАНЯТИЙ [KURS] КУРСА &#13;&#10;ФАКУЛЬТЕТА [FAK] НА [NEDEL] НЕДЕЛЮ" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 14pt, style=Bold"/>
+      <TextObject Name="g1t" Left="111.89" Top="52.54" Width="634.66" Height="18.9" Border.Lines="All" Border.Width="2" CanBreak="false" Text="[GR1]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 10pt"/>
+    </ReportTitleBand>
+    <DataBand Name="Data1" Top="74.94" Width="748.44" Height="936.68">
+      <TextObject Name="Text11" Left="0.02" Width="26.84" Height="156.11" GroupIndex="1" Border.Lines="All" Border.Width="2" Text="понедельник" HorzAlign="Center" VertAlign="Center" Angle="270" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Text12" Top="156.11" Width="26.84" Height="156.11" GroupIndex="1" Border.Lines="All" Border.Width="2" Text="вторник" HorzAlign="Center" VertAlign="Center" Angle="270" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Text13" Left="0.03" Top="312.23" Width="26.84" Height="156.11" GroupIndex="1" Border.Lines="All" Border.Width="2" Text="среда" HorzAlign="Center" VertAlign="Center" Angle="270" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Text14" Left="0.01" Top="468.34" Width="26.84" Height="156.11" GroupIndex="1" Border.Lines="All" Border.Width="2" Text="четверг" HorzAlign="Center" VertAlign="Center" Angle="270" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Text15" Top="624.46" Width="26.84" Height="156.11" GroupIndex="1" Border.Lines="All" Border.Width="2" Text="пятница&#13;&#10;" HorzAlign="Center" VertAlign="Center" Angle="270" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Text16" Top="780.57" Width="26.84" Height="156.11" GroupIndex="1" Border.Lines="All" Border.Width="2" Text="суббота" HorzAlign="Center" VertAlign="Center" Angle="270" Font="Times New Roman, 12pt"/>
+      <SubreportObject Name="Subreport1" Left="26.84" Width="75.6" Height="18.9" GrowToBottom="true" ReportPage="Page2" PrintOnParent="true"/>
+    </DataBand>
+    <PageFooterBand Name="PageFooter1" Top="1015.07" Width="748.44" Height="37.8">
+      <TextObject Name="Text3" Width="1538.46" Height="37.8" Text="Начальник УМУ _________________________  Декан_______________________" Font="Times New Roman, 12pt, style=Bold"/>
+    </PageFooterBand>
+  </ReportPage>
+  <ReportPage Name="Page2" RawPaperSize="9" LeftMargin="6" TopMargin="5" RightMargin="6" FirstPageSource="15" OtherPagesSource="15">
+    <DataBand Name="Data2" Width="748.44" Height="26.01" CanGrow="true" BeforePrintEvent="Data2_BeforePrint" CanBreak="true" DataSource="Potok" RowCount="0" MaxRows="36" PrintIfDatasourceEmpty="true">
+      <TextObject Name="Chas" Left="0.04" Width="85.05" Height="26.01" Border.Lines="All" Border.RightLine.Width="2" Text="[Potok.num]" HorzAlign="Center" VertAlign="Center" Font="Times New Roman, 9pt"/>
+      <TextObject Name="r1" Left="85.09" Width="634.66" Height="26.01" Border.Lines="All" Border.RightLine.Width="2" CanBreak="false" Text="[Potok.rasp1]" VertAlign="Center" Font="Times New Roman, 7pt" HtmlTags="true"/>
+    </DataBand>
+  </ReportPage>
+</Report>

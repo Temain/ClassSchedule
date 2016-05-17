@@ -80,7 +80,7 @@ namespace ClassSchedule.Web.Controllers
                         .Select(y => new
                         {
                             y.Key,
-                            Floors = String.Join(", ", y.Select(z => z.AuditoriumNumber))
+                            Floors = String.Join(", ", y.Select(z => z.AuditoriumNumber).OrderBy(n => n))
                         })
                         .OrderBy(f => f.Key)
                 })

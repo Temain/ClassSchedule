@@ -192,11 +192,16 @@
     <Compile Include="Migrations\201605140018495_AddAdditionalFieldToGroupSetGroup.Designer.cs">
       <DependentUpon>201605140018495_AddAdditionalFieldToGroupSetGroup.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605170918216_AddClassTimeTable.cs" />
+    <Compile Include="Migrations\201605170918216_AddClassTimeTable.Designer.cs">
+      <DependentUpon>201605170918216_AddClassTimeTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AcademicPlan.cs" />
     <Compile Include="Models\Auditorium.cs" />
     <Compile Include="Models\AuditoriumType.cs" />
     <Compile Include="Models\Chair.cs" />
+    <Compile Include="Models\ClassTime.cs" />
     <Compile Include="Models\Course.cs" />
     <Compile Include="Models\Discipline.cs" />
     <Compile Include="Models\DisciplineSemesterPlanJob.cs" />
@@ -331,6 +336,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605140018495_AddAdditionalFieldToGroupSetGroup.resx">
       <DependentUpon>201605140018495_AddAdditionalFieldToGroupSetGroup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605170918216_AddClassTimeTable.resx">
+      <DependentUpon>201605170918216_AddClassTimeTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
