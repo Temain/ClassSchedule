@@ -198,7 +198,7 @@
                             if (showDiscipline)
                             {
                                 <tr>
-                                    <td><span class="name">@discipline.DisciplineName</span> <br/> <span class="chair">Кафедра @discipline.ChairName</span></td>
+                                    <td class="td-lg"><span class="name">@discipline.DisciplineName</span> <br/> <span class="chair">Кафедра @discipline.ChairName</span></td>
                                     @for (int semester = 1; semester <= Model.NumberOfSemesters; semester++)
                                     {
                                         var semesterPlan = discipline.DisciplineSemesterPlans.SingleOrDefault(x => x.SemesterNumber == semester);

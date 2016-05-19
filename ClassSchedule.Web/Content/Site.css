@@ -945,6 +945,14 @@ html { overflow-y: auto !important; }
     padding-left: 0;
 }
 
+.block tbody > tr > td.large,
+.block thead > tr > th.large {
+    width: 50% !important;
+    color: #848484;
+    font-size: 1em;
+    /*padding-left: 0;*/
+}
+
 .block .table-header {
     font-size: 1.1em;
     color: #848484;
@@ -960,8 +968,12 @@ html { overflow-y: auto !important; }
     border: none;
 }
 
-.block tbody > tr > td:first-child {
+.block tbody > tr > td.td-lg {
     width: 56.66666666%;
+}
+
+.block tbody > tr > td.td-sm {
+    width: 33.33333333%;
 }
 
 .block tbody > tr:first-child {

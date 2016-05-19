@@ -126,6 +126,8 @@ namespace ClassSchedule.Web.Controllers
             var facultyPercentage = UnitOfWork.Execute<FacultyPercentageViewModel>(query, parameters).ToList();
             viewModel.Faculties = facultyPercentage;
 
+            // viewModel.TotalFilledPercent = facultyPercentage.
+
             return View(viewModel);
         }
     }

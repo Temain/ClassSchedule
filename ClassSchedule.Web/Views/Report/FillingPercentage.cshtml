@@ -16,50 +16,45 @@
             <div class="col-md-4">
                 <div class="title">Основная информация</div>
             </div>
-            <div class="col-md-8">
-                <dl class="dl-horizontal">
-                    <dt>Общий процент заполнения расписания</dt>
-                    <dd>87%</dd>
-                    <dt>Загружено учебных планов</dt>
-                    <dd>87/102</dd>
-                    <dt>Общая эффективность расписания</dt>
-                    <dd>95%</dd>
-                </dl>
+            <div class="col-md-12">
+                <table id="datatable" class="table" style="width: 83.3333333%">
+                    <thead>
+                        <tr>
+                            <th class="block-title small"></th>
+                            @*<th class="block-title" rowspan="2" style="width: 33.3333333%">Основная информация</th>*@
+                            <th class="table-header" style="width: 25%">1 семестр</th>
+                            <th class="table-header" style="width: 25%">2 семестр</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="td-sm">
+                                @*<pre class="legend" style="background: #7cb5ec"></pre>*@
+                                Общий процент заполнения расписания
+                            </td>
+                            <td style="width: 25%">87</td>
+                            <td style="width: 25%">35</td>
+                        </tr>
+                        @*<tr>
+                            <td class="large">
+                                <pre class="legend" style="background: #f7a35c"></pre>
+                                Загружено учебных планов
+                            </td>
+                            <td>11</td>
+                            <td>91</td>
+                        </tr>*@
+                        <tr>
+                            <td class="td-sm">
+                                @*<pre class="legend" style="background: #90ee7e"></pre>*@
+                                Общая эффективность расписания
+                            </td>
+                            <td style="width: 25%">95</td>
+                            <td style="width: 25%">99</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-
-        @*<div class="row inline-block">
-            <div class="col-md-4">
-                <div class="title">Общий процент заполнения расписания</div>
-            </div>
-            <div class="col-md-8">
-                <div class="title">87%</div>
-            </div>
-        </div>
-
-        <div class="row inline-block">
-            <div class="col-md-4">
-                <div class="title">Загружено учебных планов</div>
-            </div>
-            <div class="col-md-8">
-                <div class="title">81/102</div>
-            </div>
-        </div>
-
-        <div class="row inline-block">
-            <div class="col-md-4">
-                <div class="title">Общая эффективность расписания</div>
-            </div>
-            <div class="col-md-8">
-                <div class="title">91%</div>
-            </div>
-            <div class="col-md-4">
-                <div class="title">Эффективность расписания преподавателей</div>
-            </div>
-            <div class="col-md-8">
-                <div class="title">95%</div>
-            </div>
-        </div>*@
 
         <div class="row inline-block">
             <div class="col-md-12">
@@ -72,31 +67,57 @@
                 <table class="table disciplines">
                     <thead>
                         <tr>
-                            <th class="block-title">Факультеты</th>
+                            <th class="block-title" rowspan="2">Факультеты</th>
+                            <th class="table-header" colspan="2" style="width: 25%">1 семестр</th>
+                            <th class="table-header" colspan="2" style="width: 25%">2 семестр</th>
+                            <th class="table-header" rowspan="2">Загружено<br/>уч. планов, шт</th>
+                        </tr>
+                        <tr>
                             <th class="table-header">Заполнено, %</th>
-                            <th class="table-header">Уч. планов, шт</th>
                             <th class="table-header">Эффективность, %</th>
+                            <th class="table-header">Заполнено, %</th>
+                            <th class="table-header">Эффективность, %</th>
+
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><span class="name">Агрономический</span></td>
-                            <td><span>88</span></td>
-                            <td><span class="filled">10/</span><span class="plan">21</span>
-                            <td><span>45</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="name">Экономический</span></td>
-                            <td><span>77</span></td>
-                            <td><span class="filled">12/</span><span class="plan">30</span>
-                            <td><span>75</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="name">Юридический</span></td>
-                            <td><span>88</span></td>
-                            <td><span class="filled">21/</span><span class="plan">28</span>
-                            <td><span>62</span></td>
-                        </tr>
+                        @{
+                            var faculties = Model.Faculties
+                                .GroupBy(x => new { x.FacultyId, x.FacultyName, x.Uploaded, x.MustBeUploaded })
+                                .Select(x => new
+                                {
+                                    x.Key.FacultyId,
+                                    x.Key.FacultyName,
+                                    x.Key.Uploaded,
+                                    x.Key.MustBeUploaded,
+                                    Data = x.OrderBy(y => y.SemesterNumber)
+                                        .ToList()
+                                });
+
+                            foreach (var faculty in faculties)
+                            {
+                                <tr>
+                                    <td class="td-sm"><span class="name">@faculty.FacultyName</span></td>
+                                    @foreach (var data in faculty.Data)
+                                    {
+                                        if (data.SemesterNumber > 0)
+                                        {
+                                            <td><span>@data.FilledPercent</span></td>
+                                            <td><span>100</span></td>
+                                        }
+                                        else
+                                        {
+                                            <td><span>-</span></td>
+                                            <td><span>-</span></td>
+
+                                            <td><span>-</span></td>
+                                            <td><span>-</span></td>
+                                        }                                        
+                                    }
+                                    <td><span class="filled">@faculty.Uploaded/</span><span class="plan">@faculty.MustBeUploaded</span></td>
+                                </tr>
+                            }
+                        }
                     </tbody>
                 </table>
             </div>
@@ -108,256 +129,31 @@
     @Scripts.Render("~/bundles/underscore")
     @Scripts.Render("~/bundles/highcharts")
     <script>
-        $(function() {
+        $(function () {
             $('#chart').highcharts({
+                credits: {
+                    enabled: false
+                },
+                data: {
+                    table: 'datatable'
+                },
                 chart: {
                     type: 'column'
                 },
                 title: {
-                    text: 'Browser market shares. January, 2015 to May, 2015'
-                },
-                subtitle: {
-                    text: 'Click the columns to view versions. Source: <a href="http://netmarketshare.com">netmarketshare.com</a>.'
-                },
-                xAxis: {
-                    type: 'category'
+                    text: ''
                 },
                 yAxis: {
+                    allowDecimals: false,
                     title: {
-                        text: 'Total percent market share'
-                    }
-
-                },
-                legend: {
-                    enabled: false
-                },
-                plotOptions: {
-                    series: {
-                        borderWidth: 0,
-                        dataLabels: {
-                            enabled: true,
-                            format: '{point.y:.1f}%'
-                        }
+                        text: 'Проценты'
                     }
                 },
-
                 tooltip: {
-                    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-                    pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
-                },
-
-                series: [{
-                    name: 'Brands',
-                    colorByPoint: true,
-                    data: [{
-                        name: 'Microsoft Internet Explorer',
-                        y: 56.33,
-                        drilldown: 'Microsoft Internet Explorer'
-                    }, {
-                        name: 'Chrome',
-                        y: 24.03,
-                        drilldown: 'Chrome'
-                    }, {
-                        name: 'Firefox',
-                        y: 10.38,
-                        drilldown: 'Firefox'
-                    }, {
-                        name: 'Safari',
-                        y: 4.77,
-                        drilldown: 'Safari'
-                    }, {
-                        name: 'Opera',
-                        y: 0.91,
-                        drilldown: 'Opera'
-                    }, {
-                        name: 'Proprietary or Undetectable',
-                        y: 0.2,
-                        drilldown: null
-                    }]
-                }],
-                drilldown: {
-                    series: [{
-                        name: 'Microsoft Internet Explorer',
-                        id: 'Microsoft Internet Explorer',
-                        data: [
-                            [
-                                'v11.0',
-                                24.13
-                            ],
-                            [
-                                'v8.0',
-                                17.2
-                            ],
-                            [
-                                'v9.0',
-                                8.11
-                            ],
-                            [
-                                'v10.0',
-                                5.33
-                            ],
-                            [
-                                'v6.0',
-                                1.06
-                            ],
-                            [
-                                'v7.0',
-                                0.5
-                            ]
-                        ]
-                    }, {
-                        name: 'Chrome',
-                        id: 'Chrome',
-                        data: [
-                            [
-                                'v40.0',
-                                5
-                            ],
-                            [
-                                'v41.0',
-                                4.32
-                            ],
-                            [
-                                'v42.0',
-                                3.68
-                            ],
-                            [
-                                'v39.0',
-                                2.96
-                            ],
-                            [
-                                'v36.0',
-                                2.53
-                            ],
-                            [
-                                'v43.0',
-                                1.45
-                            ],
-                            [
-                                'v31.0',
-                                1.24
-                            ],
-                            [
-                                'v35.0',
-                                0.85
-                            ],
-                            [
-                                'v38.0',
-                                0.6
-                            ],
-                            [
-                                'v32.0',
-                                0.55
-                            ],
-                            [
-                                'v37.0',
-                                0.38
-                            ],
-                            [
-                                'v33.0',
-                                0.19
-                            ],
-                            [
-                                'v34.0',
-                                0.14
-                            ],
-                            [
-                                'v30.0',
-                                0.14
-                            ]
-                        ]
-                    }, {
-                        name: 'Firefox',
-                        id: 'Firefox',
-                        data: [
-                            [
-                                'v35',
-                                2.76
-                            ],
-                            [
-                                'v36',
-                                2.32
-                            ],
-                            [
-                                'v37',
-                                2.31
-                            ],
-                            [
-                                'v34',
-                                1.27
-                            ],
-                            [
-                                'v38',
-                                1.02
-                            ],
-                            [
-                                'v31',
-                                0.33
-                            ],
-                            [
-                                'v33',
-                                0.22
-                            ],
-                            [
-                                'v32',
-                                0.15
-                            ]
-                        ]
-                    }, {
-                        name: 'Safari',
-                        id: 'Safari',
-                        data: [
-                            [
-                                'v8.0',
-                                2.56
-                            ],
-                            [
-                                'v7.1',
-                                0.77
-                            ],
-                            [
-                                'v5.1',
-                                0.42
-                            ],
-                            [
-                                'v5.0',
-                                0.3
-                            ],
-                            [
-                                'v6.1',
-                                0.29
-                            ],
-                            [
-                                'v7.0',
-                                0.26
-                            ],
-                            [
-                                'v6.2',
-                                0.17
-                            ]
-                        ]
-                    }, {
-                        name: 'Opera',
-                        id: 'Opera',
-                        data: [
-                            [
-                                'v12.x',
-                                0.34
-                            ],
-                            [
-                                'v28',
-                                0.24
-                            ],
-                            [
-                                'v27',
-                                0.17
-                            ],
-                            [
-                                'v29',
-                                0.16
-                            ]
-                        ]
-                    }]
+                    formatter: function () {
+                        return '<b>' + this.series.name + '</b><br/>' +
+                            this.point.y + '% ' + this.point.name.toLowerCase();
+                    }
                 }
             });
         });

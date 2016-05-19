@@ -59,7 +59,9 @@ namespace ClassSchedule.Web
 
             bundles.Add(new ScriptBundle("~/bundles/highcharts").Include(
                        "~/Scripts/highcharts/highcharts.js",
-                       "~/Scripts/highcharts/highcharts-more.js"));
+                       "~/Scripts/highcharts/highcharts-more.js",
+                       "~/Scripts/highcharts/modules/data.js",
+                       "~/Scripts/highcharts/modules/exporting.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap-select").Include(
                        "~/Scripts/bootstrap-select.js"));
