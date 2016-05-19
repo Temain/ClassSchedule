@@ -260,6 +260,8 @@
     <Compile Include="Models\GroupInfo\DisciplineViewModel.cs" />
     <Compile Include="Models\GroupInfo\GroupInfoViewModel.cs" />
     <Compile Include="Models\GroupInfo\SemesterScheduleViewModel.cs" />
+    <Compile Include="Models\Report\FacultyPercentageViewModel.cs" />
+    <Compile Include="Models\Report\FillingPercentageViewModel.cs" />
     <Compile Include="Models\Schedule\AuditoriumViewModel.cs" />
     <Compile Include="Models\Schedule\HousingViewModel.cs" />
     <Compile Include="Models\Schedule\EditLessonViewModel.cs" />

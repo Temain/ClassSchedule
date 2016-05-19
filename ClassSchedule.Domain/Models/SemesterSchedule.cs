@@ -73,7 +73,7 @@ namespace ClassSchedule.Domain.Models
 
         public int NumberOfLastWeek
         {
-            get { return Schedule.Length; }
+            get { return NumberOfFirstWeek + Schedule.Length - 1; }
         }
 
 

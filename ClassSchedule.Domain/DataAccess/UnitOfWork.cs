@@ -57,6 +57,11 @@ namespace ClassSchedule.Domain.DataAccess
             return (GenericRepository<TEntity>)_repositories[typeName];
         }
 
+        public IEnumerable<T> Execute<T>(string query, params object[] parameters)
+        {
+            return _context.Database.SqlQuery<T>(query, parameters);
+        }
+
         public void Save()
         {
             _context.SaveChanges();

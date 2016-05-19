@@ -9,6 +9,7 @@ namespace ClassSchedule.Domain.Models
 {
     /// <summary>
     /// Учебный план
+    /// Рассмотреть необходимость добавления года составления учебного плана
     /// </summary>
     [Table("AcademicPlan", Schema = "plan")]
     public class AcademicPlan
