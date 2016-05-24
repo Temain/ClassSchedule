@@ -13,5 +13,6 @@ namespace ClassSchedule.Web.Models.Report
         public int MustBeUploaded { get; set; }
         public int? SemesterNumber { get; set; }
         public decimal FilledPercent { get; set; }
+        public decimal? Efficiency { get; set; }
     }
 }

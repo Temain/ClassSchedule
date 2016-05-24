@@ -353,6 +353,7 @@
     <Content Include="Content\bootstrap-select.css.map" />
     <Content Include="App_Data\Reports\GroupSetSchedule.frx" />
     <Content Include="App_Data\Reports\GroupSchedule.frx" />
+    <None Include="Properties\PublishProfiles\file.pubxml" />
     <None Include="Properties\PublishProfiles\smarterasp.net.pubxml" />
     <None Include="Properties\PublishProfiles\somee.com.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
