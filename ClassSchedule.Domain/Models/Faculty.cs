@@ -6,9 +6,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ClassSchedule.Domain.Models
 { 
     /// <summary>
-    /// Факультет - из представления mdFaculty где оргструктура равна 82439137-02B5-4E30-AF30-B246B053EFAA
+    /// Факультет
     /// </summary>
-    [Table("Faculty", Schema = "dict")]
+    [Table("Faculty", Schema = "dbo")]
     public partial class Faculty
     {
         /// <summary>
@@ -39,23 +39,28 @@ namespace ClassSchedule.Domain.Models
         public Guid? ParentId { get; set; }
 
         /// <summary>
-        /// Отметка об удалении записи
-        /// </summary>
-        public bool? IsDeleted { get; set; }
-
-        /// <summary>
         /// Дата последнего обновления записи
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
 
         /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
+
+        /// <summary>
+        /// Кафедры факультета
+        /// </summary>
+        public List<Chair> Chairs { get; set; }
+
+        /// <summary>
         /// Курсы на факультете
         /// </summary>
-        public virtual ICollection<Course> Courses { get; set; }
+        public List<Course> Courses { get; set; }
 
         /// <summary>
         /// Пользователи, ответственные за расписание данного факультета
         /// </summary>
-        public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; } 
+        public List<ApplicationUser> ApplicationUsers { get; set; } 
     }
 }

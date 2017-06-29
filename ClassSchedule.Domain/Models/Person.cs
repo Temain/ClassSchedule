@@ -11,11 +11,6 @@ namespace ClassSchedule.Domain.Models
     [Table("Person", Schema = "dbo")]
     public class Person
     {
-        public Person()
-        {
-            PersonGuid = Guid.NewGuid();
-        }
-
         /// <summary>
         /// Идентификатор
         /// </summary>
@@ -25,11 +20,6 @@ namespace ClassSchedule.Domain.Models
         /// Идентификатор для систем обмена
         /// </summary>
         public Guid? PersonGuid { get; set; }
-
-        /// <summary>
-        /// Идентификатор для общих Guid-ов задублированных персон из Megabase
-        /// </summary>
-        public Guid? PersonMasterGuid { get; set; }
 
         /// <summary>
         /// Код физического лица
@@ -61,46 +51,33 @@ namespace ClassSchedule.Domain.Models
         /// Дата рождения
         /// </summary>
         public DateTime? Birthday { get; set; }
-        
-        /// <summary>
-        /// Пол
-        /// </summary>
-        public byte? Sex { get; set; }
 
         /// <summary>
-        /// Источник данных конкретной записи о персоне
+        /// Ученая степень
         /// </summary>
-        //[ForeignKey("DataSourceType")]
-        //public int? DataSourceTypeId { get; set; }
-        //public virtual DataSourceType DataSourceType { get; set; }
+        [ForeignKey("AcademicDegree")]
+        public int? AcademicDegreeId { get; set; }
+        public AcademicDegree AcademicDegree { get; set; }
 
         /// <summary>
-        /// Номер паспорта
+        /// Научное звание
         /// </summary>
-        public string PassportNumber { get; set; }
+        [ForeignKey("AcademicStatus")]
+        public int? AcademicStatusId { get; set; }
+        public AcademicStatus AcademicStatus { get; set; }
 
         /// <summary>
-        /// Серия паспорта
-        /// </summary>
-        public string PassportSeries { get; set; }
-
-        /// <summary>
-        /// Отметка о том, что персона задублирована
-        /// </summary>
-        public bool? IsMarkedAsDuplicated { get; set; }
-
-        /// <summary>
-        /// Отметка об удалении записи
-        /// </summary>
-        public bool? IsDeleted { get; set; }
-
-        /// <summary>
-        /// Дата удалении записи
+        /// Дата последнего обновления записи
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
 
-        
-        public virtual ICollection<Employee> Employees { get; set; }
+        /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
+
+
+        public List<Employee> Employees { get; set; }
 
 
         /// <summary>

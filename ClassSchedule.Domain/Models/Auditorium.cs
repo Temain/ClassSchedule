@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClassSchedule.Domain.Models
 {
@@ -24,13 +21,13 @@ namespace ClassSchedule.Domain.Models
         /// Учебный корпус
         /// </summary>
         public int HousingId { get; set; }
-        public virtual Housing Housing { get; set; }
+        public Housing Housing { get; set; }
 
         /// <summary>
         /// Тип аудитории
         /// </summary>
         public int AuditoriumTypeId { get; set; }
-        public virtual AuditoriumType AuditoriumType { get; set; }
+        public AuditoriumType AuditoriumType { get; set; }
 
         /// <summary>
         /// Мест в аудитории
@@ -41,7 +38,7 @@ namespace ClassSchedule.Domain.Models
         /// Кафедра
         /// </summary>
         public int? ChairId { get; set; }
-        public virtual Chair Chair { get; set; }
+        public Chair Chair { get; set; }
 
         /// <summary>
         /// Примечание
@@ -49,11 +46,19 @@ namespace ClassSchedule.Domain.Models
         [StringLength(100)]
         public string Comment { get; set; }
 
-        public bool IsDeleted { get; set; }
+        /// <summary>
+        /// Дата последнего обновления записи
+        /// </summary>
+        public DateTime? UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
 
         /// <summary>
         /// Занятия в этой аудитории
         /// </summary>
-        public virtual ICollection<Lesson> Lessons { get; set; } 
+        public List<LessonDetail> LessonDetails { get; set; }
     }
 }

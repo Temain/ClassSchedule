@@ -29,15 +29,18 @@ namespace ClassSchedule.Domain.Models
         public string EducationLevelName { get; set; }
 
         /// <summary>
-        /// Отметка об удалении записи
-        /// </summary>
-        public bool? IsDeleted { get; set; }
-
-        /// <summary>
         /// Дата последнего обновления записи
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
 
-        public virtual ICollection<ProgramOfEducation> ProgramsOfEducation { get; set; }
+        /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
+
+        /// <summary>
+        /// У одного уровня образования может быть несколько основных образовательных программ
+        /// </summary>
+        public List<BaseProgramOfEducation> BaseProgramOfEducations { get; set; }
     }
 }

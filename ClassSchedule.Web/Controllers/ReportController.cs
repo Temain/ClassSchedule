@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using ClassSchedule.Domain.Context;
 using ClassSchedule.Domain.DataAccess.Interfaces;
 using ClassSchedule.Web.Models.Report;
 
@@ -11,9 +12,11 @@ namespace ClassSchedule.Web.Controllers
 {
     public class ReportController : BaseController
     {
-        public ReportController(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
+        private readonly ApplicationDbContext _context;
+
+        public ReportController(ApplicationDbContext context)
         {
+            _context = context;
         }
 
         [HttpGet]
@@ -302,7 +305,7 @@ namespace ClassSchedule.Web.Controllers
                 new SqlParameter("@viewedYear", UserProfile.EducationYear.YearStart)
             };
 
-            var facultyPercentage = UnitOfWork.Execute<FacultyPercentageViewModel>(query, parameters).ToList();
+            var facultyPercentage = _context.Database.SqlQuery<FacultyPercentageViewModel>(query, parameters).ToList();
             viewModel.Faculties = facultyPercentage;
 
             // viewModel.TotalFilledPercent = facultyPercentage.

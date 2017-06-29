@@ -26,7 +26,7 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         [ForeignKey("Person")]
         public int PersonId { get; set; }
-        public virtual Person Person { get; set; }
+        public Person Person { get; set; }
 
         /// <summary>
         /// Табельный номер
@@ -46,20 +46,18 @@ namespace ClassSchedule.Domain.Models
         public DateTime? EmployeeDateEnd { get; set; }
 
         /// <summary>
-        /// Отметка об удалении записи
-        /// </summary>
-        public bool? IsDeleted { get; set; }
-
-        /// <summary>
         /// Дата последнего обновления записи
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
-        
+
+        /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
+
         /// <summary>
         /// Должности сотрудника (выполняемая работа) М.б. несколько должностей у одного сотрудника
         /// </summary>
-        public virtual ICollection<Job> Jobs { get; set; }
-
+        public List<Job> Jobs { get; set; }
     }
-
 }

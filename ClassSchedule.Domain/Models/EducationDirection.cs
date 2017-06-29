@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -35,20 +36,36 @@ namespace ClassSchedule.Domain.Models
         public string EducationDirectionName { get; set; }
 
         /// <summary>
+        /// Квалификация - изначально отсутствовала
+        /// </summary>
+        [ForeignKey("Qualification")]
+        public int QualificationId { get; set; }
+        public Qualification Qualification { get; set; }
+
+        /// <summary>
         /// Новый код направления по ФГОС ВО
         /// </summary>
         public string EducationDirectionFGOSVO { get; set; }
 
 
         /// <summary>
-        /// Отметка об удалении записи
-        /// </summary>
-        public bool? IsDeleted { get; set; }
-
-        /// <summary>
         /// Дата последнего обновления записи
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
-    }
 
+        /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
+
+        /// <summary>
+        /// Профили
+        /// </summary>
+        public List<EducationProfile> EducationProfiles { get; set; }
+
+        /// <summary>
+        /// У профиля может быть много ООП
+        /// </summary>
+        public List<BaseProgramOfEducation> BaseProgramOfEducations { get; set; }
+    }
 }

@@ -13,13 +13,15 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ClassSchedule.Web</RootNamespace>
     <AssemblyName>ClassSchedule.Web</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -74,6 +76,10 @@
       <HintPath>..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.Mvc.4.0.1\lib\net45\Microsoft.Practices.Unity.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Practices.Unity.RegistrationByConvention, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
       <HintPath>..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
       <Private>True</Private>
@@ -108,16 +114,14 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
@@ -159,8 +163,13 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="Unity.Mvc5, Version=1.2.3.0, Culture=neutral, PublicKeyToken=43da31bc42a85347, processorArchitecture=MSIL">
       <HintPath>..\packages\Unity.Mvc5.1.2.3\lib\net45\Unity.Mvc5.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebActivatorEx.2.0\lib\net40\WebActivatorEx.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WebGrease">
@@ -231,7 +240,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
-    <Compile Include="Controllers\AcademicPlanController.cs" />
+    <Compile Include="App_Start\UnityMvcActivator.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AuditoriumController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
@@ -266,6 +275,7 @@
     <Compile Include="Models\Schedule\HousingViewModel.cs" />
     <Compile Include="Models\Schedule\EditLessonViewModel.cs" />
     <Compile Include="Models\Schedule\GroupLessonsViewModel.cs" />
+    <Compile Include="Models\Schedule\LessonDetailViewModel.cs" />
     <Compile Include="Models\Schedule\LessonPartViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Schedule\LessonTypeViewModel.cs" />
@@ -532,7 +542,6 @@
     <Content Include="Views\Home\SelectFlow.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Home\_EditLesson.cshtml" />
-    <Content Include="Views\AcademicPlan\Index.cshtml" />
     <Content Include="Scripts\underscore.min.map" />
     <Content Include="Views\Home\_LessonCell.cshtml" />
     <Content Include="Scripts\knockout.validation.min.js.map" />
@@ -540,7 +549,6 @@
     <Content Include="Views\Home\_ActionModal.cshtml" />
     <Content Include="Views\Teacher\_TeacherDailySchedule.cshtml" />
     <Content Include="Views\Account\LoginOld.cshtml" />
-    <Content Include="Views\AcademicPlan\Info.cshtml" />
     <Content Include="Views\Home\_ChangeWeek.cshtml" />
     <Content Include="Views\Report\FillingPercentage.cshtml" />
     <Content Include="Views\Shared\_NavbarLight.cshtml" />
@@ -557,10 +565,6 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AcademicPlan.Parser\AcademicPlan.Parser.csproj">
-      <Project>{52507cdf-1b2e-4c01-982b-bfb450b406ae}</Project>
-      <Name>AcademicPlan.Parser</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ClassSchedule.Domain\ClassSchedule.Domain.csproj">
       <Project>{6b467930-4307-4d8b-b6a0-941bcddb16c3}</Project>
       <Name>ClassSchedule.Domain</Name>

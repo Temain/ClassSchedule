@@ -12,24 +12,14 @@ namespace ClassSchedule.Domain.Models
     public partial class EducationForm
     {
         /// <summary>
-        /// Конструктор класса - форма обучения
-        /// </summary>
-        public EducationForm()
-        {
-            EducationFormGuid = Guid.NewGuid();
-        }
-
-        /// <summary>
         /// Идентификатор
         /// </summary>
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int EducationFormId { get; set; }
 
         /// <summary>
         /// Идентификатор для обмена
         /// </summary>
         public Guid? EducationFormGuid { get; set; }
-
 
         /// <summary>
         /// Наименование формы обучения
@@ -39,15 +29,18 @@ namespace ClassSchedule.Domain.Models
         public string EducationFormName { get; set; }
 
         /// <summary>
-        /// Отметка об удалении записи
-        /// </summary>
-        public bool? IsDeleted { get; set; }
-
-        /// <summary>
         /// Дата последнего обновления записи
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
 
-        public virtual ICollection<ProgramOfEducation> ProgramsOfEducation { get; set; }
+        /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
+
+        /// <summary>
+        /// У формы обучения может быть много ООП
+        /// </summary>
+        public List<BaseProgramOfEducation> BaseProgramOfEducations { get; set; }
     }
 }

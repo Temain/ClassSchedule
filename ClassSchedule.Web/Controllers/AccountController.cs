@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using ClassSchedule.Domain.Context;
 using ClassSchedule.Domain.DataAccess.Interfaces;
 using ClassSchedule.Domain.Models;
 using ClassSchedule.Web.Models;
@@ -15,15 +16,12 @@ namespace ClassSchedule.Web.Controllers
     [Authorize]
     public class AccountController : BaseController
     {
+        private readonly ApplicationDbContext _context;
         private ApplicationSignInManager _signInManager;
 
-        public AccountController()
+        public AccountController(ApplicationDbContext context)
         {
-        }
-
-        public AccountController(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
-        {
+            _context = context;
         }
 
         public ApplicationSignInManager SignInManager
@@ -135,8 +133,8 @@ namespace ClassSchedule.Web.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult ChangePassword()
         {
-            var users = UnitOfWork.Repository<ApplicationUser>()
-                .GetQ(u => u.UserName != "admin")
+            var users = _context.Users
+                .Where(u => u.UserName != "admin")
                 .Select(x => new
                 {
                     UserId = x.Id,

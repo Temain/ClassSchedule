@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -25,7 +26,7 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         [ForeignKey("EducationDirection")]
         public int EducationDirectionId { get; set; }
-        public virtual EducationDirection EducationDirection { get; set; }
+        public EducationDirection EducationDirection { get; set; }
 
         /// <summary>
         /// Наименование профиля подготовки
@@ -34,15 +35,24 @@ namespace ClassSchedule.Domain.Models
         [StringLength(200)]
         public string EducationProfileName { get; set; }
 
-
         /// <summary>
-        /// Отметка об удалении записи
+        /// Профили отмечены галкой только те, которые есть в файле от УМУ - высылал Горовой С.А. Есть в нашем университете
         /// </summary>
-        public bool? IsDeleted { get; set; }
+        public bool? IsCorrectProfile { get; set; }
 
         /// <summary>
         /// Дата последнего обновления записи
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
+
+        /// <summary>
+        /// У профиля может быть много ООП
+        /// </summary>
+        public List<BaseProgramOfEducation> BaseProgramOfEducations { get; set; }
     }
 }

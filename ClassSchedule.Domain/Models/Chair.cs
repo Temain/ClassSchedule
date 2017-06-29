@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClassSchedule.Domain.Models
 {
-
     /// <summary>
     /// Кафедра 
     /// </summary>
@@ -27,7 +26,7 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         [ForeignKey("Faculty")]
         public int FacultyId { get; set; }
-        public virtual Faculty Faculty { get; set; }
+        public Faculty Faculty { get; set; }
 
         /// <summary>
         /// Код подразделения
@@ -43,29 +42,19 @@ namespace ClassSchedule.Domain.Models
         public string DivisionName { get; set; }
 
         /// <summary>
-        /// Код подразделения в программе УП ВПО
-        /// </summary>
-        public int? DivisionCodeVpo { get; set; }
-
-        /// <summary>
         /// Вышестоящее подразделение
         /// </summary>
         public Guid? ParentId { get; set; }
 
         /// <summary>
-        /// Это факультет или нет
-        /// </summary>
-        public bool? IsFaculty { get; set; }
-
-        /// <summary>
-        /// Отметка об удалении записи
-        /// </summary>
-        public bool? IsDeleted { get; set; }
-
-        /// <summary>
         /// Дата последнего обновления записи
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
 
 
 
@@ -73,16 +62,21 @@ namespace ClassSchedule.Domain.Models
         /// <summary>
         /// Привязка сотрудников к кафедре
         /// </summary>
-        public virtual ICollection<Job> Jobs { get; set; }
+        public List<Job> Jobs { get; set; }
 
         /// <summary>
         /// Привязка дисциплин к кафедре
         /// </summary>
-        public virtual ICollection<Discipline> Disciplines { get; set; }
+        public List<Discipline> Disciplines { get; set; }
 
         /// <summary>
         /// Аудитории
         /// </summary>
-        public virtual ICollection<Auditorium> Auditoriums { get; set; }
+        public List<Auditorium> Auditoriums { get; set; }
+
+        /// <summary>
+        /// Вакансии кафедр
+        /// </summary>
+        public List<PlannedChairJob> PlannedChairJobs { get; set; }
     }
 }

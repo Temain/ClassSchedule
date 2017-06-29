@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClassSchedule.Domain.Models
 {
@@ -78,11 +74,16 @@ namespace ClassSchedule.Domain.Models
 
 
         public int CourseScheduleId { get; set; }
-        public virtual CourseSchedule CourseSchedule { get; set; }
+        public CourseSchedule CourseSchedule { get; set; }
 
         /// <summary>
-        /// План на семестр по каждой дисциплине
+        /// Дата последнего обновления записи
         /// </summary>
-        public virtual ICollection<DisciplineSemesterPlan> DisciplineSemesterPlans { get; set; } 
+        public DateTime? UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
     }
 }

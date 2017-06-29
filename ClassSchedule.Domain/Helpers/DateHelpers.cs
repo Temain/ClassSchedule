@@ -12,7 +12,7 @@ namespace ClassSchedule.Domain.Helpers
         /// <summary>
         /// Метод проверяет ситуацию, когда проверяемая дата меньше чем начало учебного года
         /// </summary>
-        /// /// <param name="educationYear">Учебный год</param>
+        /// <param name="educationYear">Учебный год</param>
         /// <param name="dateCheck">Проверяемая дата</param>
         /// <returns></returns>
         private static bool DateBeforeEducationYear(EducationYear educationYear, DateTime dateCheck)
@@ -24,7 +24,7 @@ namespace ClassSchedule.Domain.Helpers
         /// <summary>
         /// Метод проверяет вхождение даты в диапазон выбранного учебного года
         /// </summary>
-        /// /// <param name="educationYear">Учебный год</param>
+        /// <param name="educationYear">Учебный год</param>
         /// <param name="dateCheck">Проверяемая дата</param>
         /// <returns></returns>
         private static bool DateInEducationYear(EducationYear educationYear, DateTime? dateCheck)

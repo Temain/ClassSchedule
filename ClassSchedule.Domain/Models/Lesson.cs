@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClassSchedule.Domain.Models
 {
@@ -13,82 +10,57 @@ namespace ClassSchedule.Domain.Models
     [Table("Lesson", Schema = "dbo")]
     public class Lesson
     {
+        public Lesson()
+        {
+            CreatedAt = DateTime.Now;
+            LessonGuid = Guid.NewGuid();
+        }
+
         public int LessonId { get; set; }
 
         public Guid? LessonGuid { get; set; }
 
         /// <summary>
-        /// Номер пары
+        /// Позиция в расписании
         /// </summary>
-        public int ClassNumber { get; set; }
-
-        /// <summary>
-        /// Дата занятия
-        /// </summary>
-        public DateTime ClassDate { get; set; }
-
-        /// <summary>
-        /// Номер недели
-        /// </summary>
-        public int WeekNumber { get; set; }
-
-        /// <summary>
-        /// Номер дня недели
-        /// </summary>
-        public int DayNumber { get; set; }
-
-        /// <summary>
-        /// Кафедра
-        /// </summary>
-        //public int ChairId { get; set; }
-        //public virtual Chair Chair { get; set; }
-
-        /// <summary>
-        /// Преподаватель
-        /// </summary>
-        public int JobId { get; set; }
-        public virtual Job Job { get; set; }
-
-        /// <summary>
-        /// Дисциплина
-        /// </summary>
-        public int DisciplineId { get; set; }
-        public virtual Discipline Discipline { get; set; }
-
-        /// <summary>
-        /// Аудитория
-        /// </summary>
-        public int AuditoriumId { get; set; }
-        public virtual Auditorium Auditorium { get; set; }
-
-        /// <summary>
-        /// Группа
-        /// </summary>
-        public int GroupId { get; set; }
-        public virtual Group Group { get; set; }
+        public int ScheduleId { get; set; }
+        public Schedule Schedule { get; set; }
 
         /// <summary>
         /// Тип занятия
         /// </summary>
         public int? LessonTypeId { get; set; }
-        public virtual LessonType LessonType { get; set; }
+        public LessonType LessonType { get; set; }
 
         /// <summary>
-        /// Учебный год
+        /// Дисциплина
         /// </summary>
-        public int? EducationYearId { get; set; }
-        public virtual EducationYear EducationYear { get; set; }
+        public int DisciplineId { get; set; }
+        public Discipline Discipline { get; set; }
 
         /// <summary>
-        /// Неактивно
+        /// Порядок
         /// </summary>
-        public bool IsNotActive { get; set; }
+        public int? Order { get; set; }
 
-
+        /// <summary>
+        /// Дата последнего обновления записи
+        /// </summary>
         public DateTime CreatedAt { get; set; }
 
+        /// <summary>
+        /// Дата последнего обновления записи
+        /// </summary>
         public DateTime? UpdatedAt { get; set; }
 
+        /// <summary>
+        /// Дата удаления записи
+        /// </summary>
         public DateTime? DeletedAt { get; set; }
+
+        /// <summary>
+        /// В какой(их) аудиториях и какой(ие) преподаватели ведет(ут)
+        /// </summary>
+        public List<LessonDetail> LessonDetails { get; set; }
     }
 }

@@ -14,13 +14,6 @@ namespace ClassSchedule.Web.Controllers
     {
         protected BaseController() { }
        
-        protected BaseController(IUnitOfWork unitOfWork)
-        {
-            UnitOfWork = unitOfWork;
-        }
-
-        public IUnitOfWork UnitOfWork { get; protected set; }
-
         private Logger _logger;
         public Logger Logger
         {

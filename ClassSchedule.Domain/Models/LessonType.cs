@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClassSchedule.Domain.Models
 {
@@ -19,8 +16,18 @@ namespace ClassSchedule.Domain.Models
         public int Order { get; set; }
 
         /// <summary>
+        /// Дата последнего обновления записи
+        /// </summary>
+        public DateTime? UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
+
+        /// <summary>
         /// Занятия этого типа
         /// </summary>
-        public virtual ICollection<Lesson> Lessons { get; set; } 
+        public List<Lesson> Lessons { get; set; } 
     }
 }

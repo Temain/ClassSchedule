@@ -26,19 +26,19 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         [ForeignKey("Faculty")]
         public int FacultyId { get; set; }
-        public virtual Faculty Faculty { get; set; }
+        public Faculty Faculty { get; set; }
              
         /// <summary>
         /// Наименование курса
         /// </summary>
-        [Required]
-        [StringLength(50)]
+        // [Required]
+        // [StringLength(50)]
         public string CourseName { get; set; }
 
         /// <summary>
         /// Порядковый номер курса
         /// </summary>
-        public int CourseNumber { get; set; }
+        public int? CourseNumber { get; set; }
 
         /// <summary>
         /// Год начала обучения
@@ -46,21 +46,19 @@ namespace ClassSchedule.Domain.Models
         public int? YearStart { get; set; }
 
         /// <summary>
-        /// Отметка об удалении записи
-        /// </summary>
-        public bool? IsDeleted { get; set; }
-
-        /// <summary>
         /// Дата последнего обновления записи
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
 
-
+        /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
 
 
         /// <summary>
         /// Привязка групп к курсу
         /// </summary>
-        public virtual ICollection<Group> Groups { get; set; }
+        public List<Group> Groups { get; set; }
     }
 }

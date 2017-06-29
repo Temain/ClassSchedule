@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClassSchedule.Domain.Models
 {
@@ -29,8 +26,18 @@ namespace ClassSchedule.Domain.Models
         public string Abbreviation { get; set; }
 
         /// <summary>
+        /// Дата последнего обновления записи
+        /// </summary>
+        public DateTime? UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
+
+        /// <summary>
         /// Аудитории
         /// </summary>
-        public virtual ICollection<Auditorium> Auditoriums { get; set; } 
+        public List<Auditorium> Auditoriums { get; set; } 
     }
 }

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClassSchedule.Domain.Models
 {
@@ -81,16 +78,25 @@ namespace ClassSchedule.Domain.Models
         }
 
         /// <summary>
-        /// Учебный план
+        /// Основная образовательная программа
         /// </summary>
-        public int AcademicPlanId { get; set; }
-        public virtual AcademicPlan AcademicPlan { get; set; }
+        public int BaseProgramOfEducationId { get; set; }
+        public BaseProgramOfEducation BaseProgramOfEducation { get; set; }
 
+        /// <summary>
+        /// Дата последнего обновления записи
+        /// </summary>
+        public DateTime? UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
 
         /// <summary>
         /// Детализация графика учебного процесса
         /// для конкретного курса по семестрам
         /// </summary>
-        public virtual List<SemesterSchedule> SemesterSchedules { get; set; } 
+        public List<SemesterSchedule> SemesterSchedules { get; set; } 
     }
 }

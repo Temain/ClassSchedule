@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -34,14 +35,25 @@ namespace ClassSchedule.Domain.Models
         public string PositionName { get; set; }
 
         /// <summary>
-        /// Отметка об удалении записи
+        /// Должность, выверена УМУ
         /// </summary>
-        public bool? IsDeleted { get; set; }
+        [ForeignKey("PositionReal")]
+        public int? PositionRealId { get; set; }
+        public PositionReal PositionReal { get; set; }
 
         /// <summary>
         /// Дата последнего обновления записи
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
 
+        /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
+
+        /// <summary>
+        /// Ставки сотрудников
+        /// </summary>
+        public List<Job> Jobs { get; set; }
     }
 }

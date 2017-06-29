@@ -25,7 +25,7 @@ namespace ClassSchedule.Domain.DataAccess.Repositories
             string includeProperties = "", int? take = null)
         {
             IQueryable<TEntity> query = DbSet;
-            
+
             if (filter != null)
             {
                 query = query.Where(filter);

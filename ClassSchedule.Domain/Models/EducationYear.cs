@@ -46,18 +46,35 @@ namespace ClassSchedule.Domain.Models
         /// Дата окончания
         /// </summary>
         public DateTime DateEnd { get; set; }
-        
-        /// <summary>
-        /// Отметка об удалении записи
-        /// </summary>
-        public bool? IsDeleted { get; set; }
 
         /// <summary>
         /// Дата последнего обновления записи
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
 
-        public virtual ICollection<Lesson> Lessons { get; set; } 
-        public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; } 
+        /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
+
+        /// <summary>
+        /// Семестры в учебном году
+        /// </summary>
+        public List<EducationSemester> EducationSemesters { get; set; }
+
+        /// <summary>
+        /// Позиция в расписании
+        /// </summary>
+        public List<Schedule> Schedule { get; set; } 
+
+        /// <summary>
+        /// Пользователи, работающие в данном учебном году
+        /// </summary>
+        public List<ApplicationUser> ApplicationUsers { get; set; }
+
+        /// <summary>
+        /// У формы обучения может быть много ООП
+        /// </summary>
+        public List<BaseProgramOfEducation> BaseProgramOfEducations { get; set; }
     }
 }

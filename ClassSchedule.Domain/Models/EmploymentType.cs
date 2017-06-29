@@ -30,19 +30,23 @@ namespace ClassSchedule.Domain.Models
         public string EmploymentTypeName { get; set; }
 
         /// <summary>
-        /// Отметка об удалении записи
-        /// </summary>
-        public bool? IsDeleted { get; set; }
-
-        /// <summary>
         /// Дата последнего обновления записи
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
 
         /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
+
+        /// <summary>
         /// Связь для отчета 1.1 Rep. 1.1
         /// </summary>
-        public virtual ICollection<Job> Jobs { get; set; }
+        public List<Job> Jobs { get; set; }
 
+        /// <summary>
+        /// Вакансии кафедр
+        /// </summary>
+        public List<PlannedChairJob> PlannedChairJobs { get; set; }
     }
 }

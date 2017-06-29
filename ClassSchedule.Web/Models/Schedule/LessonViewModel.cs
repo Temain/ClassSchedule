@@ -18,6 +18,6 @@ namespace ClassSchedule.Web.Models.Schedule
         public int ClassNumber { get; set; }
         public int LessonTypeId { get; set; }
 
-        public IEnumerable<LessonPartViewModel> LessonParts { get; set; } 
+        public IEnumerable<LessonDetailViewModel> LessonDetails { get; set; } 
     }
 }

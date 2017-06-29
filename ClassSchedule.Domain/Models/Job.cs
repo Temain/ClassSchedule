@@ -25,21 +25,21 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         [ForeignKey("Chair")]
         public int ChairId { get; set; }
-        public virtual Chair Chair { get; set; }
+        public Chair Chair { get; set; }
 
         /// <summary>
         /// Должность
         /// </summary>
         [ForeignKey("Position")]
         public int PositionId { get; set; }
-        public virtual Position Position { get; set; }
+        public Position Position { get; set; }
 
         /// <summary>
         /// Сотрудник
         /// </summary>
         [ForeignKey("Employee")]
         public int EmployeeId { get; set; }
-        public virtual Employee Employee { get; set; }
+        public Employee Employee { get; set; }
 
         /// <summary>
         /// Дата начала работы
@@ -61,13 +61,12 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         [ForeignKey("EmploymentType")]
         public int EmploymentTypeId { get; set; }
-        public virtual EmploymentType EmploymentType { get; set; }
+        public EmploymentType EmploymentType { get; set; }
 
         /// <summary>
         /// Признак того, что сотрудник преподаватель (из БД Sync.Teachers)
         /// </summary>
         public bool? IsTeacher { get; set; }
-
 
         /// <summary>
         /// Признак того, что сотрудник декан факультета
@@ -79,33 +78,33 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         public bool? IsHeadOfChair { get; set; }
 
-
-        /// <summary>
-        /// Отметка об удалении записи
-        /// </summary>
-        public bool? IsDeleted { get; set; }
-        
         /// <summary>
         /// Дата последнего обновления записи
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
 
+        /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
 
 
         /// <summary>
-        /// Отпуск - обычный, по уходу за ребенком. Может быть несколько отпусков. 
+        /// Вакансии кафедр
         /// </summary>
-        public virtual ICollection<PersonVacation> PersonVacations { get; set; }
+        public List<PlannedChairJob> PlannedChairJobs { get; set; }
+
 
         /// <summary>
-        /// Занятия
+        /// Возвращает ФИО, должность, условия работы, дата начала работы
         /// </summary>
-        public virtual ICollection<Lesson> Lessons { get; set; }
+        /// <returns></returns>
+        public string GetCurrentActiveTeacherFullNameWithPositionAndDates()
+        {
+            var fullName = Employee.Person.FullName;
+            var position = Position.PositionName;
 
-        /// <summary>
-        /// Семестровые планы по дисциплинам
-        /// </summary>
-        public virtual ICollection<DisciplineSemesterPlan> DisciplineSemesterPlans { get; set; } 
+            return fullName + " - " + position + ", " + EmploymentType.EmploymentTypeName + " [ Работает с " + JobDateStart.ToShortDateString() + " ]";
+        }
     }
-
 }

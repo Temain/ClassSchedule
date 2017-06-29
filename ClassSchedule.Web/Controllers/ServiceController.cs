@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using ClassSchedule.Domain.Context;
 using ClassSchedule.Domain.DataAccess.Interfaces;
 
 namespace ClassSchedule.Web.Controllers
 {
     public class ServiceController : BaseController
     {
-        public ServiceController(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
+        private readonly ApplicationDbContext _context;
+
+        public ServiceController(ApplicationDbContext context)
         {
+            _context = context;
         }
 
         [HttpGet]

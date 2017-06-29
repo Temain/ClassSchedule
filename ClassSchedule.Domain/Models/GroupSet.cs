@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClassSchedule.Domain.Models
 {
@@ -14,6 +11,11 @@ namespace ClassSchedule.Domain.Models
     [Table("GroupSet", Schema = "dbo")]
     public class GroupSet
     {
+        public GroupSet()
+        {
+            CreatedAt = DateTime.Now;
+        }
+
         public int GroupSetId { get; set; }
         public string GroupSetName { get; set; }
 
@@ -21,12 +23,26 @@ namespace ClassSchedule.Domain.Models
         /// Пользователь
         /// </summary>
         public string ApplicationUserId { get; set; }
-
         [ForeignKey("ApplicationUserId")]
-        public virtual ApplicationUser ApplicationUser { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
 
         public bool IsSelected { get; set; }
 
-        public virtual ICollection<GroupSetGroup> GroupSetGroups { get; set; } 
+        /// <summary>
+        /// Дата последнего обновления записи
+        /// </summary>
+        public DateTime CreatedAt { get; set; }
+
+        /// <summary>
+        /// Дата последнего обновления записи
+        /// </summary>
+        public DateTime? UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Дата удаления записи
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
+
+        public List<GroupSetGroup> GroupSetGroups { get; set; } 
     }
 }

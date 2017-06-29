@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClassSchedule.Domain.Models
 {
@@ -6,7 +7,7 @@ namespace ClassSchedule.Domain.Models
     public class LogEntry
     {
         public int Id { get; set; }
-        public string Date { get; set; }
+        public DateTime Date { get; set; }
         public string Level { get; set; }
         public string Logger { get; set; }
         public string ClassMethod { get; set; }
