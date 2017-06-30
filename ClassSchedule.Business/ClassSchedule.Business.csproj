@@ -11,6 +11,7 @@
     <AssemblyName>ClassSchedule.Business</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,15 +41,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\IAuditoriumService.cs" />
+    <Compile Include="Interfaces\IHousingService.cs" />
+    <Compile Include="Interfaces\IJobService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AuditoriumService.cs" />
+    <Compile Include="Services\HousingService.cs" />
+    <Compile Include="Services\JobService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Exceptions\" />
     <Folder Include="Helpers\" />
-    <Folder Include="Interfaces\" />
     <Folder Include="Models\" />
-    <Folder Include="Services\" />
     <Folder Include="Settings\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ClassSchedule.Domain\ClassSchedule.Domain.csproj">
+      <Project>{6B467930-4307-4D8B-B6A0-941BCDDB16C3}</Project>
+      <Name>ClassSchedule.Domain</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

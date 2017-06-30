@@ -113,7 +113,7 @@ namespace ClassSchedule.Web.Controllers
             }
             catch(Exception ex)
             {
-                var r = 0;
+                int r = 0;
             }
 
             return null;

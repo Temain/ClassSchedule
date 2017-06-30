@@ -1,11 +1,8 @@
 ﻿using System.Collections.Generic;
-using ClassSchedule.Domain.DataAccess.Repositories;
-using ClassSchedule.Domain.Models;
-using ClassSchedule.Domain.Models.QueryResults;
 
 namespace ClassSchedule.Domain.DataAccess.Interfaces
 {
-    public interface IHousingRepository : IGenericRepository<Housing>
+    public interface IHousingRepository
     {
         /// <summary>
         /// Наименования корпусов одинаковой длинны

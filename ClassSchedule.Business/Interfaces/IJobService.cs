@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using ClassSchedule.Domain.DataAccess.Repositories;
 using ClassSchedule.Domain.Models;
 using ClassSchedule.Domain.Models.QueryResults;
 
 namespace ClassSchedule.Domain.DataAccess.Interfaces
 {
-    public interface IJobRepository : IGenericRepository<Job>
+    public interface IJobRepository
     {
         /// <summary>
         /// Преподаватели, работающие в определенном учебном году

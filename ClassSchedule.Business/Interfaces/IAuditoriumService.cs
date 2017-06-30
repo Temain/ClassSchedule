@@ -1,11 +1,8 @@
 ﻿using System.Collections.Generic;
-using ClassSchedule.Domain.DataAccess.Repositories;
-using ClassSchedule.Domain.Models;
-using ClassSchedule.Domain.Models.QueryResults;
 
 namespace ClassSchedule.Domain.DataAccess.Interfaces
 {
-    public interface IAuditoriumRepository : IGenericRepository<Auditorium>
+    public interface IAuditoriumRepository 
     {
         /// <summary>
         /// Аудитории определенного корпуса с проверкой на занятость

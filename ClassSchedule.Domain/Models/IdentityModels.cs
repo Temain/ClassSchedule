@@ -42,17 +42,17 @@ namespace ClassSchedule.Domain.Models
         /// Учебный год
         /// </summary>
         public int? EducationYearId { get; set; }
-        public EducationYear EducationYear { get; set; }
+        public virtual EducationYear EducationYear { get; set; }
 
         /// <summary>
         /// Список факультетов за расписание которых ответственнен пользователь
         /// </summary>
-        public List<Faculty> Faculties { get; set; }
+        public virtual List<Faculty> Faculties { get; set; }
 
         /// <summary>
         /// Совокупность групп, выбранных пользователем для редактирования расписания
         /// </summary>
-        public List<GroupSet> GroupSets { get; set; } 
+        public virtual List<GroupSet> GroupSets { get; set; } 
 
         /// <summary>
         /// Инициалы и фамилия: Иванов И.И.
