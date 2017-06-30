@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using ClassSchedule.Domain.Context;
-using ClassSchedule.Domain.DataAccess.Interfaces;
 using ClassSchedule.Web.Models.Report;
 
 namespace ClassSchedule.Web.Controllers

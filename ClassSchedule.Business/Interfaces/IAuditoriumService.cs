@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using ClassSchedule.Domain.Models.QueryResults;
 
-namespace ClassSchedule.Domain.DataAccess.Interfaces
+namespace ClassSchedule.Business.Interfaces
 {
-    public interface IAuditoriumRepository 
+    public interface IAuditoriumService 
     {
         /// <summary>
         /// Аудитории определенного корпуса с проверкой на занятость

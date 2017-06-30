@@ -1,18 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Web;
-using System.Web.Configuration;
-using System.Web.Mvc;
-using ClassSchedule.Domain.Context;
-using ClassSchedule.Domain.DataAccess.Interfaces;
-using ClassSchedule.Domain.Models;
-using FastReport;
-using Microsoft.Practices.ObjectBuilder2;
+﻿using ClassSchedule.Domain.Context;
 
 namespace ClassSchedule.Web.Controllers
 {

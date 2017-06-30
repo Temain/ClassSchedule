@@ -565,6 +565,10 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ClassSchedule.Business\ClassSchedule.Business.csproj">
+      <Project>{A9FD6480-5C9C-46DD-9FC0-4EF581CBDA3C}</Project>
+      <Name>ClassSchedule.Business</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ClassSchedule.Domain\ClassSchedule.Domain.csproj">
       <Project>{6b467930-4307-4d8b-b6a0-941bcddb16c3}</Project>
       <Name>ClassSchedule.Domain</Name>

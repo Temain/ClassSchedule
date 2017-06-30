@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using ClassSchedule.Domain.Context;
-using ClassSchedule.Domain.DataAccess.Interfaces;
 using ClassSchedule.Domain.Models;
 using ClassSchedule.Web.Models;
 using Microsoft.AspNet.Identity;

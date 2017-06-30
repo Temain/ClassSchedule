@@ -1,25 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Security;
-using System.Web.SessionState;
-using System.Web.UI;
 using ClassSchedule.Domain.Context;
-using ClassSchedule.Domain.DataAccess.Interfaces;
-using ClassSchedule.Domain.DataAccess.Repositories;
-using ClassSchedule.Domain.Helpers;
 using ClassSchedule.Domain.Models;
-using ClassSchedule.Web.Helpers;
-using ClassSchedule.Web.Models;
-using ClassSchedule.Web.Models.ChangeWeek;
 using ClassSchedule.Web.Models.Schedule;
-using ClassSchedule.Web.Models.SelectFlow;
-using Microsoft.AspNet.Identity;
-using WebGrease.Css.Extensions;
 
 namespace ClassSchedule.Web.Controllers
 {

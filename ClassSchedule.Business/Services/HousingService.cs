@@ -1,20 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
+using ClassSchedule.Business.Interfaces;
 using ClassSchedule.Domain.Context;
-using ClassSchedule.Domain.DataAccess.Interfaces;
-using ClassSchedule.Domain.Helpers;
-using ClassSchedule.Domain.Models;
 using ClassSchedule.Domain.Models.QueryResults;
 
-namespace ClassSchedule.Domain.DataAccess.Repositories
+namespace ClassSchedule.Business.Services
 {
-    public class HousingRepository : GenericRepository<Housing>, IHousingRepository
+    public class HousingService : IHousingService
     {
         private readonly ApplicationDbContext _context;
 
-        public HousingRepository(ApplicationDbContext context)
-            : base(context)
+        public HousingService(ApplicationDbContext context)
         {
             _context = context;
         }

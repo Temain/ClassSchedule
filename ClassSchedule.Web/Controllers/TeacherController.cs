@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using ClassSchedule.Domain.Context;
-using ClassSchedule.Domain.DataAccess.Interfaces;
-using ClassSchedule.Domain.DataAccess.Repositories;
-using ClassSchedule.Domain.Models;
-using ClassSchedule.Web.Models.Schedule;
-using ClassSchedule.Web.Models.Teacher;
+﻿using ClassSchedule.Domain.Context;
 
 namespace ClassSchedule.Web.Controllers
 {

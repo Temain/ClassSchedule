@@ -1,11 +1,9 @@
 using System;
-using System.Web.Mvc;
+using ClassSchedule.Business.Interfaces;
+using ClassSchedule.Business.Services;
 using ClassSchedule.Domain.Context;
-using ClassSchedule.Domain.DataAccess;
-using ClassSchedule.Domain.DataAccess.Interfaces;
 using ClassSchedule.Web.Controllers;
 using Microsoft.Practices.Unity;
-using Unity.Mvc5;
 
 namespace ClassSchedule.Web
 {
@@ -45,7 +43,9 @@ namespace ClassSchedule.Web
 
             container.RegisterType<ManageController>(new InjectionConstructor());
 
-            // container.RegisterType<IFileService, FileService>();
+            container.RegisterType<IAuditoriumService, AuditoriumService>();
+            container.RegisterType<IHousingService, HousingService>();
+            container.RegisterType<IJobService, JobService>();
         }
     }
 }

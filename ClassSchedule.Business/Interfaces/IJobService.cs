@@ -2,9 +2,9 @@
 using ClassSchedule.Domain.Models;
 using ClassSchedule.Domain.Models.QueryResults;
 
-namespace ClassSchedule.Domain.DataAccess.Interfaces
+namespace ClassSchedule.Business.Interfaces
 {
-    public interface IJobRepository
+    public interface IJobService
     {
         /// <summary>
         /// Преподаватели, работающие в определенном учебном году
