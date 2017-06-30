@@ -4,6 +4,7 @@ using System.Web.Mvc;
 using ClassSchedule.Business.Models.Schedule;
 using ClassSchedule.Domain.Context;
 using ClassSchedule.Domain.Models;
+using NLog;
 
 namespace ClassSchedule.Web.Controllers
 {

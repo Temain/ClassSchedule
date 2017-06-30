@@ -23,12 +23,12 @@ namespace ClassSchedule.Web
                 @"INSERT INTO [serv].[LogEntry] ([Date], [Level], [Logger], [ClassMethod], [Message], [Username], [RequestUri], [RemoteAddress], [UserAgent], [Exception]) 
                     VALUES (@Date, @Level, @Logger, @ClassMethod, @Message, @Username, @RequestUri, @RemoteAddress, @UserAgent, @Exception);";
 
-            databaseTarget.Parameters.Add(new DatabaseParameterInfo("@Date", "${longdate}"));
+            databaseTarget.Parameters.Add(new DatabaseParameterInfo("@Date", "${date:format=yyyy-MM-ddTHH\\:mm\\:ss.fff}"));
             databaseTarget.Parameters.Add(new DatabaseParameterInfo("@Level", "${level}"));
             databaseTarget.Parameters.Add(new DatabaseParameterInfo("@Logger", "${logger}"));
             databaseTarget.Parameters.Add(new DatabaseParameterInfo("@ClassMethod", "${callsite:className=false:includeSourcePath=false:methodName=true}"));
             databaseTarget.Parameters.Add(new DatabaseParameterInfo("@Message", "${message}"));
-            databaseTarget.Parameters.Add(new DatabaseParameterInfo("@Username", "${aspnet-user-identity:whenEmpty=${gdc:UserName}}"));
+            databaseTarget.Parameters.Add(new DatabaseParameterInfo("@Username", @"${aspnet-user-identity:whenEmpty=${gdc:UserName}}"));
             databaseTarget.Parameters.Add(new DatabaseParameterInfo("@RequestUri", "${aspnet-request:item=HTTP_METHOD} ${aspnet-request:serverVariable=Url}"));
             databaseTarget.Parameters.Add(new DatabaseParameterInfo("@RemoteAddress", "${aspnet-request:serverVariable=remote_host}"));
             databaseTarget.Parameters.Add(new DatabaseParameterInfo("@UserAgent", "${aspnet-request:serverVariable=HTTP_USER_AGENT}"));
