@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Web.Mvc;
-using System.Web.Security;
-using ClassSchedule.Web.Models.Schedule;
+using ClassSchedule.Business.Models.Schedule;
 
 namespace ClassSchedule.Web.Helpers
 {    

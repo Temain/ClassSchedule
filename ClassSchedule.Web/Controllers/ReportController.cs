@@ -1,8 +1,8 @@
 ﻿using System.Data.SqlClient;
 using System.Linq;
 using System.Web.Mvc;
+using ClassSchedule.Business.Models.Report;
 using ClassSchedule.Domain.Context;
-using ClassSchedule.Web.Models.Report;
 
 namespace ClassSchedule.Web.Controllers
 {

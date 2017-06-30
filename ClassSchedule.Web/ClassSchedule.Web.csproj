@@ -84,12 +84,16 @@
       <HintPath>..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.2.3\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.4.11\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NLog.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.Web.4.2\lib\net35\NLog.Web.dll</HintPath>
+      <HintPath>..\packages\NLog.Web.4.5.0\lib\net35\NLog.Web.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NLogEx, Version=1.0.11.0, Culture=neutral, processorArchitecture=MSIL">
@@ -172,19 +176,16 @@
       <HintPath>..\packages\WebActivatorEx.2.0\lib\net40\WebActivatorEx.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="WebGrease">
-      <Private>True</Private>
-      <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
-    </Reference>
     <Reference Include="Antlr3.Runtime">
       <Private>True</Private>
       <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -258,40 +259,7 @@
     </Compile>
     <Compile Include="Helpers\Helpers.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\Auditorium\AuditoriumDiscipline.cs" />
-    <Compile Include="Models\Auditorium\AuditoriumDisciplineTeacher.cs" />
-    <Compile Include="Models\Auditorium\AuditoriumLesson.cs" />
-    <Compile Include="Models\ChangeWeek\ChangeWeekViewModel.cs" />
-    <Compile Include="Models\ChangeWeek\WeekViewModel.cs" />
-    <Compile Include="Models\GroupInfo\ChartIntervalViewModel.cs" />
-    <Compile Include="Models\GroupInfo\ChartSeriesViewModel.cs" />
-    <Compile Include="Models\GroupInfo\DisciplineSemesterPlanViewModel.cs" />
-    <Compile Include="Models\GroupInfo\DisciplineViewModel.cs" />
-    <Compile Include="Models\GroupInfo\GroupInfoViewModel.cs" />
-    <Compile Include="Models\GroupInfo\SemesterScheduleViewModel.cs" />
-    <Compile Include="Models\Report\FacultyPercentageViewModel.cs" />
-    <Compile Include="Models\Report\FillingPercentageViewModel.cs" />
-    <Compile Include="Models\Schedule\AuditoriumViewModel.cs" />
-    <Compile Include="Models\Schedule\HousingViewModel.cs" />
-    <Compile Include="Models\Schedule\EditLessonViewModel.cs" />
-    <Compile Include="Models\Schedule\GroupLessonsViewModel.cs" />
-    <Compile Include="Models\Schedule\LessonDetailViewModel.cs" />
-    <Compile Include="Models\Schedule\LessonPartViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\Schedule\LessonTypeViewModel.cs" />
-    <Compile Include="Models\Schedule\RefreshCellViewModel.cs" />
-    <Compile Include="Models\Schedule\ScheduleViewModel.cs" />
-    <Compile Include="Models\Schedule\LessonViewModel.cs" />
-    <Compile Include="Models\SelectFlow\EducationFormViewModel.cs" />
-    <Compile Include="Models\SelectFlow\EducationLevelViewModel.cs" />
-    <Compile Include="Models\SelectFlow\FacultyViewModel.cs" />
-    <Compile Include="Models\SelectFlow\GroupSetViewModel.cs" />
-    <Compile Include="Models\SelectFlow\GroupViewModel.cs" />
-    <Compile Include="Models\Teacher\TeacherDiscipline.cs" />
-    <Compile Include="Models\Teacher\TeacherDisciplineAuditorium.cs" />
-    <Compile Include="Models\Teacher\TeacherLesson.cs" />
-    <Compile Include="Models\Schedule\TeacherViewModel.cs" />
-    <Compile Include="Models\SelectFlow\SelectFlowViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -344,11 +312,6 @@
     <Content Include="Fonts\blisspro-regular-webfont.eot" />
     <Content Include="Fonts\blisspro-regular-webfont.ttf" />
     <Content Include="Fonts\blisspro-regular-webfont.woff" />
-    <Content Include="Fonts\fontawesome-webfont.woff2" />
-    <Content Include="Fonts\fontawesome-webfont.woff" />
-    <Content Include="Fonts\fontawesome-webfont.ttf" />
-    <Content Include="Fonts\fontawesome-webfont.eot" />
-    <Content Include="Fonts\FontAwesome.otf" />
     <Content Include="Fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="Fonts\glyphicons-halflings-regular.woff" />
     <Content Include="Fonts\glyphicons-halflings-regular.ttf" />
@@ -363,6 +326,11 @@
     <Content Include="Content\bootstrap-select.css.map" />
     <Content Include="App_Data\Reports\GroupSetSchedule.frx" />
     <Content Include="App_Data\Reports\GroupSchedule.frx" />
+    <Content Include="Fonts\FontAwesome.otf" />
+    <Content Include="Fonts\fontawesome-webfont.woff2" />
+    <Content Include="Fonts\fontawesome-webfont.woff" />
+    <Content Include="Fonts\fontawesome-webfont.ttf" />
+    <Content Include="Fonts\fontawesome-webfont.eot" />
     <None Include="Properties\PublishProfiles\file.pubxml" />
     <None Include="Properties\PublishProfiles\smarterasp.net.pubxml" />
     <None Include="Properties\PublishProfiles\somee.com.pubxml" />
@@ -485,8 +453,8 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\knockout-3.4.0.debug.js" />
-    <Content Include="Scripts\knockout-3.4.0.js" />
+    <Content Include="Scripts\knockout-3.4.2.debug.js" />
+    <Content Include="Scripts\knockout-3.4.2.js" />
     <Content Include="Scripts\knockout.bindings.js" />
     <Content Include="Scripts\knockout.mapping-latest.debug.js" />
     <Content Include="Scripts\knockout.mapping-latest.js" />

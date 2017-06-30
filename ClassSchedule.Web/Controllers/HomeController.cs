@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
+using ClassSchedule.Business.Models.Schedule;
 using ClassSchedule.Domain.Context;
 using ClassSchedule.Domain.Models;
-using ClassSchedule.Web.Models.Schedule;
 
 namespace ClassSchedule.Web.Controllers
 {
