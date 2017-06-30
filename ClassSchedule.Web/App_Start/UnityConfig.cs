@@ -43,9 +43,11 @@ namespace ClassSchedule.Web
 
             container.RegisterType<ManageController>(new InjectionConstructor());
 
+            container.RegisterType<ILessonService, LessonService>();
+            container.RegisterType<IJobService, JobService>();
+            container.RegisterType<IGroupService, GroupService>();
             container.RegisterType<IAuditoriumService, AuditoriumService>();
             container.RegisterType<IHousingService, HousingService>();
-            container.RegisterType<IJobService, JobService>();
         }
     }
 }

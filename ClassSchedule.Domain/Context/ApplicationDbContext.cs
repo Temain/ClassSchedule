@@ -43,6 +43,7 @@ namespace ClassSchedule.Domain.Context
         public DbSet<PlannedChairJob> PlannedChairJobs { get; set; }
         public DbSet<Position> Positions { get; set; }
         public DbSet<PositionReal> PositionsReal { get; set; }
+        public DbSet<Schedule> Schedule { get; set; }
         public DbSet<Qualification> Qualifications { get; set; }
         public DbSet<SemesterSchedule> SemesterSchedules { get; set; }
 

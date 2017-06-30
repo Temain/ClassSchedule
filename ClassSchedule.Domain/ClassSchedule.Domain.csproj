@@ -75,6 +75,10 @@
     <Compile Include="Migrations\201706291327191_AddRelationBetweenLessonAndLessonDetail.Designer.cs">
       <DependentUpon>201706291327191_AddRelationBetweenLessonAndLessonDetail.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201706301048553_AddFieldsToCourseTable.cs" />
+    <Compile Include="Migrations\201706301048553_AddFieldsToCourseTable.Designer.cs">
+      <DependentUpon>201706301048553_AddFieldsToCourseTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AcademicDegree.cs" />
     <Compile Include="Models\AcademicDegreeLevel.cs" />
@@ -143,6 +147,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201706291327191_AddRelationBetweenLessonAndLessonDetail.resx">
       <DependentUpon>201706291327191_AddRelationBetweenLessonAndLessonDetail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706301048553_AddFieldsToCourseTable.resx">
+      <DependentUpon>201706301048553_AddFieldsToCourseTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

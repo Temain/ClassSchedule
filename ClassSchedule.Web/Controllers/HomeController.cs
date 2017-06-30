@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using ClassSchedule.Business.Interfaces;
 using ClassSchedule.Business.Models.Schedule;
+using ClassSchedule.Business.Models.SelectFlow;
 using ClassSchedule.Domain.Context;
 using ClassSchedule.Domain.Models;
-using NLog;
+using System.Data.Entity;
 
 namespace ClassSchedule.Web.Controllers
 {
@@ -12,10 +15,20 @@ namespace ClassSchedule.Web.Controllers
     public class HomeController : BaseController
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILessonService _lessonService;
+        private readonly IHousingService _housingService;
+        private readonly IJobService _jobService;
+        private readonly IAuditoriumService _auditoriumService;
 
-        public HomeController(ApplicationDbContext context)
+        public HomeController(ApplicationDbContext context, ILessonService lessonService
+            , IHousingService housingService, IJobService jobService
+            , IAuditoriumService auditoriumService)
         {
             _context = context;
+            _lessonService = lessonService;
+            _housingService = housingService;
+            _jobService = jobService;
+            _auditoriumService = auditoriumService;
         }
 
         /// <summary>
@@ -23,186 +36,130 @@ namespace ClassSchedule.Web.Controllers
         /// </summary>
         public ActionResult Index()
         {
-            try
+            var viewModel = new ScheduleViewModel
             {
-                var viewModel = new ScheduleViewModel();
-                var groups = GetEditableGroups();
-                var groupLessons = groups
-                    .Select(x => new GroupLessonsViewModel
-                    {
-                        GroupId = x.GroupId,
-                        GroupName = x.GroupName,
-                        NumberOfStudents = x.NumberOfStudents,
-                        Lessons = x.Schedule
-                            .SelectMany(g => g.Lessons)
-                            .GroupBy(g => new { g.Schedule.DayNumber, g.Schedule.ClassNumber, g.DisciplineId, g.Discipline.DisciplineName.Name, g.LessonTypeId })
-                            .Select(s => new LessonViewModel
-                            {
-                                DayNumber = s.Key.DayNumber,
-                                ClassNumber = s.Key.ClassNumber,
-                                DisciplineId = s.Key.DisciplineId,
-                                DisciplineName = s.Key.Name,
-                                LessonTypeId = s.Key.LessonTypeId ?? 0,
-                                LessonDetails = s.SelectMany(d => d.LessonDetails)
-                                    .Select(y => new LessonDetailViewModel
-                                    {
-                                        LessonId = y.LessonId,
-                                        AuditoriumId = y.AuditoriumId,
-                                        AuditoriumName = y.Auditorium.AuditoriumNumber + y.Auditorium.Housing.Abbreviation + ".",
-                                        PlannedChairJobId = y.PlannedChairJobId ?? 0,
-                                        TeacherLastName = y.PlannedChairJob != null && y.PlannedChairJob.Job != null
-                                                && y.PlannedChairJob.Job.Employee != null && y.PlannedChairJob.Job.Employee.Person != null
-                                            ? y.PlannedChairJob.Job.Employee.Person.LastName : "",
-                                        TeacherFirstName = y.PlannedChairJob != null && y.PlannedChairJob.Job != null
-                                                && y.PlannedChairJob.Job.Employee != null && y.PlannedChairJob.Job.Employee.Person != null ? y.PlannedChairJob.Job.Employee.Person.FirstName : "",
-                                        TeacherMiddleName = y.PlannedChairJob != null && y.PlannedChairJob.Job != null
-                                                && y.PlannedChairJob.Job.Employee != null && y.PlannedChairJob.Job.Employee.Person != null ? y.PlannedChairJob.Job.Employee.Person.MiddleName : "",
-                                    })
-                            })
-                    })
-                    .ToList();
+                GroupLessons = _lessonService.GetScheduleForGroups(UserProfile.Id),
+                WeekNumber = UserProfile.WeekNumber,
+                FirstDayOfWeek = UserProfile.FirstDayOfWeek,
+                LastDayOfWeek = UserProfile.LastDayOfWeek
+            };
 
+            //// Окна между занятиями у преподавателей
+            //var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
+            //if (jobRepository != null)
+            //{
+            //    var downtimes = jobRepository.TeachersDowntime(UserProfile.WeekNumber, maxDiff: 2);
+            //    foreach (var downtime in downtimes)
+            //    {
+            //        var groupId = downtime.GroupId;
+            //        var dayNumber = downtime.DayNumber;
+            //        var classNumber = downtime.ClassNumber;
+            //        var jobId = downtime.JobId;
 
-                //// Окна между занятиями у преподавателей
-                //var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
-                //if (jobRepository != null)
-                //{
-                //    var downtimes = jobRepository.TeachersDowntime(UserProfile.WeekNumber, maxDiff: 2);
-                //    foreach (var downtime in downtimes)
-                //    {
-                //        var groupId = downtime.GroupId;
-                //        var dayNumber = downtime.DayNumber;
-                //        var classNumber = downtime.ClassNumber;
-                //        var jobId = downtime.JobId;
+            //        groupLessons.Where(g => g.GroupId == groupId)
+            //            .SelectMany(g => g.Lessons)
+            //            .Where(x => x.DayNumber == dayNumber && x.ClassNumber == classNumber)
+            //            .SelectMany(x => x.LessonParts)
+            //            .Where(p => p.TeacherId == jobId)
+            //            .All(c => { c.TeacherHasDowntime = true; return true; });
+            //    }
+            //}
 
-                //        groupLessons.Where(g => g.GroupId == groupId)
-                //            .SelectMany(g => g.Lessons)
-                //            .Where(x => x.DayNumber == dayNumber && x.ClassNumber == classNumber)
-                //            .SelectMany(x => x.LessonParts)
-                //            .Where(p => p.TeacherId == jobId)
-                //            .All(c => { c.TeacherHasDowntime = true; return true; });
-                //    }
-                //}
-
-                viewModel.GroupLessons = groupLessons;
-                viewModel.WeekNumber = UserProfile.WeekNumber;
-
-                // Вычисление первой и последней даты редактируемой недели 
-                DateTime yearStartDate = UserProfile.EducationYear.DateStart;
-                int delta = DayOfWeek.Monday - yearStartDate.DayOfWeek;
-                DateTime firstMonday = yearStartDate.AddDays(delta);
-                viewModel.FirstDayOfWeek = firstMonday.AddDays((UserProfile.WeekNumber - 1) * 7);
-                viewModel.LastDayOfWeek = viewModel.FirstDayOfWeek.AddDays(6);
-
-                return View(viewModel);
-            }
-            catch(Exception ex)
-            {
-                int r = 0;
-            }
-
-            return null;
+            return View(viewModel);
         }
 
-        ///// <summary>
-        ///// Редактирование занятия
-        ///// </summary>
-        //// TODO: Убрать из параметров weekNumber, он есть в профиле пользователя 
-        //[HttpGet]
-        //public ActionResult EditLesson(int groupId, int weekNumber, int dayNumber, int classNumber)
-        //{
-        //    if (!Request.IsAjaxRequest()) return null;
+        /// <summary>
+        /// Редактирование занятия
+        /// </summary>
+        // TODO: Убрать из параметров weekNumber, он есть в профиле пользователя 
+        [HttpGet]
+        public ActionResult EditLesson(int groupId, int weekNumber, int dayNumber, int classNumber)
+        {
+            if (!Request.IsAjaxRequest()) return null;
 
-        //    var viewModel = new EditLessonViewModel
-        //    {
-        //        GroupId = groupId,
-        //        WeekNumber = weekNumber,
-        //        DayNumber = dayNumber,
-        //        ClassNumber = classNumber
-        //    };
+            var viewModel = new EditLessonViewModel
+            {
+                GroupId = groupId,
+                WeekNumber = weekNumber,
+                DayNumber = dayNumber,
+                ClassNumber = classNumber
+            };
 
-        //    var lessons = GetLessonViewModel(groupId, weekNumber, dayNumber, classNumber, checkDowntimes: false);
+            var lessons = GetLessonViewModel(groupId, weekNumber, dayNumber, classNumber, checkDowntimes: false);
 
-        //    // Типы занятий
-        //    viewModel.LessonTypes = UnitOfWork.Repository<LessonType>()
-        //        .GetQ(orderBy: o => o.OrderBy(n => n.Order))
-        //        .Select(
-        //            x =>
-        //                new LessonTypeViewModel
-        //                {
-        //                    LessonTypeId = x.LessonTypeId,
-        //                    LessonTypeName = x.LessonTypeName
-        //                })
-        //        .ToList();
+            // Типы занятий
+            viewModel.LessonTypes = _context.LessonTypes
+                .OrderBy(n => n.Order)
+                .Select(
+                    x =>
+                        new LessonTypeViewModel
+                        {
+                            LessonTypeId = x.LessonTypeId,
+                            LessonTypeName = x.LessonTypeName
+                        })
+                .ToList();
 
-        //    // Корпуса
-        //    var housingRepository = UnitOfWork.Repository<Housing>() as HousingRepository;
-        //    if (housingRepository != null)
-        //    {
-        //        var housings = housingRepository.HousingEqualLength();
-        //        viewModel.Housings = housings
-        //            .Select(
-        //                x =>
-        //                    new HousingViewModel
-        //                    {
-        //                        HousingId = x.HousingId,
-        //                        HousingName = x.HousingName,
-        //                        Abbreviation = x.Abbreviation
-        //                    })
-        //            .ToList();
-        //    }      
+            // Корпуса
+            var housings = _housingService.HousingEqualLength();
+            viewModel.Housings = housings
+                .Select(
+                    x =>
+                        new HousingViewModel
+                        {
+                            HousingId = x.HousingId,
+                            HousingName = x.HousingName,
+                            Abbreviation = x.Abbreviation
+                        })
+                .ToList();
 
-        //    foreach (var lesson in lessons)
-        //    {                   
-        //        // Преподаватели
-        //        var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
-        //        if (jobRepository != null)
-        //        {
-        //            var chairTeachers = jobRepository.ActualTeachers(UserProfile.EducationYear, lesson.ChairId);
-        //            lesson.ChairTeachers = chairTeachers
-        //                .Select(
-        //                    x =>
-        //                        new TeacherViewModel
-        //                        {
-        //                            TeacherId = x.JobId,
-        //                            TeacherFullName = x.FullName
-        //                        })
-        //                .ToList();
-        //        }                   
+            if (lessons != null)
+            {
+                foreach (var lesson in lessons)
+                {
+                    //var chairTeachers = _jobService.ActualTeachers(UserProfile.EducationYear, lesson.ChairId);
+                    //lesson.ChairTeachers = chairTeachers
+                    //    .Select(
+                    //        x =>
+                    //            new TeacherViewModel
+                    //            {
+                    //                TeacherId = x.JobId,
+                    //                TeacherFullName = x.FullName
+                    //            })
+                    //    .ToList();
 
-        //        // Аудитории
-        //        foreach (var lessonPart in lesson.LessonParts)
-        //        {
-        //            var chairId = lesson.ChairId;
-        //            var housingId = lessonPart.HousingId;
+                    // Аудитории
+                    foreach (var lessonDetail in lesson.LessonDetails)
+                    {
+                        var chairId = lesson.ChairId;
+                        var housingId = lessonDetail.HousingId;
 
-        //            var auditoriumRepository = UnitOfWork.Repository<Auditorium>() as AuditoriumRepository;
-        //            if (auditoriumRepository != null)
-        //            {
-        //                var auditoriums = auditoriumRepository.AuditoriumWithEmployment(chairId, housingId, weekNumber, dayNumber, classNumber, groupId);
-        //                lessonPart.Auditoriums = auditoriums
-        //                    .Select(
-        //                        x =>
-        //                            new AuditoriumViewModel
-        //                            {
-        //                                AuditoriumId = x.AuditoriumId,
-        //                                AuditoriumNumber = x.AuditoriumNumber,
-        //                                AuditoriumTypeName = x.AuditoriumTypeName,
-        //                                ChairId = x.ChairId,
-        //                                Places = x.Places,
-        //                                Comment = x.Comment,
-        //                                Employment = x.Employment
-        //                            })
-        //                            .ToList();
-        //            }
-        //        }
+                        var auditoriums = _auditoriumService.AuditoriumWithEmployment(chairId, housingId, weekNumber, dayNumber, classNumber, groupId);
+                        lessonDetail.Auditoriums = auditoriums
+                            .Select(
+                                x =>
+                                    new AuditoriumViewModel
+                                    {
+                                        AuditoriumId = x.AuditoriumId,
+                                        AuditoriumNumber = x.AuditoriumNumber,
+                                        AuditoriumTypeName = x.AuditoriumTypeName,
+                                        ChairId = x.ChairId,
+                                        Places = x.Places,
+                                        Comment = x.Comment,
+                                        Employment = x.Employment
+                                    })
+                                    .ToList();
+                    }
+                }
+            }
+            else
+            {
+                lessons = new List<LessonViewModel>();
+            }
+           
+            viewModel.Lessons = lessons;
 
-        //    }
-
-        //    viewModel.Lessons = lessons;
-
-        //    return Json(viewModel, JsonRequestBehavior.AllowGet);
-        //}
+            return Json(viewModel, JsonRequestBehavior.AllowGet);
+        }
 
         //[HttpPost]
         //public ActionResult EditLesson(EditLessonViewModel viewModel)
@@ -416,173 +373,174 @@ namespace ClassSchedule.Web.Controllers
         //    return Json(lessonCellsForRefresh);
         //}
 
-        ///// <summary>
-        ///// Выбор потока / курса / группы
-        ///// </summary>
-        //[HttpGet]
-        //public ActionResult SelectFlow()
-        //{
-        //    return View();
-        //}
+        /// <summary>
+        /// Выбор потока / курса / группы
+        /// </summary>
+        [HttpGet]
+        public ActionResult SelectFlow()
+        {
+            return View();
+        }
 
-        //[HttpPost]
-        //public ActionResult SelectFlowData(int? groupSetId)
-        //{
-        //    if (!Request.IsAjaxRequest())
-        //    {
-        //        return new HttpStatusCodeResult(404);
-        //    }
+        [HttpPost]
+        public ActionResult SelectFlowData(int? groupSetId)
+        {
+            if (!Request.IsAjaxRequest())
+            {
+                return new HttpStatusCodeResult(404);
+            }
 
-        //    var viewModel = new SelectFlowViewModel
-        //    {
-        //        GroupSets = new List<GroupSetViewModel>(),
-        //        Groups = new List<GroupViewModel>()
-        //    };
+            var viewModel = new SelectFlowViewModel
+            {
+                GroupSets = new List<GroupSetViewModel>(),
+                Groups = new List<GroupViewModel>()
+            };
 
-        //    if (groupSetId != null)
-        //    {
-        //        var groupsSet = UserProfile.GroupSets
-        //            .SingleOrDefault(x => x.GroupSetId == groupSetId);
-        //        if (groupsSet != null)
-        //        {
-        //            viewModel.GroupSetName = groupsSet.GroupSetName;
+            if (groupSetId != null)
+            {
+                var groupsSet = _context.GroupSets
+                    .Include(x => x.GroupSetGroups.Select(g => g.Group.Course))
+                    .Include(x => x.GroupSetGroups.Select(g => g.Group.BaseProgramOfEducation))
+                    .SingleOrDefault(x => x.GroupSetId == groupSetId);
+                if (groupsSet != null)
+                {
+                    viewModel.GroupSetName = groupsSet.GroupSetName;
 
-        //            var firstGroup = groupsSet.GroupSetGroups.First();
-        //            var facultyId = firstGroup.Group.Course.FacultyId;
-        //            var educationFormId = firstGroup.Group.ProgramOfEducation.EducationFormId;
-        //            var educationLevelId = firstGroup.Group.ProgramOfEducation.EducationLevelId;
-        //            var courseNumber = firstGroup.Group.Course.CourseNumber;
+                    var firstGroup = groupsSet.GroupSetGroups.First();
+                    var facultyId = firstGroup.Group.Course.FacultyId;
+                    var educationFormId = firstGroup.Group.BaseProgramOfEducation.EducationFormId;
+                    var educationLevelId = firstGroup.Group.BaseProgramOfEducation.EducationLevelId;
+                    var courseNumber = firstGroup.Group.Course.CourseNumber;
 
-        //            viewModel.FacultyId = facultyId;
-        //            viewModel.EducationFormId = educationFormId;
-        //            viewModel.EducationLevelId = educationLevelId;
-        //            viewModel.CourseNumber = courseNumber;
+                    viewModel.FacultyId = facultyId;
+                    viewModel.EducationFormId = educationFormId;
+                    viewModel.EducationLevelId = educationLevelId;
+                    viewModel.CourseNumber = courseNumber ?? 0;
 
-        //            viewModel.CourseNumbers = UnitOfWork.Repository<Course>()
-        //                .GetQ(
-        //                    filter: x => x.IsDeleted != true && x.FacultyId == facultyId && x.YearStart != null
-        //                        && x.Groups.Any(g => g.ProgramOfEducation.EducationFormId == educationFormId
-        //                            && g.ProgramOfEducation.EducationLevelId == educationLevelId
-        //                            && g.IsDeleted != true)
-        //                        && x.YearStart + x.CourseNumber == UserProfile.EducationYear.YearEnd,
-        //                    orderBy: o => o.OrderBy(n => n.CourseNumber))
-        //                .Select(x => x.CourseNumber)
-        //                .Distinct()
-        //                .ToList();
+                    viewModel.CourseNumbers = _context.Courses 
+                        .Where(x => x.DeletedAt == null && x.FacultyId == facultyId && x.YearStart != null
+                            && x.Groups.Any(g => g.BaseProgramOfEducation.EducationFormId == educationFormId
+                                && g.BaseProgramOfEducation.EducationLevelId == educationLevelId
+                                && g.DeletedAt == null)
+                            && x.YearStart + x.CourseNumber == UserProfile.EducationYear.YearEnd)
+                        .OrderBy(x => x.CourseNumber)
+                        .Select(x => x.CourseNumber ?? 0)
+                        .Distinct()
+                        .ToList();
 
-        //            var groups = UnitOfWork.Repository<Group>()
-        //                .GetQ(
-        //                    filter: x => x.IsDeleted != true && x.Course.FacultyId == facultyId
-        //                        && x.ProgramOfEducation.EducationFormId == educationFormId 
-        //                        && x.ProgramOfEducation.EducationLevelId == educationLevelId &&
-        //                        UserProfile.EducationYear.YearStart - x.Course.YearStart + 1 == courseNumber,
-        //                    orderBy: o => o.OrderBy(n => n.DivisionName));
-        //            foreach (var group in groups)
-        //            {
-        //                var groupViewModel = new GroupViewModel
-        //                {
-        //                    GroupId = group.GroupId,
-        //                    GroupName = group.DivisionName
-        //                };
+                    var groups = _context.Groups
+                        .Where(x => x.DeletedAt == null && x.Course.FacultyId == facultyId
+                            && x.BaseProgramOfEducation.EducationFormId == educationFormId
+                            && x.BaseProgramOfEducation.EducationLevelId == educationLevelId 
+                            && UserProfile.EducationYear.YearStart - x.Course.YearStart + 1 == courseNumber)
+                        .OrderBy(n => n.GroupName);
+                    foreach (var group in groups)
+                    {
+                        var groupViewModel = new GroupViewModel
+                        {
+                            GroupId = group.GroupId,
+                            GroupName = group.GroupName
+                        };
 
-        //                var groupSetGroup = groupsSet.GroupSetGroups.SingleOrDefault(g => g.GroupId == group.GroupId);
-        //                if (groupSetGroup != null)
-        //                {
-        //                    groupViewModel.IsSelected = true;
-        //                    groupViewModel.Order = groupSetGroup.Order;
-        //                }
+                        var groupSetGroup = groupsSet.GroupSetGroups.SingleOrDefault(g => g.GroupId == group.GroupId);
+                        if (groupSetGroup != null)
+                        {
+                            groupViewModel.IsSelected = true;
+                            groupViewModel.Order = groupSetGroup.Order;
+                        }
 
-        //                viewModel.Groups.Add(groupViewModel);
-        //            }    
-        //        }
-        //    }
-        //    else
-        //    {
-        //        viewModel.EducationFormId = (int)EducationForms.FullTime;
+                        viewModel.Groups.Add(groupViewModel);
+                    }
+                }
+            }
+            else
+            {
+                viewModel.EducationFormId = (int)EducationForms.FullTime;
 
-        //        var groupSets = UserProfile.GroupSets
-        //            .Select(x => new GroupSetViewModel
-        //            {
-        //                GroupSetId = x.GroupSetId,
-        //                GroupSetName = x.GroupSetName,
-        //                GroupNames = String.Join(", ", x.GroupSetGroups.OrderBy(o => o.Order).Select(g => g.Group.DivisionName))
-        //            })
-        //            .ToList();
-        //        viewModel.GroupSets = groupSets;
+                var groupSets = UserProfile.GroupSets
+                    .Select(x => new GroupSetViewModel
+                    {
+                        GroupSetId = x.GroupSetId,
+                        GroupSetName = x.GroupSetName,
+                        GroupNames = String.Join(", ", x.GroupSetGroups.OrderBy(o => o.Order).Select(g => g.Group.GroupName))
+                    })
+                    .ToList();
+                viewModel.GroupSets = groupSets;
 
-        //        if (User.IsInRole("Administrator"))
-        //        {
-        //            viewModel.Faculties = UnitOfWork.Repository<Faculty>()
-        //                .GetQ(f => f.IsDeleted != true, orderBy: o => o.OrderBy(n => n.DivisionName))
-        //                .Select(x => new FacultyViewModel { FacultyId = x.FacultyId, FacultyName = x.DivisionName })
-        //                .ToList();
-        //        }
-        //        else
-        //        {
-        //            viewModel.Faculties = UserProfile.Faculties
-        //                .Select(x => new FacultyViewModel { FacultyId = x.FacultyId, FacultyName = x.DivisionName })
-        //                .OrderBy(n => n.FacultyName)
-        //                .ToList();
-        //        }
+                if (User.IsInRole("Administrator"))
+                {
+                    viewModel.Faculties = _context.Faculties
+                        .Where(f => f.DeletedAt == null)
+                        .OrderBy(n => n.DivisionName)
+                        .Select(x => new FacultyViewModel { FacultyId = x.FacultyId, FacultyName = x.DivisionName })
+                        .ToList();
+                }
+                else
+                {
+                    viewModel.Faculties = UserProfile.Faculties
+                        .Select(x => new FacultyViewModel { FacultyId = x.FacultyId, FacultyName = x.DivisionName })
+                        .OrderBy(n => n.FacultyName)
+                        .ToList();
+                }
 
-        //        viewModel.EducationLevels = UnitOfWork.Repository<EducationLevel>()
-        //            .Get(x => x.IsDeleted != true)
-        //            .Select(x => new EducationLevelViewModel { EducationLevelId = x.EducationLevelId, EducationLevelName = x.EducationLevelName })
-        //            .ToList();
+                viewModel.EducationLevels = _context.EducationLevels
+                    .Where(x => x.DeletedAt == null)
+                    .Select(x => new EducationLevelViewModel { EducationLevelId = x.EducationLevelId, EducationLevelName = x.EducationLevelName })
+                    .ToList();
 
-        //        viewModel.EducationForms = UnitOfWork.Repository<EducationForm>()
-        //            .GetQ(x => x.IsDeleted != true)
-        //            .Select(x => new EducationFormViewModel { EducationFormId = x.EducationFormId, EducationFormName = x.EducationFormName })
-        //            .ToList();
-        //    }
+                viewModel.EducationForms = _context.EducationForms
+                    .Where(x => x.DeletedAt == null)
+                    .Select(x => new EducationFormViewModel { EducationFormId = x.EducationFormId, EducationFormName = x.EducationFormName })
+                    .ToList();
+            }
 
-        //    return Json(viewModel);
-        //}
+            return Json(viewModel);
+        }
 
-        //[HttpPost]
-        //public ActionResult SelectFlow(SelectFlowViewModel viewModel)
-        //{
-        //    var groupSets = UnitOfWork.Repository<GroupSet>()
-        //        .Get(x => x.ApplicationUserId == UserProfile.Id)
-        //        .ToList();
-        //    foreach (var groupSet in groupSets)
-        //    {
-        //        groupSet.IsSelected = false;
-        //        UnitOfWork.Repository<GroupSet>().Update(groupSet);
-        //    }
+        [HttpPost]
+        public ActionResult SelectFlow(SelectFlowViewModel viewModel)
+        {
+            var groupSets = _context.GroupSets
+                .Where(x => x.ApplicationUserId == UserProfile.Id)
+                .ToList();
+            foreach (var groupSet in groupSets)
+            {
+                groupSet.IsSelected = false;
+            }
 
-        //    var groupSetGroups = viewModel.Groups
-        //        .Select(x => new GroupSetGroup
-        //        {
-        //            GroupSetId = viewModel.GroupSetId, 
-        //            GroupId = x.GroupId, 
-        //            Order = x.Order ?? 0
-        //        })
-        //        .ToList();
+            var groupSetGroups = viewModel.Groups
+                .Select(x => new GroupSetGroup
+                {
+                    GroupSetId = viewModel.GroupSetId,
+                    GroupId = x.GroupId,
+                    Order = x.Order ?? 0
+                })
+                .ToList();
 
-        //    var currentGroupSet = groupSets.SingleOrDefault(x => x.GroupSetId == viewModel.GroupSetId);
-        //    if (currentGroupSet == null)
-        //    {
-        //        currentGroupSet = new GroupSet
-        //        {
-        //            ApplicationUserId = UserProfile.Id,
-        //            GroupSetName = viewModel.GroupSetName
-        //        };
+            var currentGroupSet = groupSets.SingleOrDefault(x => x.GroupSetId == viewModel.GroupSetId);
+            if (currentGroupSet == null)
+            {
+                currentGroupSet = new GroupSet
+                {
+                    ApplicationUserId = UserProfile.Id,
+                    GroupSetName = viewModel.GroupSetName
+                };
 
-        //        UnitOfWork.Repository<GroupSet>().Insert(currentGroupSet);
-        //    }
-        //    else
-        //    {
-        //        UnitOfWork.Repository<GroupSetGroup>().DeleteRange(x => x.GroupSetId == currentGroupSet.GroupSetId);
-        //        UnitOfWork.Repository<GroupSet>().Update(currentGroupSet);
-        //    }
+                _context.GroupSets.Add(currentGroupSet);
+            }
+            else
+            {
+                var groupSetGroupsForRemove = _context.GroupSetGroups.Where(x => x.GroupSetId == currentGroupSet.GroupSetId);
+                _context.GroupSetGroups.RemoveRange(groupSetGroupsForRemove);
+            }
 
-        //    currentGroupSet.GroupSetGroups = groupSetGroups;
-        //    currentGroupSet.IsSelected = true;
-        //    UnitOfWork.Save();
+            currentGroupSet.GroupSetGroups = groupSetGroups;
+            currentGroupSet.IsSelected = true;
 
-        //    return Json(new { result = "Redirect", url = Url.Action("Index", "Home") });
-        //}
+            _context.SaveChanges();
+
+            return Json(new { result = "Redirect", url = Url.Action("Index", "Home") });
+        }
 
         //[HttpPost]
         //public ActionResult EditableWeeks(bool showWeekType = true)
@@ -707,73 +665,91 @@ namespace ClassSchedule.Web.Controllers
             return groups;
         }
 
-        //// TODO: Убрать из параметров weekNumber, он есть в профиле пользователя
-        //public List<LessonViewModel> GetLessonViewModel(int groupId, int weekNumber, int dayNumber, int classNumber, bool checkDowntimes = true)
-        //{
-        //    var lessons = UnitOfWork.Repository<Lesson>()
-        //        .GetQ(x => x.GroupId == groupId && x.WeekNumber == weekNumber
-        //            && x.DayNumber == dayNumber && x.ClassNumber == classNumber
-        //            && x.DeletedAt == null)
-        //        .GroupBy(x => new
-        //        {
-        //            x.DisciplineId,
-        //            x.Discipline.DisciplineName,
-        //            x.Discipline.ChairId,
-        //            x.Discipline.Chair.DivisionName,
-        //            x.LessonTypeId
-        //        })
-        //        .Select(x => new LessonViewModel
-        //        {
-        //            DisciplineId = x.Key.DisciplineId,
-        //            DisciplineName = x.Key.DisciplineName,
-        //            ChairId = x.Key.ChairId,
-        //            ChairName = x.Key.DivisionName,
-        //            LessonTypeId = x.Key.LessonTypeId ?? 0,
-        //            LessonParts = x
-        //                .Select(y => new LessonPartViewModel
-        //                {
-        //                    LessonId = y.LessonId,
-        //                    HousingId = y.Auditorium.HousingId,
-        //                    AuditoriumId = y.AuditoriumId,
-        //                    TeacherId = y.JobId,
-        //                    AuditoriumName = y.Auditorium.AuditoriumNumber + y.Auditorium.Housing.Abbreviation + ".",
-        //                    TeacherLastName = y.Job.Employee.Person.LastName,
-        //                    TeacherFirstName = y.Job.Employee.Person.FirstName,
-        //                    TeacherMiddleName = y.Job.Employee.Person.MiddleName,
-        //                    // IsNotActive = y.IsNotActive
-        //                })
-        //        })
-        //        .ToList();
+        // TODO: Убрать из параметров weekNumber, он есть в профиле пользователя
+        public List<LessonViewModel> GetLessonViewModel(int groupId, int weekNumber, int dayNumber, int classNumber, bool checkDowntimes = true)
+        {
+            var schedule = _context.Schedule
+                .Where(x => x.GroupId == groupId && x.WeekNumber == weekNumber
+                    && x.DayNumber == dayNumber && x.ClassNumber == classNumber
+                    && x.DeletedAt == null)
+                .SingleOrDefault();
+            if (schedule == null)
+            {
+                return null;
+            }
 
-        //    // Проверка на окна у преподавателей
-        //    if (checkDowntimes)
-        //    {
-        //        var lessonTeacherIds = lessons
-        //            .SelectMany(x => x.LessonParts)
-        //            .Select(p => p.TeacherId)
-        //            .Distinct();
+            var lessons = _context.Lessons
+                .Where(x => x.ScheduleId == schedule.ScheduleId && x.DeletedAt == null)
+                .GroupBy(x => new
+                {
+                    x.DisciplineId,
+                    x.Discipline.DisciplineName.Name,
+                    x.Discipline.ChairId,
+                    x.Discipline.Chair.DivisionName,
+                    x.LessonTypeId
+                })
+                .Select(x => new LessonViewModel
+                {
+                    DisciplineId = x.Key.DisciplineId,
+                    DisciplineName = x.Key.Name,
+                    ChairId = x.Key.ChairId,
+                    ChairName = x.Key.DivisionName,
+                    LessonTypeId = x.Key.LessonTypeId ?? 0,
+                    LessonDetails = x.SelectMany(d => d.LessonDetails)
+                        .Select(y => new LessonDetailViewModel
+                        {
+                            LessonId = y.LessonId,
+                            AuditoriumId = y.AuditoriumId,
+                            AuditoriumName = y.Auditorium.AuditoriumNumber + y.Auditorium.Housing.Abbreviation + ".",
+                            PlannedChairJobId = y.PlannedChairJobId ?? 0,
+                            TeacherLastName = y.PlannedChairJob != null
+                                    && y.PlannedChairJob.Job != null
+                                    && y.PlannedChairJob.Job.Employee != null
+                                    && y.PlannedChairJob.Job.Employee.Person != null
+                                ? y.PlannedChairJob.Job.Employee.Person.LastName : "",
+                            TeacherFirstName = y.PlannedChairJob != null
+                                    && y.PlannedChairJob.Job != null
+                                    && y.PlannedChairJob.Job.Employee != null
+                                    && y.PlannedChairJob.Job.Employee.Person != null
+                                ? y.PlannedChairJob.Job.Employee.Person.FirstName : "",
+                            TeacherMiddleName = y.PlannedChairJob != null
+                                    && y.PlannedChairJob.Job != null
+                                    && y.PlannedChairJob.Job.Employee != null
+                                    && y.PlannedChairJob.Job.Employee.Person != null
+                                ? y.PlannedChairJob.Job.Employee.Person.MiddleName : ""
+                        })
+                })
+                .ToList();
 
-        //        var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
-        //        if (jobRepository != null)
-        //        {
-        //            foreach (var teacherId in lessonTeacherIds)
-        //            {
-        //                var teacherDowntime = jobRepository.TeachersDowntime(UserProfile.WeekNumber, teacherId, maxDiff: 2)
-        //                    .Where(x => x.DayNumber == dayNumber && x.ClassNumber == classNumber)
-        //                    .Distinct();
+            // Проверка на окна у преподавателей
+            //if (checkDowntimes)
+            //{
+            //    var lessonTeacherIds = lessons
+            //        .SelectMany(x => x.LessonParts)
+            //        .Select(p => p.TeacherId)
+            //        .Distinct();
 
-        //                if (teacherDowntime.Any())
-        //                {
-        //                    lessons.SelectMany(x => x.LessonParts)
-        //                       .Where(p => p.TeacherId == teacherId)
-        //                       .All(c => { c.TeacherHasDowntime = true; return true; });
-        //                }
-        //            }
-        //        }   
-        //    }        
+            //    var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
+            //    if (jobRepository != null)
+            //    {
+            //        foreach (var teacherId in lessonTeacherIds)
+            //        {
+            //            var teacherDowntime = jobRepository.TeachersDowntime(UserProfile.WeekNumber, teacherId, maxDiff: 2)
+            //                .Where(x => x.DayNumber == dayNumber && x.ClassNumber == classNumber)
+            //                .Distinct();
 
-        //    return lessons;
-        //}
+            //            if (teacherDowntime.Any())
+            //            {
+            //                lessons.SelectMany(x => x.LessonParts)
+            //                   .Where(p => p.TeacherId == teacherId)
+            //                   .All(c => { c.TeacherHasDowntime = true; return true; });
+            //            }
+            //        }
+            //    }
+            //}
+
+            return lessons;
+        }
 
         //public static string RenderPartialToString(Controller controller, string partialViewName, object model, ViewDataDictionary viewData, TempDataDictionary tempData)
         //{

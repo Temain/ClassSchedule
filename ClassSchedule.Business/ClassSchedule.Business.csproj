@@ -59,8 +59,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\IAuditoriumService.cs" />
+    <Compile Include="Interfaces\IGroupService.cs" />
     <Compile Include="Interfaces\IHousingService.cs" />
     <Compile Include="Interfaces\IJobService.cs" />
+    <Compile Include="Interfaces\ILessonService.cs" />
     <Compile Include="Models\Auditorium\AuditoriumDisciplineViewModel.cs" />
     <Compile Include="Models\Auditorium\AuditoriumDisciplineTeacherViewModel.cs" />
     <Compile Include="Models\Auditorium\AuditoriumLessonViewModel.cs" />
@@ -96,8 +98,10 @@
     <Compile Include="Models\Teacher\TeacherLesson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AuditoriumService.cs" />
+    <Compile Include="Services\GroupService.cs" />
     <Compile Include="Services\HousingService.cs" />
     <Compile Include="Services\JobService.cs" />
+    <Compile Include="Services\LessonService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Exceptions\" />

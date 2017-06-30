@@ -39,6 +39,39 @@ namespace ClassSchedule.Domain.Models
         public int WeekNumber { get; set; }
 
         /// <summary>
+        /// Вычисление первой даты редактируемой недели 
+        /// </summary>
+        public DateTime FirstDayOfWeek
+        {
+            get
+            {
+                DateTime yearStartDate = EducationYear.DateStart;
+                int delta = DayOfWeek.Monday - yearStartDate.DayOfWeek;
+                DateTime firstMonday = yearStartDate.AddDays(delta);
+                var firstDayOfWeek = firstMonday.AddDays((WeekNumber - 1) * 7);
+
+                return firstDayOfWeek;
+            }
+        }
+
+        /// <summary>
+        /// Вычисление последней даты редактируемой недели 
+        /// </summary>
+        public DateTime LastDayOfWeek
+        {
+            get 
+            {
+                DateTime yearStartDate = EducationYear.DateStart;
+                int delta = DayOfWeek.Monday - yearStartDate.DayOfWeek;
+                DateTime firstMonday = yearStartDate.AddDays(delta);
+                var firstDayOfWeek = firstMonday.AddDays((WeekNumber - 1) * 7);
+                var lastDayOfWeek = firstDayOfWeek.AddDays(6);
+
+                return lastDayOfWeek;
+            }
+        }
+
+        /// <summary>
         /// Учебный год
         /// </summary>
         public int? EducationYearId { get; set; }
@@ -70,7 +103,7 @@ namespace ClassSchedule.Domain.Models
 
                 return shortName;
             }
-        }      
+        }       
     }
 
     public class ApplicationRole : IdentityRole

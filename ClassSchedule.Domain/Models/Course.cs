@@ -36,6 +36,21 @@ namespace ClassSchedule.Domain.Models
         public string CourseName { get; set; }
 
         /// <summary>
+        /// Префикс
+        /// </summary>
+        public string CourseNamePrefix { get; set; }
+
+        /// <summary>
+        /// Суффикс
+        /// </summary>
+        public string CourseNameSuffix { get; set; }
+
+        /// <summary>
+        /// Ускоренность
+        /// </summary>
+        public bool IsIntensive { get; set; }
+
+        /// <summary>
         /// Порядковый номер курса
         /// </summary>
         public int? CourseNumber { get; set; }
