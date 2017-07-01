@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
+using System.Data.Entity;
 using ClassSchedule.Business.Interfaces;
 using ClassSchedule.Business.Models.Teacher;
 using ClassSchedule.Domain.Context;
@@ -19,10 +20,11 @@ namespace ClassSchedule.Web.Controllers
         }
 
         // Переписать
-        public ActionResult Schedule(int teacherId, int dayNumber)
+        public ActionResult Schedule(int chairJobId, int dayNumber)
         {
-            var teacher = _context.Jobs
-                .Where(x => x.JobId == teacherId)
+            var teacher = _context.PlannedChairJobs
+                .Include(x => x.Job.Employee)
+                .Where(x => x.PlannedChairJobId == chairJobId)
                 .SingleOrDefault();
             if (teacher == null)
             {
@@ -32,7 +34,7 @@ namespace ClassSchedule.Web.Controllers
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            var personId = teacher.Employee.PersonId;
+            var personId = teacher.Job.Employee.PersonId;
             var dailySchedule = _context.Lessons
                 .Where(x => x.LessonDetails.Any(d => d.PlannedChairJob.Job.Employee.PersonId == personId)
                     && x.Schedule.WeekNumber == UserProfile.WeekNumber && x.Schedule.DayNumber == dayNumber
@@ -63,7 +65,7 @@ namespace ClassSchedule.Web.Controllers
                 .ToList();
 
             // Окна в расписании преподавателя
-            var teacherDowntime = _jobService.TeachersDowntime(UserProfile.WeekNumber, teacherId, maxDiff: 2)
+            var teacherDowntime = _jobService.TeachersDowntime(UserProfile.WeekNumber, chairJobId, maxDiff: 2)
                 .Select(x => new
                 {
                     x.DayNumber,

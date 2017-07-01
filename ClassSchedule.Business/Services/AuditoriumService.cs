@@ -49,8 +49,7 @@ namespace ClassSchedule.Business.Services
                 FROM Auditorium a
                 LEFT JOIN dict.AuditoriumType at ON a.AuditoriumTypeId = at.AuditoriumTypeId
                 LEFT JOIN dict.Housing h ON a.HousingId = h.HousingId
-                WHERE a.HousingId = @housingId AND a.IsDeleted <> 1;
-
+                WHERE a.HousingId = @housingId AND a.DeletedAt IS NULL;
 
                 DECLARE @auditoriumsLessons TABLE(
                   AuditoriumId INT NOT NULL,
@@ -58,14 +57,16 @@ namespace ClassSchedule.Business.Services
                 )
 
                 INSERT INTO @auditoriumsLessons (AuditoriumId, GroupName)
-                SELECT a2.AuditoriumId, g.DivisionName AS GroupName
-                FROM Lesson ls
-                LEFT JOIN dict.[Group] g ON ls.GroupId = g.GroupId
-                INNER JOIN @auditoriums AS a2 ON a2.AuditoriumId = ls.AuditoriumId
-                WHERE ls.DeletedAt IS NULL
-                  AND ls.WeekNumber = @weekNumber AND ls.DayNumber = @dayNumber
-                  AND ls.ClassNumber = @classNumber
-                  AND ls.GroupId <> @groupId;
+                SELECT a2.AuditoriumId, g.GroupName AS GroupName
+                FROM LessonDetail ld
+                LEFT JOIN Lesson l ON ld.LessonId = l.LessonId
+                LEFT JOIN Schedule s ON l.ScheduleId = s.ScheduleId
+                LEFT JOIN dbo.[Group] g ON s.GroupId = g.GroupId
+                INNER JOIN @auditoriums AS a2 ON a2.AuditoriumId = ld.AuditoriumId
+                WHERE s.DeletedAt IS NULL
+                  AND s.WeekNumber = @weekNumber AND s.DayNumber = @dayNumber
+                  AND s.ClassNumber = @classNumber
+                  AND s.GroupId <> @groupId;
 
                 DECLARE @MaxLength INT;
                 SELECT @MaxLength = (SELECT MAX(LEN(am.AuditoriumNumber + at.AuditoriumTypeName))

@@ -39,16 +39,16 @@
                             </div>
                         </div>
 
-                        <!-- ko foreach: LessonParts -->
+                        <!-- ko foreach: LessonDetails -->
                         <div class="row">
                             <input type="hidden" class="lesson-id" data-bind="value: LessonId"/>
-                            @*<pre data-bind="text: JSON.stringify(ko.toJS($parent.LessonParts.length), null, 2)"></pre>*@
+                            @*<pre data-bind="text: JSON.stringify(ko.toJS($parent.LessonDetails.length), null, 2)"></pre>*@
 
                             <div class="col-md-7 col-md-offset-1 form-group">
                                 <label class="control-label">Преподаватель</label>
-                                <select class="form-control teacher" title="" data-size="12" data-bind="selectPicker: TeacherId, options: $parent.ChairTeachers, optionsValue: 'TeacherId', optionsText: 'TeacherFullName', optionsCaption: '', optionsAfterRender: $root.EditLessonViewModel().setTeacherOptionContent"></select>
+                                <select class="form-control teacher" title="" data-size="12" data-bind="selectPicker: PlannedChairJobId, options: $parent.ChairTeachers, optionsValue: 'PlannedChairJobId', optionsText: 'TeacherFullName', optionsCaption: '', optionsAfterRender: $root.EditLessonViewModel().setTeacherOptionContent"></select>
 
-                                <!-- ko if: $parent.LessonParts().length !== 2 && ($index() === ($parent.LessonParts().length - 1)) -->
+                                <!-- ko if: $parent.LessonDetails().length !== 2 && ($index() === ($parent.LessonDetails().length - 1)) -->
                                 <div class="col-md-4 no-paddings">
                                     <a class="btn btn-link teacher-btn add" data-bind="click: function() { return $root.EditLessonViewModel().addTeacher($parent, $data); }">
                                         <span class="fa fa-user-plus"></span>
@@ -56,7 +56,7 @@
                                     </a>
                                 </div>
                                 <!-- /ko -->
-                                <!-- ko if: $parent.LessonParts().length === 2 && ($index() === ($parent.LessonParts().length - 1)) -->
+                                <!-- ko if: $parent.LessonDetails().length === 2 && ($index() === ($parent.LessonDetails().length - 1)) -->
                                 <div class="col-md-4 no-paddings">
                                     <a class="btn btn-link teacher-btn remove" data-bind="click: function() { return $root.EditLessonViewModel().removeTeacher($parent, $data); }">
                                         <span class="fa fa-user-times"></span>

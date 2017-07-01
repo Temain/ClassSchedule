@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Data.Entity;
 using System.Linq;
 using ClassSchedule.Business.Interfaces;
+using ClassSchedule.Business.Models;
 using ClassSchedule.Domain.Context;
 using ClassSchedule.Domain.Models;
 using ClassSchedule.Domain.Models.QueryResults;
@@ -21,41 +23,35 @@ namespace ClassSchedule.Business.Services
         /// <summary>
         /// Преподаватели, работающие в определенном учебном году
         /// </summary>
-        public List<TeacherQueryResult> ActualTeachers(EducationYear educationYear, int? chairId, string query = "")
+        public List<TeacherViewModel> ActualTeachers(int educationYearId, int? chairId, string query = "")
         {
-            var parameters = new object[]
+            var plannedChairJobs = _context.PlannedChairJobs
+                .Include(x => x.Job.Employee.Person)
+                .Include(x => x.Job.EmploymentType)
+                .Where(x => x.EducationYearId == educationYearId && x.DeletedAt == null
+                    && x.Job.DeletedAt == null && x.Job.Employee.DeletedAt == null & x.Job.Employee.Person.DeletedAt == null);
+
+            if (chairId != null)
             {
-                new SqlParameter("@chairId", chairId ?? 0),
-                new SqlParameter("@query", query),
-                new SqlParameter("@startDate", educationYear.DateStart),
-                new SqlParameter("@endDate", educationYear.DateEnd)
-            };
+                plannedChairJobs = plannedChairJobs.Where(x => x.ChairId == chairId);
+            }
 
-            var sql = @"
-                SELECT t0.PersonId, t0.JobId, t0.FullName
-                FROM (
-                  SELECT p.PersonId, j.JobId, p.LastName + COALESCE(' ' + p.FirstName, '') + COALESCE(' ' + p.MiddleName, '') AS FullName,
-                    ROW_NUMBER() OVER(PARTITION BY e.PersonId ORDER BY j.JobDateStart DESC) as Rn 
-                  FROM Job j 
-                  LEFT JOIN Employee e ON j.EmployeeId = e.EmployeeId
-                  LEFT JOIN Person p ON e.PersonId = p.PersonId
-                  WHERE j.ChairId = CASE WHEN @chairId = 0 THEN j.ChairId ELSE @chairId END 
-                    AND (j.IsDeleted = 0 OR j.IsDeleted IS NULL)
-                    AND (e.IsDeleted = 0 OR e.IsDeleted IS NULL)
-                    AND (p.IsDeleted = 0 OR p.IsDeleted IS NULL)
+            if (!string.IsNullOrEmpty(query))
+            {
+                plannedChairJobs = plannedChairJobs.Where(x => x.Job.Employee.Person.LastName.ToLower().Contains(query.ToLower()));
+            }
 
-                    -- Проверка что преподаватель работал в определенном учебном году
-                    AND (
-                      (j.JobDateEnd IS NULL AND (j.JobDateStart < @startDate OR (j.JobDateStart >= @startDate AND j.JobDateStart <= @endDate))) 
-                      OR 
-                      (j.JobDateEnd IS NOT NULL AND (j.JobDateStart < @startDate OR (j.JobDateStart >= @startDate AND j.JobDateStart <= @endDate))
-                        AND (j.JobDateEnd IS NOT NULL AND ((j.JobDateEnd >= @startDate AND j.JobDateEnd <= @endDate) OR j.JobDateEnd > @endDate)))
-                    )
-                ) AS t0
-                WHERE t0.Rn = 1
-                  AND t0.FullName LIKE (CASE WHEN @query = '' THEN t0.FullName ELSE @query + '%' END)
-                ORDER BY t0.FullName";
-            var teachers = _context.Database.SqlQuery<TeacherQueryResult>(sql, parameters).ToList();
+            var teachers = plannedChairJobs
+                .ToList()
+                .Select(x => new TeacherViewModel
+                {
+                    PlannedChairJobId = x.PlannedChairJobId,
+                    JobId = x.JobId ?? 0,
+                    PersonId = x.Job != null ? x.Job.Employee.PersonId : 0,
+                    TeacherFullName = x.Job != null ? x.Job.Employee.Person.FullName : x.PlannedChairJobComment,
+                })
+                .OrderBy(x => x.TeacherFullName)
+                .ToList();
 
             return teachers;
         }
@@ -155,42 +151,50 @@ namespace ClassSchedule.Business.Services
         /// <param name="weekNumber">Номер недели</param>
         /// <param name="teacherId">Идентификатор преподавателя (JobId)</param>
         /// <param name="maxDiff">Размер окна (количество занятий)</param>
-        public List<TeacherDowntimeQueryResult> TeachersDowntime(int weekNumber, int? teacherId = 0, int maxDiff = 1)
+        public List<TeacherDowntimeQueryResult> TeachersDowntime(int weekNumber, int? chairJobId = 0, int maxDiff = 1)
         {
             var parameters = new object[]
             {
                 new SqlParameter("@weekNumber", weekNumber), 
-                new SqlParameter("@teacherId", teacherId ?? 0),
+                new SqlParameter("@chairJobId", chairJobId ?? 0),
                 new SqlParameter("@maxDiff", maxDiff)
             };
 
             var query = @"
                 WITH WeekLessons AS (
-                  SELECT j.JobId, ls.GroupId, e.PersonId, ls.DayNumber, ls.ClassNumber, 
-                    ROW_NUMBER() OVER(PARTITION BY e.PersonId, ls.DayNumber ORDER BY e.PersonId, ls.DayNumber,ls.ClassNumber) AS Drn,
-                    ROW_NUMBER() OVER(ORDER BY e.PersonId, ls.DayNumber, ls.ClassNumber) AS Crn
-                  FROM Lesson ls
-                  LEFT JOIN Job j ON ls.JobId = j.JobId
+                  SELECT ld.PlannedChairJobId, s.GroupId, e.PersonId, s.DayNumber, s.ClassNumber,
+                    ROW_NUMBER() OVER(PARTITION BY e.PersonId, s.DayNumber ORDER BY e.PersonId, s.DayNumber, s.ClassNumber) AS Drn,
+                    ROW_NUMBER() OVER(ORDER BY e.PersonId, s.DayNumber, s.ClassNumber) AS Crn
+                  FROM LessonDetail ld
+                  LEFT JOIN Lesson l ON ld.LessonId = l.LessonId
+                  LEFT JOIN Schedule s ON l.ScheduleId = s.ScheduleId
+                  LEFT JOIN PlannedChairJob pcj ON ld.PlannedChairJobId = pcj.PlannedChairJobId
+                  LEFT JOIN Job j ON pcj.JobId = j.JobId
                   LEFT JOIN Employee e ON j.EmployeeId = e.EmployeeId
                   WHERE e.PersonId IN (
-                    SELECT DISTINCT e2.PersonId
-                    FROM Lesson tls
-                    LEFT JOIN Job j2 ON tls.JobId = j2.JobId
-                    LEFT JOIN Employee e2 ON j2.EmployeeId = e2.EmployeeId
-                    WHERE tls.WeekNumber = @weekNumber
+                    SELECT DISTINCT e1.PersonId
+                    FROM LessonDetail tls
+                    LEFT JOIN Lesson l1 ON tls.LessonId = l1.LessonId
+                    LEFT JOIN Schedule s1 ON l1.ScheduleId = s1.ScheduleId
+                    LEFT JOIN PlannedChairJob pcj1 ON tls.PlannedChairJobId = pcj1.PlannedChairJobId
+                    LEFT JOIN Job j1 ON pcj1.JobId = j1.JobId
+                    LEFT JOIN Employee e1 ON j1.EmployeeId = e1.EmployeeId
+                    WHERE s1.WeekNumber = @weekNumber
+                      --AND s1.GroupId IN (233,309,500)
+                      AND l1.DeletedAt IS NULL AND s1.DeletedAt IS NULL
                       AND tls.DeletedAt IS NULL
-                      AND tls.GroupId IN (233,309,500)
                   )
-                  AND ls.JobId = CASE WHEN @teacherId <> 0 THEN @teacherId ELSE ls.JobId END
-                  AND ls.WeekNumber = @weekNumber
-                  AND ls.DeletedAt IS NULL
+                  AND ld.PlannedChairJobId = CASE WHEN @chairJobId <> 0 THEN @chairJobId ELSE ld.PlannedChairJobId END
+                  AND s.WeekNumber = @weekNumber
+                  AND s.DeletedAt IS NULL AND ld.DeletedAt IS NULL AND l.DeletedAt IS NULL
                 )
+
                 SELECT 
-                  w2.PersonId, w2.JobId, w2.GroupId, 
+                  w2.PersonId, w2.PlannedChairJobId, w2.GroupId, 
                   w2.DayNumber, w2.ClassNumber, t0.ClassDiff 
                 FROM WeekLessons w2
                 LEFT JOIN (
-                  SELECT w.PersonId, w.JobId, w.GroupId, w.DayNumber, w.ClassNumber, /*prev.*,*/ 
+                  SELECT w.PersonId, w.PlannedChairJobId, w.GroupId, w.DayNumber, w.ClassNumber, /*prev.*,*/ 
                     w.ClassNumber - prev.ClassNumber - 1 AS ClassDiff
                   FROM WeekLessons w
                   LEFT JOIN WeekLessons prev ON prev.PersonId = w.PersonId AND prev.Drn = w.Drn - 1 AND prev.Crn = w.Crn - 1
@@ -211,13 +215,13 @@ namespace ClassSchedule.Business.Services
         /// <param name="weeks">Номера недель</param>
         /// <param name="teacherId">Идентификатор преподавателя (JobId)</param>
         /// <param name="maxDiff">Размер окна (количество занятий)</param>
-        public List<TeacherDowntimeQueryResult> TeachersDowntime(int[] weeks, int? teacherId = 0, int maxDiff = 1)
+        public List<TeacherDowntimeQueryResult> TeachersDowntime(int[] weeks, int? chairJobId = 0, int maxDiff = 1)
         {
             var weeksStr = String.Join(",", weeks);
             var parameters = new object[]
             {
                 // new SqlParameter("@weekNumber", weekNumber), 
-                new SqlParameter("@teacherId", teacherId ?? 0),
+                new SqlParameter("@chairJobId", chairJobId ?? 0),
                 new SqlParameter("@maxDiff", maxDiff)
             };
 

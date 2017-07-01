@@ -58,14 +58,15 @@ namespace ClassSchedule.Web.Controllers
                 var groupId = downtime.GroupId;
                 var dayNumber = downtime.DayNumber;
                 var classNumber = downtime.ClassNumber;
-                var jobId = downtime.JobId;
+                // var jobId = downtime.JobId;
+                var plannedChairJobId = downtime.PlannedChairJobId;
 
                 viewModel.GroupLessons
                     .Where(g => g.GroupId == groupId)
                     .SelectMany(g => g.Lessons)
                     .Where(x => x.DayNumber == dayNumber && x.ClassNumber == classNumber)
                     .SelectMany(x => x.LessonDetails)
-                    .Where(p => p.PlannedChairJobId == jobId) // PlannedChairJobId !!!!!!!!!!!!!!!
+                    .Where(p => p.PlannedChairJobId == plannedChairJobId) 
                     .All(c => { c.TeacherHasDowntime = true; return true; });
             }
 
@@ -95,40 +96,21 @@ namespace ClassSchedule.Web.Controllers
             viewModel.LessonTypes = _dictionaryService.GetLessonTypes();
 
             // Корпуса
-            var housings = _dictionaryService.GetHousingEqualLength();
+            viewModel.Housings = _dictionaryService.GetHousingEqualLength();
 
             if (lessons != null)
             {
                 foreach (var lesson in lessons)
                 {
-                    var chairTeachers = _jobService.ActualTeachers(UserProfile.EducationYear, lesson.ChairId);
-                    lesson.ChairTeachers = chairTeachers
-                        .Select(x => new TeacherViewModel
-                        {
-                            PlannedChairJobId = x.JobId, // PlannedChairJobId !!!!!!!!!!!!!!!!!!!!!!
-                            TeacherFullName = x.FullName
-                        })
-                        .ToList();
-
+                    lesson.ChairTeachers = _jobService.ActualTeachers(UserProfile.EducationYearId ?? 0, lesson.ChairId);
+ 
                     // Аудитории
                     foreach (var lessonDetail in lesson.LessonDetails)
                     {
                         var chairId = lesson.ChairId;
                         var housingId = lessonDetail.HousingId;
 
-                        var auditoriums = _dictionaryService.GetAuditoriumWithEmployment(chairId, housingId, weekNumber, dayNumber, classNumber, groupId);
-                        lessonDetail.Auditoriums = auditoriums
-                            .Select(x => new AuditoriumViewModel
-                            {
-                                AuditoriumId = x.AuditoriumId,
-                                AuditoriumNumber = x.AuditoriumNumber,
-                                AuditoriumTypeName = x.AuditoriumTypeName,
-                                ChairId = x.ChairId,
-                                Places = x.Places,
-                                Comment = x.Comment,
-                                Employment = x.Employment
-                            })
-                            .ToList();
+                        lessonDetail.Auditoriums = _dictionaryService.GetAuditoriumWithEmployment(chairId, housingId, weekNumber, dayNumber, classNumber, groupId);
                     }
                 }
             }
@@ -677,6 +659,7 @@ namespace ClassSchedule.Web.Controllers
                             LessonId = y.LessonId,
                             AuditoriumId = y.AuditoriumId,
                             AuditoriumName = y.Auditorium.AuditoriumNumber + y.Auditorium.Housing.Abbreviation + ".",
+                            HousingId = y.Auditorium.HousingId,
                             PlannedChairJobId = y.PlannedChairJobId ?? 0,
                             TeacherLastName = y.PlannedChairJob != null
                                     && y.PlannedChairJob.Job != null

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ClassSchedule.Business.Models;
 using ClassSchedule.Domain.Models;
 using ClassSchedule.Domain.Models.QueryResults;
 
@@ -9,7 +10,7 @@ namespace ClassSchedule.Business.Interfaces
         /// <summary>
         /// Преподаватели, работающие в определенном учебном году
         /// </summary>
-        List<TeacherQueryResult> ActualTeachers(EducationYear educationYear, int? chairId, string query = "");
+        List<TeacherViewModel> ActualTeachers(int educationYearId, int? chairId, string query = "");
 
         /// <summary>
         /// Преподаватели, работающие в определенном учебном году
@@ -25,7 +26,7 @@ namespace ClassSchedule.Business.Interfaces
         /// <param name="weekNumber">Номер недели</param>
         /// <param name="teacherId">Идентификатор преподавателя (JobId)</param>
         /// <param name="maxDiff">Размер окна (количество занятий)</param>
-        List<TeacherDowntimeQueryResult> TeachersDowntime(int weekNumber, int? teacherId = 0, int maxDiff = 1);
+        List<TeacherDowntimeQueryResult> TeachersDowntime(int weekNumber, int? chairJobId = 0, int maxDiff = 1);
 
         /// <summary>
         /// Окна между занятиями у преподавателей на несколько недель
@@ -34,6 +35,6 @@ namespace ClassSchedule.Business.Interfaces
         /// <param name="weeks">Номера недель</param>
         /// <param name="teacherId">Идентификатор преподавателя (JobId)</param>
         /// <param name="maxDiff">Размер окна (количество занятий)</param>
-        List<TeacherDowntimeQueryResult> TeachersDowntime(int[] weeks, int? teacherId = 0, int maxDiff = 1);
+        List<TeacherDowntimeQueryResult> TeachersDowntime(int[] weeks, int? chairJobId = 0, int maxDiff = 1);
     }
 }

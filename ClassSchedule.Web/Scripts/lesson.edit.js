@@ -42,12 +42,12 @@
                 return {
                     ChairId: lessonDiscipline.ChairId,
                     DisciplineId: lessonDiscipline.DisciplineId,
-                    LessonParts: _.map(lessonDiscipline.LessonParts, function (lessonPart) {
+                    LessonDetails: _.map(lessonDiscipline.LessonDetails, function (lessonDetail) {
                         return {
-                            AuditoriumId : lessonPart.AuditoriumId,
-                            HousingId: lessonPart.HousingId,
-                            LessonId: lessonPart.LessonId,
-                            TeacherId: lessonPart.TeacherId
+                            AuditoriumId : lessonDetail.AuditoriumId,
+                            HousingId: lessonDetail.HousingId,
+                            LessonId: lessonDetail.LessonId,
+                            TeacherId: lessonDetail.TeacherId
                         };
                     }),
                     LessonTypeId: lessonDiscipline.LessonTypeId
@@ -103,11 +103,11 @@
     };
 
     self.addTeacher = function (lesson) {
-        lesson.LessonParts.push(new LessonPartViewModel());
+        lesson.LessonDetails.push(new LessonDetailViewModel());
     };
 
     self.removeTeacher = function (lesson, teacher) {
-        lesson.LessonParts.remove(teacher);
+        lesson.LessonDetails.remove(teacher);
     };
 
     /* Заполнение выпадающих списков
@@ -158,18 +158,18 @@
         ko.applyBindingsToNode(option, {}, item);
     };
 
-    self.loadAuditoriums = function (lessonPart, chairId) {
+    self.loadAuditoriums = function (lessonDetail, chairId) {
         if (!chairId) return;
 
-        var housingId = lessonPart.HousingId();
+        var housingId = lessonDetail.HousingId();
         if (!housingId) {
-            lessonPart.Auditoriums([]);
+            lessonDetail.Auditoriums([]);
             return;
         }
 
         var parameters = {
             chairId: chairId,
-            housingId: lessonPart.HousingId(),
+            housingId: lessonDetail.HousingId(),
             weekNumber: self.WeekNumber(),
             dayNumber: self.DayNumber(),
             classNumber: self.ClassNumber(),
@@ -177,7 +177,7 @@
         };
 
         $.post('/Dictionary/AuditoriumWithEmployment', parameters, function (data) {
-            ko.mapping.fromJS(data, {}, lessonPart.Auditoriums);
+            ko.mapping.fromJS(data, {}, lessonDetail.Auditoriums);
 
             $('select.auditorium').selectpicker('refresh');
         });
@@ -211,10 +211,10 @@
         ko.applyBindingsToNode(option, {}, item);
     };
 
-    self.housingChanged = function (lessonPart, event) {
+    self.housingChanged = function (lessonDetail, event) {
         var housingSelect = $(event.target);
         var chairId = housingSelect.closest('.lesson-content').find('.chair-id').val();
-        self.loadAuditoriums(lessonPart, chairId);
+        self.loadAuditoriums(lessonDetail, chairId);
     };
 
     /* Биндинги
@@ -281,8 +281,8 @@
 
                     self.loadTeachers(elementData, disciplines[item].ChairId);
 
-                    $.each(elementData.LessonParts(), function (index, lessonPart) {
-                        lessonPart.HousingId('');
+                    $.each(elementData.LessonDetails(), function (index, lessonDetail) {
+                        lessonDetail.HousingId('');
                     });
 
                     return item;
@@ -334,15 +334,15 @@ function LessonViewModel(data) {
         // self.ClassNumber = ko.observable('');
         self.LessonTypeId = ko.observable('');
         self.ChairTeachers = ko.observableArray([]);
-        self.LessonParts = ko.observableArray([new LessonPartViewModel()]);
+        self.LessonDetails = ko.observableArray([new LessonDetailViewModel()]);
 
         //return self;
     }
     
     var lessonMapping = {
-        'LessonParts': {
+        'LessonDetails': {
             create: function (options) {
-                return new LessonPartViewModel(options.data);
+                return new LessonDetailViewModel(options.data);
             }
         },
         'ChairTeachers': {
@@ -356,7 +356,7 @@ function LessonViewModel(data) {
 
     // Валидация
     self.validationObject = ko.validatedObservable({
-        LessonParts: self.LessonParts,
+        LessonDetails: self.LessonDetails,
         DisciplineId: self.DisciplineId.extend({
             required: {
                 params: true,
@@ -371,11 +371,11 @@ function LessonViewModel(data) {
     return self;
 }
 
-function LessonPartViewModel(data) {
+function LessonDetailViewModel(data) {
     var self = this;
     if (!data) {
         self.LessonId = ko.observable('');
-        self.TeacherId = ko.observable('');
+        self.PlannedChairJobId = ko.observable('');
         self.TeacherLastName = ko.observable('');
         self.TeacherFirstName = ko.observable('');
         self.TeacherMiddleName = ko.observable('');
@@ -388,7 +388,7 @@ function LessonPartViewModel(data) {
         //return self;
     }
 
-    var lessonPartMapping = {
+    var lessonDetailMapping = {
         'Auditoriums': {
             create: function (options) {
                 return new AuditoriumViewModel(options.data);
@@ -396,11 +396,11 @@ function LessonPartViewModel(data) {
         }
     };
    
-    ko.mapping.fromJS(data, lessonPartMapping, self);
+    ko.mapping.fromJS(data, lessonDetailMapping, self);
 
     // Валидация
     self.validationObject = ko.validatedObservable({
-        TeacherId: self.TeacherId.extend({
+        PlannedChairJobId: self.PlannedChairJobId.extend({
             required: {
                 params: true,
                 message: " ",

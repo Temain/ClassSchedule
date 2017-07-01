@@ -149,8 +149,8 @@
                 }); //.popover('show'); 
 
                 var dayNumber = element.closest('.lesson-cell').attr('data-day');
-                var teacherId = element.attr('data-teacher');
-                $.get('/Teacher/Schedule?teacherId=' + teacherId + '&dayNumber=' + dayNumber, function(result) {
+                var chairJobId = element.attr('data-chair-job');
+                $.get('/Teacher/Schedule?chairJobId=' + chairJobId + '&dayNumber=' + dayNumber, function (result) {
                     element.attr('data-content', result);
                     element.popover('show');
                 });

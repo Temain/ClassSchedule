@@ -9,6 +9,7 @@ namespace ClassSchedule.Domain.Models.QueryResults
     public class TeacherDowntimeQueryResult
     {
         public int PersonId { get; set; }
+        public int PlannedChairJobId { get; set; }
         public int JobId { get; set; }
         public int GroupId { get; set; }
         public int WeekNumber { get; set; }
