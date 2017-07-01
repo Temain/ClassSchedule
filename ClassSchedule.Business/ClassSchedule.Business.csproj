@@ -97,9 +97,9 @@
     <Compile Include="Models\SelectFlow\GroupSetViewModel.cs" />
     <Compile Include="Models\GroupViewModel.cs" />
     <Compile Include="Models\SelectFlow\SelectFlowViewModel.cs" />
-    <Compile Include="Models\Teacher\TeacherDiscipline.cs" />
-    <Compile Include="Models\Teacher\TeacherDisciplineAuditorium.cs" />
-    <Compile Include="Models\Teacher\TeacherLesson.cs" />
+    <Compile Include="Models\Teacher\TeacherDisciplineViewModel.cs" />
+    <Compile Include="Models\Teacher\TeacherDisciplineAuditoriumViewModel.cs" />
+    <Compile Include="Models\Teacher\TeacherLessonViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AuditoriumService.cs" />
     <Compile Include="Services\DictionaryService.cs" />

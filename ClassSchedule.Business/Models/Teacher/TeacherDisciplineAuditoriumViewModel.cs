@@ -2,7 +2,7 @@
 
 namespace ClassSchedule.Business.Models.Teacher
 {
-    public class TeacherDisciplineAuditorium
+    public class TeacherDisciplineAuditoriumViewModel
     {
         public int AuditoriumId { get; set; }
         public string AuditoriumNumber { get; set; }

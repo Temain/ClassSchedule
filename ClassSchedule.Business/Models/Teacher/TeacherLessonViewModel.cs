@@ -2,7 +2,7 @@
 
 namespace ClassSchedule.Business.Models.Teacher
 {
-    public class TeacherLesson
+    public class TeacherLessonViewModel
     {
         public int WeekNumber { get; set; }
         public int DayNumber { get; set; }
@@ -13,6 +13,6 @@ namespace ClassSchedule.Business.Models.Teacher
         /// </summary>
         public bool IsDowntime { get; set; }
 
-        public IEnumerable<TeacherDiscipline> Disciplines { get; set; } 
+        public IEnumerable<TeacherDisciplineViewModel> Disciplines { get; set; } 
     }
 }

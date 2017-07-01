@@ -37,6 +37,7 @@ namespace ClassSchedule.Domain.Context
         public DbSet<Housing> Housings { get; set; }
         public DbSet<Job> Jobs { get; set; }
         public DbSet<Lesson> Lessons { get; set; }
+        public DbSet<LessonDetail> LessonDetails { get; set; }
         public DbSet<LessonType> LessonTypes { get; set; }
         public DbSet<LogEntry> LogEntries { get; set; }
         public DbSet<Person> Persons { get; set; }

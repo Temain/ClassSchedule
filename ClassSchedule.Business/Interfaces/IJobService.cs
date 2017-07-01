@@ -25,6 +25,15 @@ namespace ClassSchedule.Business.Interfaces
         /// <param name="weekNumber">Номер недели</param>
         /// <param name="teacherId">Идентификатор преподавателя (JobId)</param>
         /// <param name="maxDiff">Размер окна (количество занятий)</param>
-        List<TeacherDowntimeQueryResult> TeachersDowntime(int weekNumber, int? teacherId = 0, int maxDiff = 2);
+        List<TeacherDowntimeQueryResult> TeachersDowntime(int weekNumber, int? teacherId = 0, int maxDiff = 1);
+
+        /// <summary>
+        /// Окна между занятиями у преподавателей на несколько недель
+        /// Преподаватели выбираются независимо от редактируемой пользователем недели и групп
+        /// </summary>
+        /// <param name="weeks">Номера недель</param>
+        /// <param name="teacherId">Идентификатор преподавателя (JobId)</param>
+        /// <param name="maxDiff">Размер окна (количество занятий)</param>
+        List<TeacherDowntimeQueryResult> TeachersDowntime(int[] weeks, int? teacherId = 0, int maxDiff = 1);
     }
 }
