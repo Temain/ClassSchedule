@@ -18,6 +18,8 @@ namespace ClassSchedule.Business.Models.Schedule
         public int AuditoriumId { get; set; }
         public string AuditoriumName { get; set; }
 
+        public int? Order { get; set; }
+
         public List<AuditoriumViewModel> Auditoriums { get; set; }
     }
 }

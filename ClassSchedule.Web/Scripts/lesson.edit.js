@@ -1,6 +1,7 @@
 ﻿function EditLessonViewModel(data) {
     var self = this;
     if (!data) {
+        self.ScheduleId = ko.observable(0);
         self.GroupId = ko.observable('');
         self.WeekNumber = ko.observable('');
         self.DayNumber = ko.observable('');
@@ -326,17 +327,15 @@
 function LessonViewModel(data) {
     var self = this;
     if (!data) {
+        self.LessonId = ko.observable(0);
+        self.ScheduleId = ko.observable('');
         self.DisciplineId = ko.observable('');
         self.DisciplineName = ko.observable('');
         self.ChairId = ko.observable('');
         self.ChairName = ko.observable('');
-        // self.DayNumber = ko.observable('');
-        // self.ClassNumber = ko.observable('');
         self.LessonTypeId = ko.observable('');
         self.ChairTeachers = ko.observableArray([]);
         self.LessonDetails = ko.observableArray([new LessonDetailViewModel()]);
-
-        //return self;
     }
     
     var lessonMapping = {
@@ -374,6 +373,7 @@ function LessonViewModel(data) {
 function LessonDetailViewModel(data) {
     var self = this;
     if (!data) {
+        self.LessonDetailId = ko.observable(0);
         self.LessonId = ko.observable('');
         self.PlannedChairJobId = ko.observable('');
         self.TeacherLastName = ko.observable('');

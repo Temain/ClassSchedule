@@ -13,6 +13,7 @@ namespace ClassSchedule.Domain.Models
         public Schedule()
         {
             CreatedAt = DateTime.Now;
+            ScheduleGuid = Guid.NewGuid();
         }
 
         public int ScheduleId { get; set; }

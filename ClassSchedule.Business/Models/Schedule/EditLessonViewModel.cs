@@ -4,6 +4,7 @@ namespace ClassSchedule.Business.Models.Schedule
 {
     public class EditLessonViewModel
     {
+        public int ScheduleId { get; set; }
         public int GroupId { get; set; }
         public int WeekNumber { get; set; }
         public int DayNumber { get; set; }

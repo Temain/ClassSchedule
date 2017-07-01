@@ -16,6 +16,7 @@ using Microsoft.AspNet.Identity;
 using System.Text;
 using System.Web.UI;
 using System.IO;
+using System.Net;
 
 namespace ClassSchedule.Web.Controllers
 {
@@ -143,73 +144,125 @@ namespace ClassSchedule.Web.Controllers
                 return null;
             }
 
-            // Удаление занятия(ий)
-            //var viewModelLessonIds = viewModel.Lessons.SelectMany(x => x.LessonDetails).Select(p => p.LessonId);
-            //var lessonsForDelete = _context.Lessons
-            //    .Where(x => x.Schedule.GroupId == viewModel.GroupId && x.Schedule.WeekNumber == viewModel.WeekNumber
-            //        && x.Schedule.DayNumber == viewModel.DayNumber && x.Schedule.ClassNumber == viewModel.ClassNumber
-            //        && x.DeletedAt == null)
-            //    .Where(x => !viewModelLessonIds.Contains(x.LessonId));
-            //foreach (var lesson in lessonsForDelete)
-            //{
-            //    lesson.DeletedAt = DateTime.Now;
-            //    _context.SaveChanges();
+            var scheduleState = EntityState.Modified;
+            var schedule = _context.Schedule
+                .Include(x => x.Lessons.Select(s => s.LessonDetails))
+                .SingleOrDefault(x => x.ScheduleId == viewModel.ScheduleId && x.DeletedAt == null);
 
-            //    Logger.Info("Занятие помечено как удалённое : LessonId=" + lesson.LessonId);
-            //}
+            try
+            {
+                if (schedule == null)
+                {
+                    schedule = new Schedule
+                    {
+                        GroupId = viewModel.GroupId,
+                        EducationYearId = UserProfile.EducationYearId,
+                        WeekNumber = UserProfile.WeekNumber,
+                        DayNumber = viewModel.DayNumber,
+                        ClassNumber = viewModel.ClassNumber,
+                        ClassDate = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart,
+                            viewModel.WeekNumber, viewModel.DayNumber),
+                        Lessons = new List<Lesson> { new Lesson { LessonDetails = new List<LessonDetail>() } }
+                    };
 
-            //// Создание и обновление занятий
-            //foreach (var lessonViewModel in viewModel.Lessons)
-            //{
-            //    foreach (var lessonDetailViewModel in lessonViewModel.LessonDetails)
-            //    {
-            //        var lessonId = lessonDetailViewModel.LessonId;
-            //        var lesson = _context.Lessons
-            //            .Where(x => x.LessonId == lessonId)
-            //            .SingleOrDefault();
+                    scheduleState = EntityState.Added;
+                }
 
-            //        // Обновление занятия
-            //        if (lesson != null)
-            //        {
-            //            lesson.LessonTypeId = lessonViewModel.LessonTypeId;
-            //            lesson.DisciplineId = lessonViewModel.DisciplineId;
-            //            lesson.AuditoriumId = lessonDetailViewModel.AuditoriumId;
-            //            lesson.JobId = lessonDetailViewModel.TeacherId;
-            //            // lesson.IsNotActive = lessonDetailViewModel.IsNotActive;
-            //            lesson.UpdatedAt = DateTime.Now;
+                // Создание и обновление занятий
+                foreach (var lessonViewModel in viewModel.Lessons)
+                {
+                    var lesson = schedule.Lessons
+                        .Where(x => x.LessonId == lessonViewModel.LessonId && x.LessonId != 0 && x.DeletedAt == null)
+                        .SingleOrDefault();
+                    if (lesson == null)
+                    {
+                        lesson = new Lesson
+                        {
+                            DisciplineId = lessonViewModel.DisciplineId,
+                            LessonTypeId = lessonViewModel.LessonTypeId,
+                            LessonDetails = lessonViewModel.LessonDetails
+                                .Select(s => new LessonDetail
+                                {
+                                    AuditoriumId = s.AuditoriumId,
+                                    PlannedChairJobId = s.PlannedChairJobId,
+                                    Order = s.Order ?? 0
+                                })
+                                .ToList()
+                        };
 
-            //            _context.SaveChanges();
+                        schedule.Lessons.Add(lesson);
+                    }
+                    else
+                    {
+                        lesson.LessonTypeId = lessonViewModel.LessonTypeId;
+                        lesson.DisciplineId = lessonViewModel.DisciplineId;
+                        lesson.Order = lessonViewModel.Order;
+                        lesson.UpdatedAt = DateTime.Now;
 
-            //            Logger.Info("Обновлено занятие : LessonId=" + lesson.LessonId);
-            //        }
-            //        // Создание нового занятия
-            //        else
-            //        {
-            //            var classDate = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart,
-            //                viewModel.WeekNumber, viewModel.DayNumber);
-            //            lesson = new Lesson
-            //            {
-            //                LessonGuid = Guid.NewGuid(),
-            //                WeekNumber = viewModel.WeekNumber,
-            //                DayNumber = viewModel.DayNumber,
-            //                ClassNumber = viewModel.ClassNumber,
-            //                ClassDate = classDate,
-            //                GroupId = viewModel.GroupId,
-            //                LessonTypeId = lessonViewModel.LessonTypeId,
-            //                DisciplineId = lessonViewModel.DisciplineId,
-            //                AuditoriumId = lessonDetailViewModel.AuditoriumId,
-            //                JobId = lessonDetailViewModel.TeacherId,
-            //                // IsNotActive = lessonPartViewModel.IsNotActive,
-            //                CreatedAt = DateTime.Now,
-            //            };
+                        foreach (var lessonDetailViewModel in lessonViewModel.LessonDetails)
+                        {
+                            var lessonDetail = lesson.LessonDetails
+                                .SingleOrDefault(x => x.LessonDetailId == lessonDetailViewModel.LessonDetailId
+                                    && x.LessonDetailId != 0 && x.DeletedAt == null);
+                            if (lessonDetail == null)
+                            {
+                                lessonDetail = new LessonDetail
+                                {
+                                    AuditoriumId = lessonDetailViewModel.AuditoriumId,
+                                    PlannedChairJobId = lessonDetailViewModel.PlannedChairJobId,
+                                    Order = lessonDetailViewModel.Order
+                                };
 
-            //            _context.Lessons.Add(lesson);
-            //            _context.SaveChanges();
+                                lesson.LessonDetails.Add(lessonDetail);
+                            }
+                            else
+                            {
+                                lessonDetail.AuditoriumId = lessonDetailViewModel.AuditoriumId;
+                                lessonDetail.PlannedChairJobId = lessonDetailViewModel.PlannedChairJobId;
+                                lessonDetail.Order = lessonDetailViewModel.Order;
+                                lessonDetail.UpdatedAt = DateTime.Now;
+                            }
+                        }
+                    }
+                }
 
-            //            Logger.Info("Создано новое занятие : LessonId=" + lesson.LessonId);
-            //        }
-            //    }
-            //}
+                // Удаление занятия(ий)
+                var viewModelLessonIds = viewModel.Lessons.Select(x => x.LessonId);
+                var lessonsForDelete = _context.Lessons
+                    .Where(x => x.Schedule.EducationYearId == UserProfile.EducationYearId 
+                        && x.Schedule.GroupId == viewModel.GroupId && x.Schedule.WeekNumber == viewModel.WeekNumber
+                        && x.Schedule.DayNumber == viewModel.DayNumber && x.Schedule.ClassNumber == viewModel.ClassNumber
+                        && x.DeletedAt == null)
+                    .Where(x => !viewModelLessonIds.Contains(x.LessonId));
+                foreach (var lesson in lessonsForDelete)
+                {
+                    lesson.DeletedAt = DateTime.Now;
+
+                    Logger.Info("Занятие помечено как удалённое : LessonId=" + lesson.LessonId);
+                }
+
+                if (scheduleState == EntityState.Added)
+                {
+                    _context.Schedule.Add(schedule);
+                }
+
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Произошла ошибка при сохранении занятия.");
+
+                return new JsonErrorResult(HttpStatusCode.InternalServerError) { Data = string.Format("ErrorMessage : {0}, StackTrace: {1}", ex.Message, ex.StackTrace) };
+            }        
+
+            if (scheduleState == EntityState.Added)
+            {
+                // Logger.Info("Создано новое занятие : LessonId=" + lesson.LessonId);
+            }
+            else
+            {
+                // Logger.Info("Обновлено занятие : LessonId=" + lesson.LessonId);
+            }
 
             var lessonCell = GetLessonViewModel(viewModel.GroupId, viewModel.WeekNumber, viewModel.DayNumber,
                 viewModel.ClassNumber);
@@ -627,7 +680,8 @@ namespace ClassSchedule.Web.Controllers
         public List<LessonViewModel> GetLessonViewModel(int groupId, int weekNumber, int dayNumber, int classNumber, bool checkDowntimes = true)
         {
             var schedule = _context.Schedule
-                .Where(x => x.GroupId == groupId && x.WeekNumber == weekNumber
+                .Where(x => x.EducationYearId == UserProfile.EducationYearId 
+                    && x.GroupId == groupId && x.WeekNumber == weekNumber
                     && x.DayNumber == dayNumber && x.ClassNumber == classNumber
                     && x.DeletedAt == null)
                 .SingleOrDefault();
