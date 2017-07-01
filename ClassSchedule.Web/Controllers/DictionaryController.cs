@@ -4,71 +4,44 @@ using System.Data.Entity;
 using ClassSchedule.Domain.Context;
 using ClassSchedule.Business.Models.Schedule;
 using ClassSchedule.Business.Interfaces;
+using System.Collections.Generic;
+using ClassSchedule.Business.Models;
+using System;
 
 namespace ClassSchedule.Web.Controllers
 {
     public class DictionaryController : BaseController
     {
         private readonly ApplicationDbContext _context;
-        private readonly IJobService _jobService;
+        private readonly IDictionaryService _dictionaryService;
 
-        public DictionaryController(ApplicationDbContext context, IJobService jobService)
+        public DictionaryController(ApplicationDbContext context, IDictionaryService dictionaryService)
         {
             _context = context;
-            _jobService = jobService;
+            _dictionaryService = dictionaryService;
         }
 
-        public enum ResultType
+        [HttpPost]
+        public ActionResult Course(int facultyId)
         {
-            Dictionary,
-            Json
+            if (Request.IsAjaxRequest())
+            {
+                var courses = _dictionaryService.GetCourses(facultyId);
+
+                return Json(courses);
+            }
+
+            return null;
         }
-
-        //[HttpPost]
-        //public ActionResult Course(int facultyId)
-        //{
-        //    if (Request.IsAjaxRequest())
-        //    {
-        //        var courses = UnitOfWork.Repository<Course>()
-        //            .GetQ(
-        //                filter: x => x.IsDeleted != true && x.FacultyId == facultyId && x.YearStart != null 
-        //                    && x.YearStart + x.CourseNumber == UserProfile.EducationYear.YearEnd,
-        //                orderBy: o => o.OrderBy(n => n.CourseName))
-        //            .Select(x => new {x.CourseId, x.CourseName});
-
-        //        return Json(courses);
-        //    }
-
-        //    return null;
-        //}
 
         [HttpPost]
         public ActionResult CourseNumber(int facultyId, int? educationFormId, int? educationLevelId)
         {
             if (Request.IsAjaxRequest())
             {
-                var courses = _context.Courses
-                    .Include(x => x.Groups.Select(g => g.BaseProgramOfEducation))
-                    .Where(x => x.DeletedAt == null && x.FacultyId == facultyId && x.YearStart != null
-                        && x.YearStart + x.CourseNumber == UserProfile.EducationYear.YearEnd);
+                var courses = _dictionaryService.GetCourseNumbers(facultyId, educationFormId, educationLevelId);
 
-                if (educationFormId != null)
-                {
-                    courses = courses.Where(x => x.Groups.Any(g => g.BaseProgramOfEducation.EducationFormId == educationFormId && g.DeletedAt == null));
-                }
-
-                if (educationLevelId != null)
-                {
-                    courses = courses.Where(x => x.Groups.Any(g => g.BaseProgramOfEducation.EducationLevelId == educationLevelId && g.DeletedAt == null));
-                }
-
-                var courseNumbers = courses
-                    .OrderBy(n => n.CourseName)
-                    .Select(x => x.CourseNumber)
-                    .Distinct()
-                    .ToList();
-
-                return Json(courseNumbers);
+                return Json(courses);
             }
 
             return null;
@@ -79,353 +52,167 @@ namespace ClassSchedule.Web.Controllers
         {
             if (Request.IsAjaxRequest())
             {
-                var groups = _context.Groups
-                    .Where(x => x.DeletedAt == null && x.Course.FacultyId == facultyId);
+                var groups = _dictionaryService.GetGroups(facultyId, courseId, educationFormId, educationLevelId, courseNumber);
 
-                if (courseId != null)
-                {
-                    groups = groups.Where(x => x.CourseId == courseId);
-                }
-
-                if (educationFormId != null)
-                {
-                    groups = groups.Where(g => g.BaseProgramOfEducation.EducationFormId == educationFormId);
-                }
-
-                if (educationLevelId != null)
-                {
-                    groups = groups.Where(g => g.BaseProgramOfEducation.EducationLevelId == educationLevelId);
-                }
-
-                if (courseNumber != null)
-                {
-                    groups = groups.Where(g => UserProfile.EducationYear.YearStart - g.Course.YearStart + 1 == courseNumber);
-                }
-
-                var result = groups
-                    .OrderBy(n => n.GroupName)
-                    .Select(x => new { x.GroupId, GroupName = x.GroupName })
-                    .ToList();
-
-                return Json(result);
+                return Json(groups);
             }
 
             return null;
         }
 
-        //[HttpPost]
-        //public ActionResult EducationForm()
-        //{
-        //    if (Request.IsAjaxRequest())
-        //    {
-        //        var forms = UnitOfWork.Repository<EducationForm>()
-        //            .GetQ(x => x.IsDeleted != true, orderBy: o => o.OrderBy(n => n.EducationFormName))
-        //            .Select(x => new { x.EducationFormId, x.EducationFormName });
+        [HttpPost]
+        public ActionResult EducationForm()
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var forms = _dictionaryService.GetEducationForms();
 
-        //        return Json(forms);
-        //    }
+                return Json(forms);
+            }
 
-        //    return null;
-        //}
+            return null;
+        }
 
-        //[HttpPost]
-        //public ActionResult EducationLevel()
-        //{
-        //    if (Request.IsAjaxRequest())
-        //    {
-        //        var levels = UnitOfWork.Repository<EducationLevel>()
-        //            .GetQ(x => x.IsDeleted != true, orderBy: o => o.OrderBy(n => n.EducationLevelName))
-        //            .Select(x => new { x.EducationLevelId, x.EducationLevelName });
+        [HttpPost]
+        public ActionResult EducationLevel()
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var levels = _dictionaryService.GetEducationLevels();
 
-        //        return Json(levels);
-        //    }
+                return Json(levels);
+            }
 
-        //    return null;
-        //}
+            return null;
+        }
 
-        //[HttpPost]
-        //public ActionResult AcademicPlanYear()
-        //{
-        //    if (Request.IsAjaxRequest())
-        //    {
-        //        var years = UnitOfWork.Repository<Course>()
-        //        .GetQ(x => x.IsDeleted != true)
-        //        .Select(x => new
-        //        {
-        //            Value = x.YearStart
-        //        })
-        //        .Distinct()
-        //        .OrderBy(x => x.Value)
-        //        .ToList();
+        [HttpPost]
+        [Obsolete("В версии 2.0.0 больше нет функционала загрузки учебных планов")]
+        public ActionResult AcademicPlanYear()
+        {
+            if (Request.IsAjaxRequest())
+            {
+                return Json(new { Message = "Depracated" });
+            }
 
-        //        return Json(years);
-        //    }
+            return null;
+        }
 
-        //    return null;
-        //}
+        [HttpPost]
+        public ActionResult Direction()
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var directions = _dictionaryService.GetEducationDirections();
 
-        //[HttpPost]
-        //public ActionResult Direction()
-        //{
-        //    if (Request.IsAjaxRequest())
-        //    {
-        //        var directions = UnitOfWork.Repository<EducationDirection>()
-        //            .GetQ(x => x.IsDeleted != true, orderBy: o => o.OrderBy(n => n.EducationDirectionCode))
-        //            .Select(
-        //                x =>
-        //                    new
-        //                    {
-        //                        EducationDirection = x.EducationDirectionId,
-        //                        EducationDirectionName = x.EducationDirectionCode + " " + x.EducationDirectionName
-        //                    });
+                return Json(directions);
+            }
 
-        //        return Json(directions);
-        //    }
+            return null;
+        }
 
-        //    return null;
-        //}
+        [HttpPost]
+        public ActionResult EducationProfile(int educationFormId, int educationDirectionId, int yearStart)
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var profiles = _dictionaryService.GetEducationProfiles(educationFormId, educationDirectionId, yearStart);
 
-        //[HttpPost]
-        //public ActionResult EducationProfile(int educationFormId, int educationDirectionId, int yearStart)
-        //{
-        //    if (Request.IsAjaxRequest())
-        //    {
-        //        var profiles = UnitOfWork.Repository<ProgramOfEducation>()
-        //            .GetQ(x => x.IsDeleted != true && x.EducationFormId == educationFormId 
-        //                && x.EducationProfile.EducationDirectionId == educationDirectionId
-        //                && x.Groups.Any(g => g.Course.YearStart == yearStart))
-        //            .Select(x => new
-        //            {
-        //                ProgramOfEducationId = x.ProgramOfEducationId,
-        //                EducationProfileId = x.EducationProfileId,
-        //                EducationLevelId = x.EducationLevelId,
-        //                EducationProfileName =
-        //                    x.EducationProfile.EducationDirection.EducationDirectionCode + " " +
-        //                    x.EducationProfile.EducationProfileName + (x.EducationLevelId == 2 ? " (прикладной бакалавриат)" : "")
-        //            })
-        //            .OrderBy(n => n.EducationLevelId)
-        //            .ThenBy(x => x.EducationProfileName)
-        //            .ToList();
+                return Json(profiles);
+            }
 
-        //        return Json(profiles);
-        //    }
-
-        //    return null;
-        //}
+            return null;
+        }
 
         [HttpPost]
         public ActionResult Discipline(string query, int? chairId)
         {
             if (Request.IsAjaxRequest())
             {
-                var disciplines = _context.Disciplines
-                    .Include(x => x.DisciplineName)
-                    .Where(x => x.DisciplineName.Name.StartsWith(query))
-                    .Take(20);
+                var disciplines = _dictionaryService.GetDisciplines(query, chairId);
 
-                if (chairId != null)
-                {
-                    disciplines = disciplines.Where(d => d.ChairId == chairId);
-                }
-
-                var result = disciplines
-                    .Select(x => new
-                    {
-                        x.DisciplineId,
-                        DisciplineName = x.DisciplineName.Name,
-                        x.ChairId,
-                        ChairName = x.Chair.DivisionName
-                    })
-                    .ToList();
-
-                return Json(result);
+                return Json(disciplines);
             }
 
             return null;
         }
 
-        //[HttpPost]
-        //public ActionResult Teacher(int? chairId, string query)
-        //{
-        //    if (Request.IsAjaxRequest())
-        //    {
-        //        var jobRepository = UnitOfWork.Repository<Job>() as JobRepository;
-        //        if (jobRepository != null)
-        //        {
-        //            var teachers = jobRepository.ActualTeachers(UserProfile.EducationYear, chairId, query);
-        //            var result = teachers
-        //                .Select(
-        //                    x =>
-        //                        new TeacherViewModel
-        //                        {
-        //                            PersonId = x.PersonId,
-        //                            TeacherId = x.JobId,
-        //                            TeacherFullName = x.FullName
-        //                        });
+        [HttpPost]
+        public ActionResult Teacher(int? chairId, string query)
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var teachers = _dictionaryService.GetTeachers(chairId, query);
 
-        //            return Json(result);
-        //        }              
-        //    }
+                return Json(teachers);
+            }
 
-        //    return null;
-        //}
+            return null;
+        }
 
         [HttpPost]
         public ActionResult TeacherWithEmployment(int chairId, int weekNumber, int dayNumber, int classNumber, int groupId)
         {
             if (Request.IsAjaxRequest())
             {
-                var chairTeachers = _jobService.ActualTeachersWithEmployment(UserProfile.EducationYear, chairId, weekNumber, dayNumber, classNumber, groupId);
-                var result = chairTeachers
-                    .Select(
-                        x =>
-                            new TeacherViewModel
-                            {
-                                TeacherId = x.JobId,
-                                TeacherFullName = x.FullName,
-                                Employment = x.Employment
-                            });
+                var chairTeachers = _dictionaryService.GetTeacherWithEmployment(chairId, weekNumber, dayNumber, classNumber, dayNumber);
 
-                return Json(result);
+                return Json(chairTeachers);
             }
 
             return null;
         }
 
-        //[HttpPost]
-        //public ActionResult Housing()
-        //{
-        //    if (Request.IsAjaxRequest())
-        //    {
-        //        var housings = UnitOfWork.Repository<Housing>()
-        //            .GetQ()
-        //            .Select(x => new HousingViewModel
-        //            {
-        //                HousingId = x.HousingId,
-        //                HousingName = x.HousingName,
-        //                Abbreviation = x.Abbreviation
-        //            });
+        [HttpPost]
+        public ActionResult Housing()
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var housings = _dictionaryService.GetHousings();
 
-        //        return Json(housings);
-        //    }
+                return Json(housings);
+            }
 
-        //    return null;
-        //}
+            return null;
+        }
 
-        //[HttpPost]
-        //public ActionResult HousingEqualLength()
-        //{
-        //    if (Request.IsAjaxRequest())
-        //    {
-        //        var housingRepository = UnitOfWork.Repository<Housing>() as HousingRepository;
-        //        if (housingRepository != null)
-        //        {
-        //            var housings = housingRepository.HousingEqualLength();
-        //            var result = housings
-        //                .Select(
-        //                    x =>
-        //                        new HousingViewModel
-        //                        {
-        //                            HousingId = x.HousingId,
-        //                            HousingName = x.HousingName,
-        //                            Abbreviation = x.Abbreviation
-        //                        });
+        [HttpPost]
+        public ActionResult HousingEqualLength()
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var housings = _dictionaryService.GetHousingEqualLength();
 
-        //            return Json(result);
-        //        }
+                return Json(housings);
+            }
 
-        //    }
+            return null;
+        }
 
-        //    return null;
-        //}
+        [HttpPost]
+        public ActionResult Auditorium(int? chairId, int? housingId, string query, bool shortResult = false)
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var auditoriums = _dictionaryService.GetAuditoriums(chairId, housingId, query, shortResult);
 
-        //[HttpPost]
-        //public ActionResult Auditorium(int? chairId, int? housingId, string query, bool shortResult = false)
-        //{
-        //    if (Request.IsAjaxRequest())
-        //    {
-        //        var auditoriums = UnitOfWork.Repository<Auditorium>()
-        //            .GetQ(filter: x => x.IsDeleted != true,
-        //                orderBy: o => o.OrderByDescending(n => n.ChairId)
-        //                    .ThenBy(n => n.AuditoriumNumber));
+                return Json(auditoriums);
+            }
 
-        //        if (housingId != null)
-        //        {
-        //            auditoriums = auditoriums.Where(x => x.HousingId == housingId);
-        //        }
+            return null;
+        }
 
-        //        if (chairId != null)
-        //        {
-        //            auditoriums = auditoriums.Where(x => x.ChairId == chairId || x.ChairId == null);
-        //        }
+        [HttpPost]
+        public ActionResult AuditoriumWithEmployment(int chairId, int housingId, int weekNumber, int dayNumber, int classNumber, int groupId)
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var auditoriums = _dictionaryService.GetAuditoriumWithEmployment(chairId, housingId, weekNumber, dayNumber, classNumber, groupId);
 
-        //        if (query != null)
-        //        {
-        //            auditoriums = auditoriums.Where(x => x.AuditoriumNumber.StartsWith(query));
-        //        }
+                return Json(auditoriums);
+            }
 
-        //        List<AuditoriumViewModel> result;
-        //        if (shortResult)
-        //        {
-        //            result = auditoriums
-        //            .Select(x => new AuditoriumViewModel
-        //            {
-        //                AuditoriumId = x.AuditoriumId,
-        //                AuditoriumNumber = x.AuditoriumNumber + x.Housing.Abbreviation,
-        //                AuditoriumTypeName = x.AuditoriumType.AuditoriumTypeName,
-        //                Places = x.Places ?? 0
-        //            })
-        //            .ToList();
-        //        }
-        //        else
-        //        {
-        //            result = auditoriums
-        //            .Select(x => new AuditoriumViewModel
-        //            {
-        //                AuditoriumId = x.AuditoriumId,
-        //                AuditoriumNumber = x.AuditoriumNumber,
-        //                AuditoriumTypeName = x.AuditoriumType.AuditoriumTypeName,
-        //                // HousingId = x.HousingId,
-        //                // HousingAbbreviation = x.Housing.Abbreviation,
-        //                Places = x.Places ?? 0
-        //            })
-        //            .ToList();
-        //        }
-
-        //        return Json(result);
-        //    }
-
-        //    return null;
-        //}
-
-        //[HttpPost]
-        //public ActionResult AuditoriumWithEmployment(int chairId, int housingId, int weekNumber, int dayNumber, int classNumber, int groupId)
-        //{
-        //    if (Request.IsAjaxRequest())
-        //    {
-        //        var auditoriumRepository = UnitOfWork.Repository<Auditorium>() as AuditoriumRepository;
-        //        if (auditoriumRepository != null)
-        //        {
-        //            var auditoriums = auditoriumRepository.AuditoriumWithEmployment(chairId, housingId, weekNumber, dayNumber, classNumber, groupId);
-        //            var result = auditoriums
-        //                .Select(
-        //                    x =>
-        //                        new AuditoriumViewModel
-        //                        {
-        //                            AuditoriumId = x.AuditoriumId,
-        //                            AuditoriumNumber = x.AuditoriumNumber,
-        //                            AuditoriumTypeName = x.AuditoriumTypeName,
-        //                            ChairId = x.ChairId,
-        //                            Places = x.Places,
-        //                            Comment = x.Comment,
-        //                            Employment = x.Employment
-        //                        });
-
-        //            return Json(result);
-        //        }
-        //    }
-
-        //    return null;
-        //}
+            return null;
+        }
     }
 }

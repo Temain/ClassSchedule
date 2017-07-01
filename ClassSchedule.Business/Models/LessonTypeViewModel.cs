@@ -1,4 +1,4 @@
-﻿namespace ClassSchedule.Business.Models.Schedule
+﻿namespace ClassSchedule.Business.Models
 {
     public class LessonTypeViewModel
     {

@@ -1,4 +1,4 @@
-﻿namespace ClassSchedule.Business.Models.SelectFlow
+﻿namespace ClassSchedule.Business.Models
 {
     public class GroupViewModel
     {

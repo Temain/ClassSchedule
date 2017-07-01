@@ -48,6 +48,7 @@ namespace ClassSchedule.Web
             container.RegisterType<IGroupService, GroupService>();
             container.RegisterType<IAuditoriumService, AuditoriumService>();
             container.RegisterType<IHousingService, HousingService>();
+            container.RegisterType<IDictionaryService, DictionaryService>();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ClassSchedule.Business.Models.GroupInfo
+namespace ClassSchedule.Business.Models
 {
     public class DisciplineViewModel
     {
@@ -10,6 +10,6 @@ namespace ClassSchedule.Business.Models.GroupInfo
         public int ChairId { get; set; }
         public string ChairName { get; set; }
 
-        public List<DisciplineSemesterPlanViewModel> DisciplineSemesterPlans { get; set; } 
+        // public List<DisciplineSemesterPlanViewModel> DisciplineSemesterPlans { get; set; } 
     }
 }
