@@ -142,7 +142,7 @@ namespace ClassSchedule.Web.Controllers
         {
             if (Request.IsAjaxRequest())
             {
-                var teachers = _dictionaryService.GetTeachers(chairId, query);
+                var teachers = _dictionaryService.GetTeachers(UserProfile.EducationYearId ?? 0, chairId, query);
 
                 return Json(teachers);
             }
@@ -155,7 +155,7 @@ namespace ClassSchedule.Web.Controllers
         {
             if (Request.IsAjaxRequest())
             {
-                var chairTeachers = _dictionaryService.GetTeacherWithEmployment(chairId, weekNumber, dayNumber, classNumber, dayNumber);
+                var chairTeachers = _dictionaryService.GetTeacherWithEmployment(UserProfile.EducationYearId ?? 0, chairId, weekNumber, dayNumber, classNumber, groupId);
 
                 return Json(chairTeachers);
             }

@@ -95,9 +95,9 @@ namespace ClassSchedule.Business.Services
                     ELSE 2
                   END, 
                   aud.AuditoriumNumber;";
-            var teachers = _context.Database.SqlQuery<AuditoriumQueryResult>(query, parameters).ToList();
+            var auditoriums = _context.Database.SqlQuery<AuditoriumQueryResult>(query, parameters).ToList();
 
-            return teachers;
+            return auditoriums;
         }
     }
 }

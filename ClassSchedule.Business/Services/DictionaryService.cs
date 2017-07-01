@@ -11,14 +11,17 @@ namespace ClassSchedule.Business.Services
     public class DictionaryService : IDictionaryService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IJobService _jobService;
         private readonly IHousingService _housingService;
         private readonly IAuditoriumService _auditoriumService;
 
-        public DictionaryService(ApplicationDbContext context, IHousingService housingService, IAuditoriumService auditoriumService)
+        public DictionaryService(ApplicationDbContext context, IHousingService housingService
+            , IAuditoriumService auditoriumService, IJobService jobService)
         {
             _context = context;
             _housingService = housingService;
             _auditoriumService = auditoriumService;
+            _jobService = jobService;
         }
 
         public List<CourseViewModel> GetCourses(int? facultyId)
@@ -178,40 +181,14 @@ namespace ClassSchedule.Business.Services
             return result;
         }
 
-        public List<TeacherViewModel> GetTeachers(int? chairId, string query)
+        public List<TeacherViewModel> GetTeachers(int educationYearId, int? chairId, string query)
         {
-            //var teachers = _jobService.ActualTeachers(UserProfile.EducationYear, chairId, query);
-            //var result = teachers
-            //    .Select(
-            //        x =>
-            //            new TeacherViewModel
-            //            {
-            //                PersonId = x.PersonId,
-            //                TeacherId = x.JobId,
-            //                TeacherFullName = x.FullName
-            //            });
-
-            //return result;
-
-            return new List<TeacherViewModel>();
+            return _jobService.ActualTeachers(educationYearId, chairId, query);
         }
 
-        public List<TeacherViewModel> GetTeacherWithEmployment(int chairId, int weekNumber, int dayNumber, int classNumber, int groupId)
+        public List<TeacherViewModel> GetTeacherWithEmployment(int educationYearId, int chairId, int weekNumber, int dayNumber, int classNumber, int groupId)
         {
-            //var chairTeachers = _jobService.ActualTeachersWithEmployment(UserProfile.EducationYear, chairId, weekNumber, dayNumber, classNumber, groupId);
-            //var result = chairTeachers
-            //    .Select(
-            //        x =>
-            //            new TeacherViewModel
-            //            {
-            //                TeacherId = x.JobId,
-            //                TeacherFullName = x.FullName,
-            //                Employment = x.Employment
-            //            });
-
-            //return Json(result);
-
-            return new List<TeacherViewModel>();
+            return _jobService.ActualTeachersWithEmployment(educationYearId, chairId, weekNumber, dayNumber, classNumber, groupId);
         }
 
         public List<HousingViewModel> GetHousings()
