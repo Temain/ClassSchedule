@@ -68,7 +68,7 @@ namespace ClassSchedule.Web.Controllers
             if (!Request.IsAjaxRequest()) return null;
 
             var schedule = _lessonService
-                .GetScheduleForGroups(new int[] { groupId }, UserProfile.WeekNumber, dayNumber, classNumber, checkDowntimes: false)
+                .GetScheduleForGroups(new int[] { groupId }, UserProfile.EducationYearId ?? 0, UserProfile.WeekNumber, dayNumber, classNumber, checkDowntimes: false)
                 .SingleOrDefault();
             if (schedule != null)
             {
@@ -145,7 +145,7 @@ namespace ClassSchedule.Web.Controllers
                         ClassNumber = viewModel.ClassNumber,
                         ClassDate = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart,
                             viewModel.WeekNumber, viewModel.DayNumber),
-                        Lessons = new List<Lesson> { new Lesson { LessonDetails = new List<LessonDetail>() } }
+                        Lessons = new List<Lesson> { }
                     };
 
                     scheduleState = EntityState.Added;
@@ -248,7 +248,7 @@ namespace ClassSchedule.Web.Controllers
             }
 
             var scheduleViewModel = _lessonService
-               .GetScheduleForGroups(new int[] { viewModel.GroupId }, UserProfile.WeekNumber, viewModel.DayNumber, viewModel.ClassNumber, checkDowntimes: false)
+               .GetScheduleForGroups(new int[] { viewModel.GroupId }, UserProfile.EducationYearId ?? 0, UserProfile.WeekNumber, viewModel.DayNumber, viewModel.ClassNumber, checkDowntimes: false)
                .SingleOrDefault();
             if (scheduleViewModel != null)
             {
@@ -319,14 +319,15 @@ namespace ClassSchedule.Web.Controllers
         /// <summary>
         /// Удаление занятия
         /// </summary>
-        // TODO: Убрать из параметров weekNumber, он есть в профиле пользователя 
         [HttpPost]
-        public ActionResult RemoveLesson(int groupId, int weekNumber, int dayNumber, int classNumber)
+        public ActionResult RemoveLesson(int groupId, int dayNumber, int classNumber)
         {
             var lessons = _context.Lessons
-                .Where(x => x.Schedule.GroupId == groupId && x.Schedule.WeekNumber == weekNumber
-                    && x.Schedule.DayNumber == dayNumber && x.Schedule.ClassNumber == classNumber
-                    && x.DeletedAt == null);
+                .Include(x => x.Schedule)
+                .Where(x => x.Schedule.GroupId == groupId && x.Schedule.EducationYearId == UserProfile.EducationYearId
+                    && x.Schedule.WeekNumber == UserProfile.WeekNumber && x.Schedule.DayNumber == dayNumber && x.Schedule.ClassNumber == classNumber
+                    && x.DeletedAt == null)
+                .ToList();
             foreach (var lesson in lessons)
             {
                 lesson.DeletedAt = DateTime.Now;
@@ -343,40 +344,40 @@ namespace ClassSchedule.Web.Controllers
         /// Например, для того чтобы подсветилась подсказка об окнах в расписании преподавателей
         /// </summary>
         [HttpPost]
-        public ActionResult RefreshLesson(int groupId, int dayNumber, int classNumber, int[] teacherIds)
+        public ActionResult RefreshLesson(int groupId, int dayNumber, int classNumber, int[] plannedChairJobIds)
         {
-            if (!Request.IsAjaxRequest() || teacherIds == null) return null;
+            if (!Request.IsAjaxRequest() || plannedChairJobIds == null) return null;
 
-            var editableGroups = GetEditableGroups()
-                .Select(x => x.GroupId);
+            var editableGroups = _groupService.GetEditableGroupsIdentifiers(UserProfile.Id);
 
-            var teachersPersonIds = _context.Jobs
-                .Where(t => teacherIds.Contains(t.JobId))
-                .Select(x => x.Employee.PersonId);
-
-            //var changedLessons = _context.Lessons
-            //   .Where(x => teachersPersonIds.Contains(x.Job.Employee.PersonId) && editableGroups.Contains(x.Schedule.GroupId)
-            //       && x.Schedule.WeekNumber == UserProfile.WeekNumber && x.Schedule.DayNumber == dayNumber
-            //       && x.Schedule.ClassNumber != classNumber && x.DeletedAt == null)
-            //   .ToList();
+            var changedLessonDetails = _context.LessonDetails
+                .Include(x => x.Lesson.Schedule)
+                .Where(x => plannedChairJobIds.Contains(x.PlannedChairJobId ?? 0) && editableGroups.Contains(x.Lesson.Schedule.GroupId)
+                    && x.Lesson.Schedule.EducationYearId == UserProfile.EducationYearId
+                    && x.Lesson.Schedule.WeekNumber == UserProfile.WeekNumber && x.Lesson.Schedule.DayNumber == dayNumber
+                    && x.Lesson.Schedule.ClassNumber != classNumber && x.DeletedAt == null && x.Lesson.DeletedAt == null && x.Lesson.Schedule.DeletedAt == null)
+                .ToList();
 
             var lessonCellsForRefresh = new List<RefreshCellViewModel>();
-            //foreach (var lesson in changedLessons)
-            //{
-            //    var targetGroupId = lesson.GroupId;
-            //    var targetClassNumber = lesson.ClassNumber;
-            //    var lessonViewModel = GetLessonViewModel(targetGroupId, UserProfile.WeekNumber, dayNumber, targetClassNumber);
+            foreach (var lessonDetail in changedLessonDetails)
+            {
+                var targetGroupId = lessonDetail.Lesson.Schedule.GroupId;
+                var targetClassNumber = lessonDetail.Lesson.Schedule.ClassNumber;
+                var dayScheduleViewModel = _lessonService
+                   .GetScheduleForGroups(new int[] { targetGroupId }, UserProfile.EducationYearId ?? 0, UserProfile.WeekNumber, dayNumber, targetClassNumber, checkDowntimes: true)
+                   .SingleOrDefault();
 
-            //    var lessonCellContent = RenderPartialToString(this, "_LessonCell", lessonViewModel, ViewData, TempData);
-            //    var lessonCellForRefresh = new RefreshCellViewModel
-            //    {
-            //        DayNumber = dayNumber,
-            //        ClassNumber = targetClassNumber,
-            //        GroupId = targetGroupId,
-            //        Content = lessonCellContent
-            //    };
-            //    lessonCellsForRefresh.Add(lessonCellForRefresh);
-            //}
+                var lessonCellContent = RenderPartialToString(this, "_LessonCell", dayScheduleViewModel.Lessons, ViewData, TempData);
+                var lessonCellForRefresh = new RefreshCellViewModel
+                {
+                    DayNumber = dayNumber,
+                    ClassNumber = targetClassNumber,
+                    GroupId = targetGroupId,
+                    Content = lessonCellContent
+                };
+
+                lessonCellsForRefresh.Add(lessonCellForRefresh);
+            }
 
             return Json(lessonCellsForRefresh);
         }

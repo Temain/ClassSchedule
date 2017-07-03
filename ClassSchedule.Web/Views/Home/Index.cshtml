@@ -91,6 +91,11 @@
                             {
                                 @Html.Partial("_LessonCell", schedule.Lessons)
                             }
+                            else
+                            {
+                                <div class="lesson-cell-content"></div>
+                            }
+
 
                             @Html.Partial("_LessonActions")
                         }
@@ -380,8 +385,8 @@
                 var dayNumber = $(selectedCell).attr('data-day');
                 var classNumber = $(selectedCell).attr('data-class-number');
 
-                var teacherIds = $(selectedCell).find('.teacher').map(function () {
-                    return $(this).attr('data-teacher');
+                var plannedChairJobIds = $(selectedCell).find('.teacher').map(function () {
+                    return $(this).attr('data-chair-job');
                 }).get();
 
                 // Целевая ячейка используется для обновления после копирования
@@ -389,7 +394,7 @@
 
                     // Если в исходной ячейке не пусто, то берем группу, день и номер занятия из целевой ячейки
                     // Если в исходной ячейке пусто, берем идентификаторы преподавателей из целевой ячейки
-                    if (teacherIds.length) {
+                    if (plannedChairJobIds.length) {
 
                         groupId = $(targetLessonCell).attr('data-group');
                         dayNumber = $(targetLessonCell).attr('data-day');
@@ -397,15 +402,15 @@
 
                     } else {
 
-                        teacherIds = $(targetLessonCell).find('.teacher').map(function () {
-                            return $(this).attr('data-teacher');
+                        plannedChairJobIds = $(targetLessonCell).find('.teacher').map(function () {
+                            return $(this).attr('data-chair-job');
                         }).get();
                     }
                 }
 
                 var postData = {
                     groupId: groupId,
-                    teacherIds: teacherIds,
+                    plannedChairJobIds: plannedChairJobIds,
                     dayNumber: dayNumber,
                     classNumber: classNumber
                 }

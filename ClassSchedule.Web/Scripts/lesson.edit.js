@@ -36,19 +36,24 @@
 
         // Избавляемся от избыточных данных
         var postData = {
+            ScheduleId: editLessonViewModel.ScheduleId,
             ClassNumber: editLessonViewModel.ClassNumber,
             DayNumber: editLessonViewModel.DayNumber,
             GroupId: editLessonViewModel.GroupId,
             Lessons: _.map(editLessonViewModel.Lessons, function (lessonDiscipline) {
                 return {
+                    LessonId: lessonDiscipline.LessonId,
+                    ScheduleId: lessonDiscipline.ScheduleId,
                     ChairId: lessonDiscipline.ChairId,
                     DisciplineId: lessonDiscipline.DisciplineId,
                     LessonDetails: _.map(lessonDiscipline.LessonDetails, function (lessonDetail) {
                         return {
+                            LessonDetailId: lessonDetail.LessonDetailId,
+                            LessonId: lessonDiscipline.LessonId,
                             AuditoriumId : lessonDetail.AuditoriumId,
                             HousingId: lessonDetail.HousingId,
                             LessonId: lessonDetail.LessonId,
-                            TeacherId: lessonDetail.TeacherId
+                            PlannedChairJobId: lessonDetail.PlannedChairJobId
                         };
                     }),
                     LessonTypeId: lessonDiscipline.LessonTypeId
@@ -328,7 +333,7 @@ function LessonViewModel(data) {
     var self = this;
     if (!data) {
         self.LessonId = ko.observable(0);
-        self.ScheduleId = ko.observable('');
+        self.ScheduleId = ko.observable(0);
         self.DisciplineId = ko.observable('');
         self.DisciplineName = ko.observable('');
         self.ChairId = ko.observable('');
@@ -374,7 +379,7 @@ function LessonDetailViewModel(data) {
     var self = this;
     if (!data) {
         self.LessonDetailId = ko.observable(0);
-        self.LessonId = ko.observable('');
+        self.LessonId = ko.observable(0);
         self.PlannedChairJobId = ko.observable('');
         self.TeacherLastName = ko.observable('');
         self.TeacherFirstName = ko.observable('');

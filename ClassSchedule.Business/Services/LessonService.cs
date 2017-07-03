@@ -82,7 +82,7 @@ namespace ClassSchedule.Business.Services
                                             && ld.PlannedChairJob.Job != null
                                             && ld.PlannedChairJob.Job.Employee != null
                                             && ld.PlannedChairJob.Job.Employee.Person != null
-                                        ? ld.PlannedChairJob.Job.Employee.Person.LastName : "",
+                                        ? ld.PlannedChairJob.Job.Employee.Person.LastName : ld.PlannedChairJob.PlannedChairJobComment,
                                     TeacherFirstName = ld.PlannedChairJob != null
                                             && ld.PlannedChairJob.Job != null
                                             && ld.PlannedChairJob.Job.Employee != null

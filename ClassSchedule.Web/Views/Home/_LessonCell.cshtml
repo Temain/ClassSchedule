@@ -5,7 +5,7 @@
 <div class="lesson-cell-content">
     @foreach (LessonViewModel discipline in Model)
     {
-        var lessonParts = discipline.LessonDetails.ToList();
+        var lessonDetails = discipline.LessonDetails.ToList();
         var isLection = discipline.LessonTypeId == (int)LessonTypes.Lection;
         <div class="lesson-cell-part">
             <span class="discipline@(isLection ? " red" : "")" data-discipline="@discipline.DisciplineId">@discipline.DisciplineName</span> <span class="lesson-type">@(isLection ? " (лекция)" : "")</span> -
@@ -14,24 +14,24 @@
 
             @for (int i = 0; i < discipline.LessonDetails.Count(); i++)
             {
-                var teacherShortName = ScheduleHelpers.PersonShortName(lessonParts[i].TeacherLastName, lessonParts[i].TeacherFirstName, lessonParts[i].TeacherMiddleName);
-                var teacherHasDowntime = lessonParts[i].TeacherHasDowntime;
+                var teacherShortName = ScheduleHelpers.PersonShortName(lessonDetails[i].TeacherLastName, lessonDetails[i].TeacherFirstName, lessonDetails[i].TeacherMiddleName);
+                var teacherHasDowntime = lessonDetails[i].TeacherHasDowntime;
                 if (!teacherHasDowntime)
                 {
-                    <span class="teacher" data-chair-job="@lessonParts[i].PlannedChairJobId">
+                    <span class="teacher" data-chair-job="@lessonDetails[i].PlannedChairJobId">
                         @teacherShortName
                     </span>
                 }
                 else
                 {
-                    <a class="teacher" data-toggle="popover" data-chair-job="@lessonParts[i].PlannedChairJobId" data-bind="tooltip: { title: '«Окна» в расписании преподавателя', trigger: 'hover' }">
+                    <a class="teacher" data-toggle="popover" data-chair-job="@lessonDetails[i].PlannedChairJobId" data-bind="tooltip: { title: '«Окна» в расписании преподавателя', trigger: 'hover' }">
                         <i class="fa fa-clock-o" aria-hidden="true"></i>
                         @teacherShortName
                     </a>
                 }
 
-                <span class="auditorium" data-auditorium="@lessonParts[i].AuditoriumId">
-                    (@lessonParts[i].AuditoriumName)@(i != lessonParts.Count - 1 ? "," : "")
+                <span class="auditorium" data-auditorium="@lessonDetails[i].AuditoriumId">
+                    (@lessonDetails[i].AuditoriumName)@(i != lessonDetails.Count - 1 ? "," : "")
                 </span>
             }
         </div>
