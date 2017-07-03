@@ -181,7 +181,7 @@ namespace ClassSchedule.Business.Services
             return result;
         }
 
-        public List<TeacherViewModel> GetTeachers(int educationYearId, int? chairId, string query)
+        public List<TeacherViewModel> GetTeachers(int educationYearId, int? chairId, string query = null)
         {
             return _jobService.ActualTeachers(educationYearId, chairId, query);
         }

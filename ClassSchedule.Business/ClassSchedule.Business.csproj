@@ -92,6 +92,7 @@
     <Compile Include="Models\Schedule\LessonViewModel.cs" />
     <Compile Include="Models\Schedule\RefreshCellViewModel.cs" />
     <Compile Include="Models\Schedule\ScheduleViewModel.cs" />
+    <Compile Include="Models\Schedule\ShowScheduleViewModel.cs" />
     <Compile Include="Models\TeacherViewModel.cs" />
     <Compile Include="Models\SelectFlow\FacultyViewModel.cs" />
     <Compile Include="Models\SelectFlow\GroupSetViewModel.cs" />

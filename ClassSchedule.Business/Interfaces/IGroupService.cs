@@ -11,6 +11,6 @@ namespace ClassSchedule.Business.Interfaces
     {
         IQueryable<Group> GetEditableGroups(string userId);
 
-        List<int> GetEditableGroupsIdentifiers(string userId);
+        int[] GetEditableGroupsIdentifiers(string userId);
     }
 }

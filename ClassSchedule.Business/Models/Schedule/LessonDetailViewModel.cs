@@ -8,6 +8,9 @@ namespace ClassSchedule.Business.Models.Schedule
 
         public int? LessonId { get; set; }
 
+        public int AuditoriumId { get; set; }
+        public string AuditoriumName { get; set; }
+
         public int PlannedChairJobId { get; set; }
         public string TeacherLastName { get; set; }
         public string TeacherFirstName { get; set; }
@@ -15,8 +18,6 @@ namespace ClassSchedule.Business.Models.Schedule
         public bool TeacherHasDowntime { get; set; }
 
         public int HousingId { get; set; }
-        public int AuditoriumId { get; set; }
-        public string AuditoriumName { get; set; }
 
         public int? Order { get; set; }
 

@@ -6,6 +6,10 @@ namespace ClassSchedule.Business.Models.Schedule
     {
         public int LessonId { get; set; }
 
+        public int ScheduleId { get; set; }
+
+        public int LessonTypeId { get; set; }
+
         public int DisciplineId { get; set; }
         public string DisciplineName { get; set; }
 
@@ -13,12 +17,8 @@ namespace ClassSchedule.Business.Models.Schedule
         public string ChairName { get; set; }
         public List<TeacherViewModel> ChairTeachers { get; set; } 
 
-        public int DayNumber { get; set; }
-        public int ClassNumber { get; set; }
-        public int LessonTypeId { get; set; }
-
         public int? Order { get; set; }
 
-        public IEnumerable<LessonDetailViewModel> LessonDetails { get; set; } 
+        public List<LessonDetailViewModel> LessonDetails { get; set; } 
     }
 }

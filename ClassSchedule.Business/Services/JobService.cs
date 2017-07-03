@@ -23,7 +23,7 @@ namespace ClassSchedule.Business.Services
         /// <summary>
         /// Преподаватели, работающие в определенном учебном году
         /// </summary>
-        public List<TeacherViewModel> ActualTeachers(int educationYearId, int? chairId, string query = "")
+        public List<TeacherViewModel> ActualTeachers(int educationYearId, int? chairId, string query = null)
         {
             var plannedChairJobs = _context.PlannedChairJobs
                 .Include(x => x.Job.Employee.Person)

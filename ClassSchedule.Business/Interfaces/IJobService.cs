@@ -10,7 +10,7 @@ namespace ClassSchedule.Business.Interfaces
         /// <summary>
         /// Преподаватели, работающие в определенном учебном году
         /// </summary>
-        List<TeacherViewModel> ActualTeachers(int educationYearId, int? chairId, string query = "");
+        List<TeacherViewModel> ActualTeachers(int educationYearId, int? chairId, string query = null);
 
         /// <summary>
         /// Преподаватели, работающие в определенном учебном году

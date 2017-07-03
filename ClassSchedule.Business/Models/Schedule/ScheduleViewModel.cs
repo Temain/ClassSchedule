@@ -5,23 +5,58 @@ namespace ClassSchedule.Business.Models.Schedule
 {
     public class ScheduleViewModel
     {
-        public string FacultyName { get; set; }
+        public int ScheduleId { get; set; }
 
         /// <summary>
-        /// Номер недели (по порядку)
+        /// Номер недели
         /// </summary>
         public int WeekNumber { get; set; }
 
         /// <summary>
-        /// Первый день недели
+        /// Номер дня недели
         /// </summary>
-        public DateTime FirstDayOfWeek { get; set; }
+        public int DayNumber { get; set; }
 
         /// <summary>
-        /// Последний день недели
+        /// Номер пары
         /// </summary>
-        public DateTime LastDayOfWeek { get; set; }
+        public int ClassNumber { get; set; }
 
-        public List<GroupLessonsViewModel> GroupLessons { get; set; }
+        /// <summary>
+        /// Дата занятия
+        /// </summary>
+        public DateTime ClassDate { get; set; }
+
+        /// <summary>
+        /// Группа
+        /// </summary>
+        public int GroupId { get; set; }
+        public string GroupName { get; set; }
+
+        /// <summary>
+        /// Учебный год
+        /// </summary>
+        public int? EducationYearId { get; set; }
+        public string EducationYear { get; set; }
+
+        /// <summary>
+        /// Неактивно
+        /// </summary>
+        public bool IsNotActive { get; set; }
+
+        /// <summary>
+        /// Корпуса
+        /// </summary>
+        public List<HousingViewModel> Housings { get; set; }
+
+        /// <summary>
+        /// Типы занятий
+        /// </summary>
+        public List<LessonTypeViewModel> LessonTypes { get; set; }
+
+        /// <summary>
+        /// Занятия
+        /// </summary>
+        public List<LessonViewModel> Lessons { get; set; }
     }
 }

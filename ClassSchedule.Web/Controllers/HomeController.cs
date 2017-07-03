@@ -44,32 +44,17 @@ namespace ClassSchedule.Web.Controllers
         /// </summary>
         public ActionResult Index()
         {
-            var viewModel = new ScheduleViewModel
+            var groupsIdentifiers = _groupService.GetEditableGroupsIdentifiers(UserProfile.Id);
+            var schedule = _lessonService.GetScheduleForGroups(groupsIdentifiers, UserProfile.EducationYearId ?? 0, UserProfile.WeekNumber, checkDowntimes: true);
+
+            var viewModel = new ShowScheduleViewModel
             {
-                GroupLessons = _lessonService.GetScheduleForGroups(UserProfile.Id),
                 WeekNumber = UserProfile.WeekNumber,
                 FirstDayOfWeek = UserProfile.FirstDayOfWeek,
-                LastDayOfWeek = UserProfile.LastDayOfWeek
+                LastDayOfWeek = UserProfile.LastDayOfWeek,
+                NumberOfGroups = groupsIdentifiers.Length,
+                Schedule = schedule
             };
-
-            // Окна между занятиями у преподавателей
-            var downtimes = _jobService.TeachersDowntime(UserProfile.WeekNumber, maxDiff: 2);
-            foreach (var downtime in downtimes)
-            {
-                var groupId = downtime.GroupId;
-                var dayNumber = downtime.DayNumber;
-                var classNumber = downtime.ClassNumber;
-                // var jobId = downtime.JobId;
-                var plannedChairJobId = downtime.PlannedChairJobId;
-
-                viewModel.GroupLessons
-                    .Where(g => g.GroupId == groupId)
-                    .SelectMany(g => g.Lessons)
-                    .Where(x => x.DayNumber == dayNumber && x.ClassNumber == classNumber)
-                    .SelectMany(x => x.LessonDetails)
-                    .Where(p => p.PlannedChairJobId == plannedChairJobId) 
-                    .All(c => { c.TeacherHasDowntime = true; return true; });
-            }
 
             return View(viewModel);
         }
@@ -77,52 +62,50 @@ namespace ClassSchedule.Web.Controllers
         /// <summary>
         /// Редактирование занятия
         /// </summary>
-        // TODO: Убрать из параметров weekNumber, он есть в профиле пользователя 
         [HttpGet]
-        public ActionResult EditLesson(int groupId, int weekNumber, int dayNumber, int classNumber)
+        public ActionResult EditLesson(int groupId, int dayNumber, int classNumber)
         {
             if (!Request.IsAjaxRequest()) return null;
 
-            var viewModel = new EditLessonViewModel
+            var schedule = _lessonService
+                .GetScheduleForGroups(new int[] { groupId }, UserProfile.WeekNumber, dayNumber, classNumber, checkDowntimes: false)
+                .SingleOrDefault();
+            if (schedule != null)
             {
-                GroupId = groupId,
-                WeekNumber = weekNumber,
-                DayNumber = dayNumber,
-                ClassNumber = classNumber
-            };
-
-            var lessons = GetLessonViewModel(groupId, weekNumber, dayNumber, classNumber, checkDowntimes: false);
-
-            // Типы занятий
-            viewModel.LessonTypes = _dictionaryService.GetLessonTypes();
-
-            // Корпуса
-            viewModel.Housings = _dictionaryService.GetHousingEqualLength();
-
-            if (lessons != null)
-            {
-                foreach (var lesson in lessons)
+                if (schedule.Lessons == null)
                 {
-                    lesson.ChairTeachers = _jobService.ActualTeachers(UserProfile.EducationYearId ?? 0, lesson.ChairId);
+                    schedule.Lessons = new List<LessonViewModel>();
+                }
+
+                schedule.LessonTypes = _dictionaryService.GetLessonTypes();
+                schedule.Housings = _dictionaryService.GetHousingEqualLength();
+
+                foreach (var lesson in schedule.Lessons)
+                {
+                    lesson.ChairTeachers = _dictionaryService.GetTeachers(UserProfile.EducationYearId ?? 0, lesson.ChairId);
  
-                    // Аудитории
                     foreach (var lessonDetail in lesson.LessonDetails)
                     {
                         var chairId = lesson.ChairId;
                         var housingId = lessonDetail.HousingId;
 
-                        lessonDetail.Auditoriums = _dictionaryService.GetAuditoriumWithEmployment(chairId, housingId, weekNumber, dayNumber, classNumber, groupId);
+                        lessonDetail.Auditoriums = _dictionaryService.GetAuditoriumWithEmployment(chairId, housingId, UserProfile.WeekNumber, dayNumber, classNumber, groupId);
                     }
                 }
             }
             else
             {
-                lessons = new List<LessonViewModel>();
-            }
-           
-            viewModel.Lessons = lessons;
+                schedule = new ScheduleViewModel
+                {
+                    GroupId = groupId,
+                    WeekNumber = UserProfile.WeekNumber,
+                    DayNumber = dayNumber,
+                    ClassNumber = classNumber,
+                    Lessons = new List<LessonViewModel> { new LessonViewModel() }
+                };
+            }           
 
-            return Json(viewModel, JsonRequestBehavior.AllowGet);
+            return Json(schedule, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -264,9 +247,15 @@ namespace ClassSchedule.Web.Controllers
                 // Logger.Info("Обновлено занятие : LessonId=" + lesson.LessonId);
             }
 
-            var lessonCell = GetLessonViewModel(viewModel.GroupId, viewModel.WeekNumber, viewModel.DayNumber,
-                viewModel.ClassNumber);
-            return PartialView("_LessonCell", lessonCell);
+            var scheduleViewModel = _lessonService
+               .GetScheduleForGroups(new int[] { viewModel.GroupId }, UserProfile.WeekNumber, viewModel.DayNumber, viewModel.ClassNumber, checkDowntimes: false)
+               .SingleOrDefault();
+            if (scheduleViewModel != null)
+            {
+                return PartialView("_LessonCell", scheduleViewModel.Lessons);
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -316,8 +305,15 @@ namespace ClassSchedule.Web.Controllers
                 Logger.Info("Скопировано занятие : SourceLessonId={0}, TargetLessonId={1}", sourceLesson.LessonId, targetLesson.LessonId);
             }
 
-            var lessonCell = GetLessonViewModel(targetGroupId, weekNumber, targetDayNumber, targetClassNumber);
-            return PartialView("_LessonCell", lessonCell);
+            var scheduleViewModel = _lessonService
+              .GetScheduleForGroups(new int[] { targetGroupId }, weekNumber, targetDayNumber, targetClassNumber, checkDowntimes: false)
+              .SingleOrDefault();
+            if (scheduleViewModel != null)
+            {
+                return PartialView("_LessonCell", scheduleViewModel.Lessons);
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -674,90 +670,6 @@ namespace ClassSchedule.Web.Controllers
                 .Select(x => x.Group);
 
             return groups;
-        }
-
-        // TODO: Убрать из параметров weekNumber, он есть в профиле пользователя
-        public List<LessonViewModel> GetLessonViewModel(int groupId, int weekNumber, int dayNumber, int classNumber, bool checkDowntimes = true)
-        {
-            var schedule = _context.Schedule
-                .Where(x => x.EducationYearId == UserProfile.EducationYearId 
-                    && x.GroupId == groupId && x.WeekNumber == weekNumber
-                    && x.DayNumber == dayNumber && x.ClassNumber == classNumber
-                    && x.DeletedAt == null)
-                .SingleOrDefault();
-            if (schedule == null)
-            {
-                return null;
-            }
-
-            var lessons = _context.Lessons
-                .Where(x => x.ScheduleId == schedule.ScheduleId && x.DeletedAt == null)
-                .GroupBy(x => new
-                {
-                    x.DisciplineId,
-                    x.Discipline.DisciplineName.Name,
-                    x.Discipline.ChairId,
-                    x.Discipline.Chair.DivisionName,
-                    x.LessonTypeId
-                })
-                .Select(x => new LessonViewModel
-                {
-                    DisciplineId = x.Key.DisciplineId,
-                    DisciplineName = x.Key.Name,
-                    ChairId = x.Key.ChairId,
-                    ChairName = x.Key.DivisionName,
-                    LessonTypeId = x.Key.LessonTypeId ?? 0,
-                    LessonDetails = x.SelectMany(d => d.LessonDetails)
-                        .Select(y => new LessonDetailViewModel
-                        {
-                            LessonId = y.LessonId,
-                            AuditoriumId = y.AuditoriumId,
-                            AuditoriumName = y.Auditorium.AuditoriumNumber + y.Auditorium.Housing.Abbreviation + ".",
-                            HousingId = y.Auditorium.HousingId,
-                            PlannedChairJobId = y.PlannedChairJobId ?? 0,
-                            TeacherLastName = y.PlannedChairJob != null
-                                    && y.PlannedChairJob.Job != null
-                                    && y.PlannedChairJob.Job.Employee != null
-                                    && y.PlannedChairJob.Job.Employee.Person != null
-                                ? y.PlannedChairJob.Job.Employee.Person.LastName : "",
-                            TeacherFirstName = y.PlannedChairJob != null
-                                    && y.PlannedChairJob.Job != null
-                                    && y.PlannedChairJob.Job.Employee != null
-                                    && y.PlannedChairJob.Job.Employee.Person != null
-                                ? y.PlannedChairJob.Job.Employee.Person.FirstName : "",
-                            TeacherMiddleName = y.PlannedChairJob != null
-                                    && y.PlannedChairJob.Job != null
-                                    && y.PlannedChairJob.Job.Employee != null
-                                    && y.PlannedChairJob.Job.Employee.Person != null
-                                ? y.PlannedChairJob.Job.Employee.Person.MiddleName : ""
-                        })
-                })
-                .ToList();
-
-            // Проверка на окна у преподавателей
-            if (checkDowntimes)
-            {
-                var lessonTeacherIds = lessons
-                    .SelectMany(x => x.LessonDetails)
-                    .Select(p => p.PlannedChairJobId) // PlannedChairJobId !!!!!!!!!!!!!!!!!!!!!!!!!!
-                    .Distinct();
-
-                foreach (var teacherId in lessonTeacherIds)
-                {
-                    var teacherDowntime = _jobService.TeachersDowntime(UserProfile.WeekNumber, teacherId, maxDiff: 2)
-                        .Where(x => x.DayNumber == dayNumber && x.ClassNumber == classNumber)
-                        .Distinct();
-
-                    if (teacherDowntime.Any())
-                    {
-                        lessons.SelectMany(x => x.LessonDetails)
-                           .Where(p => p.PlannedChairJobId == teacherId) // PlannedChairJobId !!!!!!!!!!!!!!!!!!!!!!!!!!
-                           .All(c => { c.TeacherHasDowntime = true; return true; });
-                    }
-                }
-            }
-
-            return lessons;
         }
 
         public static string RenderPartialToString(Controller controller, string partialViewName, object model, ViewDataDictionary viewData, TempDataDictionary tempData)

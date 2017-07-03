@@ -5,6 +5,6 @@ namespace ClassSchedule.Business.Interfaces
 {
     public interface ILessonService
     {
-        List<GroupLessonsViewModel> GetScheduleForGroups(string userId);
+        List<ScheduleViewModel> GetScheduleForGroups(int[] groupsIds, int educationYearId, int weekNumber, int? dayNumber = null, int? classNumber = null, bool checkDowntimes = false);
     }
 }

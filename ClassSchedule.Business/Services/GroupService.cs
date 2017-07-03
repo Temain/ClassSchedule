@@ -33,14 +33,14 @@ namespace ClassSchedule.Business.Services
         /// <summary>
         /// Возвращает список идентификаторов групп, для которых редактируется расписание
         /// </summary>
-        public List<int> GetEditableGroupsIdentifiers(string userId)
+        public int[] GetEditableGroupsIdentifiers(string userId)
         {
             var groups = _context.GroupSets
                 .Where(x => x.IsSelected && x.ApplicationUserId == userId)
                 .SelectMany(x => x.GroupSetGroups)
                 .OrderBy(x => x.Order)
                 .Select(x => x.Group.GroupId)
-                .ToList();
+                .ToArray();
 
             return groups;
         }
