@@ -113,6 +113,7 @@ namespace ClassSchedule.Business.Services
                 }
             }
 
+            var index = 0;
             var groups = _context.Groups
                 .Where(x => groupsIds.Contains(x.GroupId) && x.DeletedAt == null)
                 .ToList();
@@ -121,7 +122,7 @@ namespace ClassSchedule.Business.Services
                 var contains = scheduleViewModel.Any(s => s.GroupId == group.GroupId);
                 if (!contains)
                 {
-                    scheduleViewModel.Add(new ScheduleViewModel
+                    scheduleViewModel.Insert(index, new ScheduleViewModel
                     {
                         GroupId = group.GroupId,
                         GroupName = group.GroupName,
@@ -131,6 +132,8 @@ namespace ClassSchedule.Business.Services
                         ClassNumber = classNumber ?? 0
                     });
                 }
+
+                index++;
             }
 
             return scheduleViewModel;

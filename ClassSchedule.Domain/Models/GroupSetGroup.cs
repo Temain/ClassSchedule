@@ -22,7 +22,7 @@ namespace ClassSchedule.Domain.Models
 
         [Key, Column(Order = 1)]
         public int GroupId { get; set; }
-        public virtual Group Group { get; set; }
+        public Group Group { get; set; }
 
         public int Order { get; set; }
 

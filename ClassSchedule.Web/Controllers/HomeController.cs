@@ -261,56 +261,88 @@ namespace ClassSchedule.Web.Controllers
         /// <summary>
         /// Копирование занятия
         /// </summary>
-        // TODO: Убрать из параметров weekNumber, он есть в профиле пользователя 
         [HttpPost]
-        public ActionResult CopyLesson(int weekNumber, int sourceGroupId, int sourceDayNumber, int sourceClassNumber,
+        public ActionResult CopyLesson(int sourceGroupId, int sourceDayNumber, int sourceClassNumber,
             int targetGroupId, int targetDayNumber, int targetClassNumber)
         {
-            var targetLessons = _context.Lessons
-                .Where(x => x.Schedule.GroupId == targetGroupId && x.Schedule.WeekNumber == weekNumber
-                    && x.Schedule.DayNumber == targetDayNumber && x.Schedule.ClassNumber == targetClassNumber
-                    && x.DeletedAt == null);
-            foreach (var targetLesson in targetLessons)
+            // Чистка старого занятия
+            var targetSchedule = _context.Schedule
+                .Include(x => x.Lessons.Select(l => l.LessonDetails))
+                .Where(x => x.EducationYearId == UserProfile.EducationYearId && x.GroupId == targetGroupId
+                    && x.WeekNumber == UserProfile.WeekNumber && x.DayNumber == targetDayNumber && x.ClassNumber == targetClassNumber
+                    && x.DeletedAt == null)
+                .SingleOrDefault();
+            if (targetSchedule != null)
             {
-                targetLesson.DeletedAt = DateTime.Now;
-                _context.SaveChanges();
-            }
-
-            var sourceLessons = _context.Lessons
-                .Where(x => x.Schedule.GroupId == sourceGroupId && x.Schedule.WeekNumber == weekNumber
-                    && x.Schedule.DayNumber == sourceDayNumber && x.Schedule.ClassNumber == sourceClassNumber
-                    && x.DeletedAt == null);
-            foreach (var sourceLesson in sourceLessons)
-            {
-                var targetClassDate = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart,
-                    weekNumber, targetDayNumber);
-                var targetLesson = new Lesson
+                foreach (var targetLesson in targetSchedule.Lessons.Where(x => x.DeletedAt == null))
                 {
-                    // AuditoriumId = sourceLesson.AuditoriumId,
-                    DisciplineId = sourceLesson.DisciplineId,
-                    // GroupId = targetGroupId,
-                    // JobId = sourceLesson.JobId,
-                    LessonTypeId = sourceLesson.LessonTypeId,
-                    // WeekNumber = weekNumber,
-                    // DayNumber = targetDayNumber,
-                    // ClassNumber = targetClassNumber,
-                    // ClassDate = targetClassDate,
-                    CreatedAt = DateTime.Now,
-                    LessonGuid = Guid.NewGuid()
+                    targetLesson.DeletedAt = DateTime.Now;
+
+                    foreach (var targetLessonDetail in targetLesson.LessonDetails.Where(x => x.DeletedAt == null))
+                    {
+                        targetLessonDetail.DeletedAt = DateTime.Now;
+                    }
+
+                    _context.SaveChanges();
+                }
+            }
+            else
+            {
+                targetSchedule = new Schedule
+                {
+                    EducationYearId = UserProfile.EducationYearId,
+                    GroupId = targetGroupId,
+                    WeekNumber = UserProfile.WeekNumber,
+                    DayNumber = targetDayNumber,
+                    ClassNumber = targetClassNumber,
+                    ClassDate = ScheduleHelpers.DateOfLesson(UserProfile.EducationYear.DateStart, UserProfile.WeekNumber, targetDayNumber),
+                    Lessons = new List<Lesson>()
                 };
 
-                _context.Lessons.Add(targetLesson);
-                _context.SaveChanges();
-
-                Logger.Info("Скопировано занятие : SourceLessonId={0}, TargetLessonId={1}", sourceLesson.LessonId, targetLesson.LessonId);
+                _context.Schedule.Add(targetSchedule);
             }
 
-            var scheduleViewModel = _lessonService
-              .GetScheduleForGroups(new int[] { targetGroupId }, weekNumber, targetDayNumber, targetClassNumber, checkDowntimes: false)
-              .SingleOrDefault();
-            if (scheduleViewModel != null)
+            // Копирование
+            var sourceSchedule = _context.Schedule
+                .Include(x => x.Lessons.Select(l => l.LessonDetails))
+                .Where(x => x.EducationYearId == UserProfile.EducationYearId && x.GroupId == sourceGroupId
+                    && x.WeekNumber == UserProfile.WeekNumber && x.DayNumber == sourceDayNumber && x.ClassNumber == sourceClassNumber
+                    && x.DeletedAt == null)
+                .SingleOrDefault();
+            if (sourceSchedule != null)
             {
-                return PartialView("_LessonCell", scheduleViewModel.Lessons);
+                foreach (var sourceLesson in sourceSchedule.Lessons.Where(x => x.DeletedAt == null))
+                {
+                    var targetLesson = new Lesson
+                    {
+                        DisciplineId = sourceLesson.DisciplineId,
+                        LessonTypeId = sourceLesson.LessonTypeId,
+                        Order = sourceLesson.Order,
+                        LessonDetails = sourceLesson.LessonDetails
+                            .Where(x => x.DeletedAt == null)
+                            .Select(d => new LessonDetail
+                            {
+                                PlannedChairJobId = d.PlannedChairJobId,
+                                AuditoriumId = d.AuditoriumId,
+                                Order = d.Order
+                            })
+                            .ToList()
+                    };
+
+                    targetSchedule.Lessons.Add(targetLesson);
+                }
+
+                _context.SaveChanges();
+
+                // Logger.Info("Скопировано занятие : SourceLessonId={0}, TargetLessonId={1}", sourceLesson.LessonId, targetLesson.LessonId);
+
+                var scheduleViewModel = _lessonService
+                  .GetScheduleForGroups(new int[] { targetGroupId }, UserProfile.EducationYearId ?? 0, UserProfile.WeekNumber, targetDayNumber, targetClassNumber, checkDowntimes: true)
+                  .SingleOrDefault();
+                if (scheduleViewModel != null)
+                {
+                    return PartialView("_LessonCell", scheduleViewModel.Lessons);
+                }
             }
 
             return null;
@@ -466,7 +498,10 @@ namespace ClassSchedule.Web.Controllers
             {
                 viewModel.EducationFormId = (int)EducationForms.FullTime;
 
-                var groupSets = UserProfile.GroupSets
+                var groupSets = _context.GroupSets
+                    .Include(x => x.GroupSetGroups.Select(g => g.Group))
+                    .Where(x => x.ApplicationUserId == UserProfile.Id)
+                    .ToList()
                     .Select(x => new GroupSetViewModel
                     {
                         GroupSetId = x.GroupSetId,

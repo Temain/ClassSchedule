@@ -26,7 +26,7 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         [ForeignKey("Faculty")]
         public int FacultyId { get; set; }
-        public Faculty Faculty { get; set; }
+        public virtual Faculty Faculty { get; set; }
              
         /// <summary>
         /// Наименование курса

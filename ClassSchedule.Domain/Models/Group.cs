@@ -24,8 +24,9 @@ namespace ClassSchedule.Domain.Models
         /// <summary>
         /// Курс, на котором обучается группа
         /// </summary>
+        [ForeignKey("Course")]
         public int CourseId { get; set; }
-        public Course Course { get; set; }
+        public virtual Course Course { get; set; }
 
         /// <summary>
         /// Код подразделения из 1С

@@ -43,6 +43,6 @@ namespace ClassSchedule.Domain.Models
         /// </summary>
         public DateTime? DeletedAt { get; set; }
 
-        public virtual List<GroupSetGroup> GroupSetGroups { get; set; } 
+        public List<GroupSetGroup> GroupSetGroups { get; set; } 
     }
 }

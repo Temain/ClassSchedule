@@ -20,10 +20,9 @@ namespace ClassSchedule.Business.Services
         /// </summary>
         public IQueryable<Group> GetEditableGroups(string userId)
         {
-            var groups = _context.GroupSets
-                .Include(x => x.GroupSetGroups.Select(g => g.Group.Course))
-                .Where(x => x.IsSelected && x.ApplicationUserId == userId)
-                .SelectMany(x => x.GroupSetGroups)
+            var groups = _context.GroupSetGroups
+                .Include(x => x.Group.Course.Faculty)
+                .Where(x => x.GroupSet.IsSelected && x.GroupSet.ApplicationUserId == userId)
                 .OrderBy(x => x.Order)
                 .Select(x => x.Group);
 
