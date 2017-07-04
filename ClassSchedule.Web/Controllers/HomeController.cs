@@ -248,7 +248,7 @@ namespace ClassSchedule.Web.Controllers
             }
 
             var scheduleViewModel = _lessonService
-               .GetScheduleForGroups(new int[] { viewModel.GroupId }, UserProfile.EducationYearId ?? 0, UserProfile.WeekNumber, viewModel.DayNumber, viewModel.ClassNumber, checkDowntimes: false)
+               .GetScheduleForGroups(new int[] { viewModel.GroupId }, UserProfile.EducationYearId ?? 0, UserProfile.WeekNumber, viewModel.DayNumber, viewModel.ClassNumber, checkDowntimes: true)
                .SingleOrDefault();
             if (scheduleViewModel != null)
             {
@@ -573,10 +573,10 @@ namespace ClassSchedule.Web.Controllers
                 };
 
                 // Необходим график учебного процесса чтобы узнать количество недель
-                var courseSchedules = new List<CourseSchedule>();
-                foreach (var group in groups)
-                {
-                    var courseNumber = group.Course.CourseNumber;
+                //var courseSchedules = new List<CourseSchedule>();
+                //foreach (var group in groups)
+                //{
+                    // var courseNumber = group.Course.CourseNumber;
                     //var academicPlan = group.BaseProgramOfEducation.AcademicPlans
                     //    .OrderByDescending(d => d.UploadedAt)
                     //    .FirstOrDefault();
@@ -588,7 +588,7 @@ namespace ClassSchedule.Web.Controllers
 
                     //    courseSchedules.Add(courseSchedule);
                     //}
-                }
+                //}
 
                 // Если для всех групп загружен учебный план
                 //if (groups.Count == courseSchedules.Count && showWeekType)
@@ -658,20 +658,6 @@ namespace ClassSchedule.Web.Controllers
         }
 
         #region Вспомогательные методы
-
-        /// <summary>
-        /// Возвращает список групп, для которых редактируется расписание
-        /// </summary>
-        public IQueryable<Group> GetEditableGroups()
-        {
-            var groups = _context.GroupSets
-                .Where(x => x.IsSelected && x.ApplicationUserId == UserProfile.Id)
-                .SelectMany(x => x.GroupSetGroups)
-                .OrderBy(x => x.Order)
-                .Select(x => x.Group);
-
-            return groups;
-        }
 
         public static string RenderPartialToString(Controller controller, string partialViewName, object model, ViewDataDictionary viewData, TempDataDictionary tempData)
         {

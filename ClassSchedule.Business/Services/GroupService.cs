@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using System.Data.Entity;
 using ClassSchedule.Business.Interfaces;
 using ClassSchedule.Domain.Context;
 using ClassSchedule.Domain.Models;
@@ -22,6 +21,7 @@ namespace ClassSchedule.Business.Services
         public IQueryable<Group> GetEditableGroups(string userId)
         {
             var groups = _context.GroupSets
+                .Include(x => x.GroupSetGroups.Select(g => g.Group.Course))
                 .Where(x => x.IsSelected && x.ApplicationUserId == userId)
                 .SelectMany(x => x.GroupSetGroups)
                 .OrderBy(x => x.Order)

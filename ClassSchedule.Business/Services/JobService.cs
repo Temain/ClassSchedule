@@ -23,10 +23,11 @@ namespace ClassSchedule.Business.Services
         /// <summary>
         /// Преподаватели, работающие в определенном учебном году
         /// </summary>
-        public List<TeacherViewModel> ActualTeachers(int educationYearId, int? chairId, string query = null)
+        public List<TeacherViewModel> ActualTeachers(int educationYearId, int? chairId, string query = null, int? take = null)
         {
             var plannedChairJobs = _context.PlannedChairJobs
                 .Include(x => x.Job.Employee.Person)
+                .Include(x => x.Job.Position.PositionReal)
                 .Include(x => x.Job.EmploymentType)
                 .Where(x => x.EducationYearId == educationYearId && x.DeletedAt == null
                     && x.Job.DeletedAt == null && x.Job.Employee.DeletedAt == null & x.Job.Employee.Person.DeletedAt == null);
@@ -41,6 +42,11 @@ namespace ClassSchedule.Business.Services
                 plannedChairJobs = plannedChairJobs.Where(x => x.Job.Employee.Person.LastName.ToLower().Contains(query.ToLower()));
             }
 
+            if (take != null && take != 0)
+            {
+                plannedChairJobs = plannedChairJobs.Take(take ?? 0);
+            }
+
             var teachers = plannedChairJobs
                 .ToList()
                 .Select(x => new TeacherViewModel
@@ -48,7 +54,7 @@ namespace ClassSchedule.Business.Services
                     PlannedChairJobId = x.PlannedChairJobId,
                     JobId = x.JobId ?? 0,
                     PersonId = x.Job != null ? x.Job.Employee.PersonId : 0,
-                    TeacherFullName = x.Job != null ? x.Job.Employee.Person.FullName : x.PlannedChairJobComment,
+                    TeacherFullName = x.Job != null ? x.Job.Employee.Person.FullName + " (" + x.Job.Position.PositionReal.PositionName + ", усл.: " + x.EmploymentType.EmploymentTypeName + ")" : x.PlannedChairJobComment,
                 })
                 .OrderBy(x => x.TeacherFullName)
                 .ToList();
@@ -155,7 +161,7 @@ namespace ClassSchedule.Business.Services
                 )
 
                 SELECT 
-                  COALESCE(w2.PersonId, 0), w2.PlannedChairJobId, w2.GroupId, 
+                  COALESCE(w2.PersonId, 0) AS PersonId, w2.PlannedChairJobId, w2.GroupId, 
                   w2.DayNumber, w2.ClassNumber, t0.ClassDiff 
                 FROM WeekLessons w2
                 LEFT JOIN (
@@ -192,30 +198,33 @@ namespace ClassSchedule.Business.Services
 
             var query = String.Format(@"
                 WITH WeekLessons AS (
-                  SELECT j.JobId, ls.GroupId, e.PersonId, ls.WeekNumber, ls.DayNumber, ls.ClassNumber, 
-                    ROW_NUMBER() OVER(PARTITION BY e.PersonId, ls.WeekNumber, ls.DayNumber ORDER BY e.PersonId, ls.DayNumber, ls.ClassNumber) AS Drn,
-                    ROW_NUMBER() OVER(PARTITION BY ls.WeekNumber ORDER BY e.PersonId, ls.WeekNumber, ls.DayNumber, ls.ClassNumber) AS Crn
-                  FROM Lesson ls
-                  LEFT JOIN Job j ON ls.JobId = j.JobId
+                  SELECT ld.PlannedChairJobId, s.WeekNumber, s.GroupId, e.PersonId, s.DayNumber, s.ClassNumber,
+                    ROW_NUMBER() OVER(PARTITION BY e.PersonId, s.WeekNumber, s.DayNumber ORDER BY e.PersonId, s.DayNumber, s.ClassNumber) AS Drn,
+                    ROW_NUMBER() OVER(PARTITION BY s.WeekNumber ORDER BY e.PersonId, s.WeekNumber, s.DayNumber, s.ClassNumber) AS Crn
+                  FROM LessonDetail ld
+                  LEFT JOIN Lesson l ON ld.LessonId = l.LessonId
+                  LEFT JOIN Schedule s ON l.ScheduleId = s.ScheduleId
+                  LEFT JOIN PlannedChairJob pcj ON ld.PlannedChairJobId = pcj.PlannedChairJobId
+                  LEFT JOIN Job j ON pcj.JobId = j.JobId
                   LEFT JOIN Employee e ON j.EmployeeId = e.EmployeeId
-                  WHERE ls.JobId = CASE WHEN @teacherId <> 0 THEN @teacherId ELSE ls.JobId END
-                    AND ls.WeekNumber IN ({0})
-                    AND ls.DeletedAt IS NULL
+                  WHERE s.WeekNumber IN (1,2)
+                    AND ld.PlannedChairJobId = CASE WHEN @chairJobId <> 0 THEN @chairJobId ELSE ld.PlannedChairJobId END
+                    AND s.DeletedAt IS NULL AND ld.DeletedAt IS NULL AND l.DeletedAt IS NULL
                 )
 
                 SELECT 
-                  w2.PersonId, w2.JobId, w2.GroupId, w2.WeekNumber,
+                  COALESCE(w2.PersonId, 0) AS PersonId, w2.PlannedChairJobId, w2.GroupId, w2.WeekNumber,
                   w2.DayNumber, w2.ClassNumber, t0.ClassDiff 
                 FROM WeekLessons w2
                 LEFT JOIN (
-                  SELECT w.PersonId, w.JobId, w.GroupId, w.WeekNumber, w.DayNumber, w.ClassNumber, /*prev.*,*/ 
+                  SELECT w.PersonId, w.PlannedChairJobId, w.GroupId, w.WeekNumber, w.DayNumber, w.ClassNumber, /*prev.*,*/ 
                     w.ClassNumber - prev.ClassNumber - 1 AS ClassDiff
                   FROM WeekLessons w
-                  LEFT JOIN WeekLessons prev ON prev.PersonId = w.PersonId AND prev.WeekNumber = w.WeekNumber AND prev.Drn = w.Drn - 1 AND prev.Crn = w.Crn - 1
+                  LEFT JOIN WeekLessons prev ON (prev.PersonId = w.PersonId OR prev.PlannedChairJobId = w.PlannedChairJobId) AND prev.WeekNumber = w.WeekNumber AND prev.Drn = w.Drn - 1 AND prev.Crn = w.Crn - 1
                   WHERE w.ClassNumber - prev.ClassNumber - 1 >= @maxDiff
-                ) AS t0 ON w2.PersonId = t0.PersonId AND w2.WeekNumber = t0.WeekNumber AND w2.DayNumber = t0.DayNumber 
+                ) AS t0 ON (w2.PersonId = t0.PersonId OR w2.PlannedChairJobId = t0.PlannedChairJobId) AND w2.WeekNumber = t0.WeekNumber AND w2.DayNumber = t0.DayNumber 
                   AND (w2.ClassNumber = t0.ClassNumber OR w2.ClassNumber = t0.ClassNumber - t0.ClassDiff - 1)
-                WHERE t0.PersonId IS NOT NULL
+                WHERE t0.ClassDiff IS NOT NULL
                 ORDER BY w2.PersonId, w2.DayNumber, w2.ClassNumber;", weeksStr);
             var downtimes = _context.Database.SqlQuery<TeacherDowntimeQueryResult>(query, parameters).ToList();
 

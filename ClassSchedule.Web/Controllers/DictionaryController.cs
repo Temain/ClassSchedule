@@ -138,11 +138,11 @@ namespace ClassSchedule.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Teacher(int? chairId, string query)
+        public ActionResult Teacher(int? chairId, string query, int? take = null)
         {
             if (Request.IsAjaxRequest())
             {
-                var teachers = _dictionaryService.GetTeachers(UserProfile.EducationYearId ?? 0, chairId, query);
+                var teachers = _dictionaryService.GetTeachers(UserProfile.EducationYearId ?? 0, chairId, query, take);
 
                 return Json(teachers);
             }
@@ -190,11 +190,11 @@ namespace ClassSchedule.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Auditorium(int? chairId, int? housingId, string query, bool shortResult = false)
+        public ActionResult Auditorium(int? chairId, int? housingId, string query, bool shortResult = false, int? take = null)
         {
             if (Request.IsAjaxRequest())
             {
-                var auditoriums = _dictionaryService.GetAuditoriums(chairId, housingId, query, shortResult);
+                var auditoriums = _dictionaryService.GetAuditoriums(chairId, housingId, query, shortResult, take);
 
                 return Json(auditoriums);
             }

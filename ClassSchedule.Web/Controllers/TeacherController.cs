@@ -19,7 +19,6 @@ namespace ClassSchedule.Web.Controllers
             _jobService = jobService;
         }
 
-        // Переписать
         public ActionResult Schedule(int chairJobId, int dayNumber)
         {
             var teacher = _context.PlannedChairJobs
@@ -108,26 +107,38 @@ namespace ClassSchedule.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Schedule(int teacherId, int[] weekNumbers)
+        public ActionResult Schedule(int chairJobId, int[] weekNumbers)
         {
-            var teacher = _context.Jobs
-                .Where(x => x.JobId == teacherId)
+            var teacher = _context.PlannedChairJobs
+                .Include(x => x.Job.Employee)
+                .Where(x => x.EducationYearId == UserProfile.EducationYearId && x.PlannedChairJobId == chairJobId)
                 .SingleOrDefault();
             if (teacher == null)
             {
                 return Content("Error");
             }
 
-            // Stopwatch stopWatch = new Stopwatch();
-            // stopWatch.Start();
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
 
-            var personId = teacher.Employee.PersonId;
-            var schedule = _context.LessonDetails
-                .Where(x => x.PlannedChairJob.Job.Employee.PersonId == personId
-                    && weekNumbers.Contains(x.Lesson.Schedule.WeekNumber) && x.DeletedAt == null)
-                .OrderBy(n => n.Lesson.Schedule.WeekNumber)
-                .ThenBy(n => n.Lesson.Schedule.DayNumber)
-                .ThenBy(n => n.Lesson.Schedule.ClassNumber)
+            var lessonDetails = _context.LessonDetails
+                .Where(x => x.PlannedChairJobId == teacher.PlannedChairJobId
+                    && x.Lesson.Schedule.EducationYearId == UserProfile.EducationYearId
+                    && x.Lesson.Schedule.WeekNumber == UserProfile.WeekNumber
+                    && x.DeletedAt == null && x.Lesson.DeletedAt == null && x.Lesson.Schedule.DeletedAt == null);
+
+            if (teacher.Job != null && teacher.Job.Employee != null)
+            {
+                var personId = teacher.Job.Employee.PersonId;
+                lessonDetails = _context.LessonDetails
+                    .Where(x => x.PlannedChairJob.Job.Employee.PersonId == personId
+                        && x.Lesson.Schedule.EducationYearId == UserProfile.EducationYearId
+                        && x.Lesson.Schedule.WeekNumber == UserProfile.WeekNumber
+                        && x.DeletedAt == null && x.Lesson.DeletedAt == null && x.Lesson.Schedule.DeletedAt == null);
+            }
+
+            var schedule = lessonDetails
+                .OrderBy(n => n.Lesson.Schedule.ClassNumber)
                 .GroupBy(g => new { g.Lesson.Schedule.WeekNumber, g.Lesson.Schedule.DayNumber, g.Lesson.Schedule.ClassNumber })
                 .Select(x => new TeacherLessonViewModel
                 {
@@ -135,30 +146,24 @@ namespace ClassSchedule.Web.Controllers
                     DayNumber = x.Key.DayNumber,
                     ClassNumber = x.Key.ClassNumber,
                     Disciplines = x.GroupBy(g => new { g.Lesson.DisciplineId, g.Lesson.Discipline.DisciplineName.Name, g.Lesson.LessonTypeId })
-                            .Select(d => new TeacherDisciplineViewModel
-                            {
-                                DisciplineId = d.Key.DisciplineId,
-                                DisciplineName = d.Key.Name,
-                                IsLection = d.Key.LessonTypeId == (int) LessonTypes.Lection,
-                                Auditoriums = d
-                                    .GroupBy(g => new
-                                    {
-                                        g.AuditoriumId,
-                                        AuditoriumNumber = g.Auditorium.AuditoriumNumber + g.Auditorium.Housing.Abbreviation
-                                    })
-                                    .Select(a => new TeacherDisciplineAuditoriumViewModel
-                                    {
-                                        AuditoriumId = a.Key.AuditoriumId,
-                                        AuditoriumNumber = a.Key.AuditoriumNumber,
-                                        Groups = x.Select(gr => gr.Lesson.Schedule.Group.GroupName)
-                                    })
-                            })
-                }
-                )
+                        .Select(d => new TeacherDisciplineViewModel
+                        {
+                            DisciplineId = d.Key.DisciplineId,
+                            DisciplineName = d.Key.Name,
+                            IsLection = d.Key.LessonTypeId == (int)LessonTypes.Lection,
+                            Auditoriums = d.GroupBy(g => new { g.AuditoriumId, AuditoriumNumber = g.Auditorium.AuditoriumNumber + g.Auditorium.Housing.Abbreviation })
+                                .Select(a => new TeacherDisciplineAuditoriumViewModel
+                                {
+                                    AuditoriumId = a.Key.AuditoriumId,
+                                    AuditoriumNumber = a.Key.AuditoriumNumber,
+                                    Groups = a.Select(ag => ag.Lesson.Schedule.Group.GroupName)
+                                })
+                        })
+                })
                 .ToList();
 
             // Окна в расписании преподавателя
-            var teacherDowntimeAll = _jobService.TeachersDowntime(weekNumbers, teacherId, maxDiff: 2)
+            var teacherDowntimeAll = _jobService.TeachersDowntime(weekNumbers, chairJobId, maxDiff: 2)
                 .Select(x => new
                 {
                     x.WeekNumber,

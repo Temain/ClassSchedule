@@ -787,6 +787,7 @@ html { overflow-y: auto !important; }
 
 .teacher-daily-schedule .discipline {
     border-right: 1px #ccc solid;
+    min-width: 200px;
 }
 
 .teacher-daily-schedule .auditorium {

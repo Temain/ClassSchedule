@@ -18,11 +18,11 @@ namespace ClassSchedule.Business.Interfaces
         List<EducationDirectionViewModel> GetEducationDirections();
         List<EducationProfileViewModel> GetEducationProfiles(int educationFormId, int educationDirectionId, int yearStart);
         List<DisciplineViewModel> GetDisciplines(string query, int? chairId);
-        List<TeacherViewModel> GetTeachers(int educationYearId, int? chairId, string query = null);
+        List<TeacherViewModel> GetTeachers(int educationYearId, int? chairId, string query = null, int? take = null);
         List<TeacherViewModel> GetTeacherWithEmployment(int educationYearId, int chairId, int weekNumber, int dayNumber, int classNumber, int groupId);
         List<HousingViewModel> GetHousings();
         List<HousingViewModel> GetHousingEqualLength();
-        List<AuditoriumViewModel> GetAuditoriums(int? chairId, int? housingId, string query, bool shortResult = false);
+        List<AuditoriumViewModel> GetAuditoriums(int? chairId, int? housingId, string query, bool shortResult = false, int? take = null);
         List<AuditoriumViewModel> GetAuditoriumWithEmployment(int chairId, int housingId, int weekNumber, int dayNumber, int classNumber, int groupId);
         List<LessonTypeViewModel> GetLessonTypes();
     }

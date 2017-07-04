@@ -23,7 +23,7 @@
             <div class="col-md-8">
                 <div class="form-group col-md-9">
                     <input type="text" class="teacher form-control" data-bind="typeahead: $data, textInput: TeacherFullName" data-provide="typeahead" placeholder="Введите Ф.И.О. преподавателя" autocomplete="off" value="" />
-                    <input type="hidden" class="person-id" data-bind="value: TeacherId" />
+                    <input type="hidden" class="person-id" data-bind="value: PlannedChairJobId" />
                     <div class="text-danger msg-text" style="display: none">
                         <span class="glyphicon glyphicon glyphicon-exclamation-sign form-control-feedback"></span>Преподаватель не найден
                     </div>
@@ -52,7 +52,7 @@
             </div>
             <div class="col-md-8">
                 <div class="col-md-3">
-                    <button class="btn btn-success btn-lg" data-bind="click: loadTeacherLessons, enable: $root.TeacherId() > 0"><i class="fa fa-check-square" aria-hidden="true"></i> Выбрать</button>
+                    <button class="btn btn-success btn-lg" data-bind="click: loadTeacherLessons, enable: $root.PlannedChairJobId() > 0"><i class="fa fa-check-square" aria-hidden="true"></i> Выбрать</button>
                 </div>
             </div>
         </div>
@@ -85,7 +85,7 @@
         function MainViewModel() {
             var self = this;
 
-            self.TeacherId = ko.observable('');
+            self.PlannedChairJobId = ko.observable('');
             self.TeacherFullName = ko.observable('');
             self.TeacherLessons = ko.observableArray([]);
             self.SelectedOddWeek = ko.observable('');
@@ -93,7 +93,7 @@
             self.ChangeWeekViewModel = ko.observable(new ChangeWeekViewModel());
 
             self.loadTeacherLessons = function() {
-                $.post('/Teacher/Schedule', { teacherId: self.TeacherId(), weekNumbers: [self.SelectedOddWeek(), self.SelectedEvenWeek() ] }, function (data) {
+                $.post('/Teacher/Schedule', { chairJobId: self.PlannedChairJobId(), weekNumbers: [self.SelectedOddWeek(), self.SelectedEvenWeek()] }, function (data) {
                     //self.TeacherLessons(data);
                     $('#schedule').html(data);
                 });
@@ -130,7 +130,7 @@
                 var teacherFullNames = [];
 
                 var searchTeacher = _.debounce(function (query, process) {
-                    $.post('/Dictionary/Teacher', { query: query }, function (data) {
+                    $.post('/Dictionary/Teacher', { query: query, take: 20 }, function (data) {
 
                         teachers = {};
                         teacherFullNames = [];
@@ -139,11 +139,11 @@
 
                         _.each(data, function (item, ix, list) {
                             if (_.contains(teachers, item.TeacherFullName)) {
-                                item.TeacherFullName = item.TeacherFullName + ' #' + item.TeacherId;
+                                item.TeacherFullName = item.TeacherFullName + ' #' + item.PlannedChairJobId;
                             }
                             teacherFullNames.push(item.TeacherFullName);
                             teachers[item.TeacherFullName] = {
-                                TeacherId: item.TeacherId,
+                                PlannedChairJobId: item.PlannedChairJobId,
                                 TeacherFullName: item.TeacherFullName
                             };
                         });
@@ -151,7 +151,7 @@
                         var labelsCount = Object.keys(teacherFullNames).length;
                         if (labelsCount === 0) {
                             $element.closest(".teacher").siblings('.msg-text').slideDown(250);
-                            elementData.TeacherId("");
+                            elementData.PlannedChairJobId("");
                         } else {
                             $element.closest(".teacher").siblings('.msg-text').slideUp(250);
                         }
@@ -169,18 +169,18 @@
                     },
                     items: 15,
                     updater: function (item) {
-                        elementData.TeacherId(teachers[item].TeacherId);
+                        elementData.PlannedChairJobId(teachers[item].PlannedChairJobId);
 
                         return item;
                     },
                     matcher: function (item) {
                         if (item.toLowerCase().indexOf(this.query.trim().toLowerCase()) !== -1) {
-                            elementData.TeacherId(teachers[item].TeacherId);
+                            elementData.PlannedChairJobId(teachers[item].PlannedChairJobId);
 
                             return item;
                         }
 
-                        elementData.TeacherId("");
+                        elementData.PlannedChairJobId("");
                         return this.query;
                     },
                     highlighter: function (item) {

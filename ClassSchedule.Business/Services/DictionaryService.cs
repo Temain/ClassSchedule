@@ -181,9 +181,9 @@ namespace ClassSchedule.Business.Services
             return result;
         }
 
-        public List<TeacherViewModel> GetTeachers(int educationYearId, int? chairId, string query = null)
+        public List<TeacherViewModel> GetTeachers(int educationYearId, int? chairId, string query = null, int? take = null)
         {
-            return _jobService.ActualTeachers(educationYearId, chairId, query);
+            return _jobService.ActualTeachers(educationYearId, chairId, query, take);
         }
 
         public List<TeacherViewModel> GetTeacherWithEmployment(int educationYearId, int chairId, int weekNumber, int dayNumber, int classNumber, int groupId)
@@ -220,7 +220,7 @@ namespace ClassSchedule.Business.Services
             return result;
         }
 
-        public List<AuditoriumViewModel> GetAuditoriums(int? chairId, int? housingId, string query, bool shortResult = false)
+        public List<AuditoriumViewModel> GetAuditoriums(int? chairId, int? housingId, string query, bool shortResult = false, int? take = null)
         {
             var auditoriums = _context.Auditoriums
                 .Where(x => x.DeletedAt == null)
@@ -241,6 +241,11 @@ namespace ClassSchedule.Business.Services
             if (query != null)
             {
                 auditoriums = auditoriums.Where(x => x.AuditoriumNumber.StartsWith(query));
+            }
+
+            if (take != null && take != 0)
+            {
+                auditoriums = auditoriums.Take(take ?? 0);
             }
 
             List<AuditoriumViewModel> result;
