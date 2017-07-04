@@ -74,6 +74,7 @@
     <Compile Include="Models\EducationFormViewModel.cs" />
     <Compile Include="Models\EducationLevelViewModel.cs" />
     <Compile Include="Models\EducationProfileViewModel.cs" />
+    <Compile Include="Models\EducationYearViewModel.cs" />
     <Compile Include="Models\GroupInfo\ChartIntervalViewModel.cs" />
     <Compile Include="Models\GroupInfo\ChartSeriesViewModel.cs" />
     <Compile Include="Models\GroupInfo\DisciplineSemesterPlanViewModel.cs" />

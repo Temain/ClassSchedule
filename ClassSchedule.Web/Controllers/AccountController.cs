@@ -171,6 +171,16 @@ namespace ClassSchedule.Web.Controllers
             return RedirectToAction("ChangePassword", "Account");
         }
 
+        [HttpGet]
+        public ActionResult ChangeYear(int yearId)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            user.EducationYearId = yearId;
+            UserManager.Update(user);
+
+            return RedirectToAction("Index", "Home");
+        }
+
         ////
         //// GET: /Account/VerifyCode
         //[AllowAnonymous]

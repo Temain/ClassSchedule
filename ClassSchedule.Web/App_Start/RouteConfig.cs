@@ -14,6 +14,12 @@ namespace ClassSchedule.Web
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+                "ChangeYear",
+                "Account/ChangeYear/{yearId}",
+                new { controller = "Account", action = "ChangeYear" }
+           );
+
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }

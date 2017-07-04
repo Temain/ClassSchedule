@@ -123,8 +123,8 @@ namespace ClassSchedule.Business.Services
             var query = @"
                 WITH WeekLessons AS (
                   SELECT ld.PlannedChairJobId, s.GroupId, e.PersonId, s.DayNumber, s.ClassNumber,
-                    ROW_NUMBER() OVER(PARTITION BY e.PersonId, s.DayNumber ORDER BY e.PersonId, s.DayNumber, s.ClassNumber) AS Drn,
-                    ROW_NUMBER() OVER(ORDER BY e.PersonId, s.DayNumber, s.ClassNumber) AS Crn
+                    ROW_NUMBER() OVER(PARTITION BY CASE WHEN e.PersonId IS NULL THEN ld.PlannedChairJobId ELSE e.PersonId END, s.DayNumber ORDER BY CASE WHEN e.PersonId IS NULL THEN ld.PlannedChairJobId ELSE e.PersonId END, s.DayNumber, s.ClassNumber) AS Drn,
+                    ROW_NUMBER() OVER(ORDER BY CASE WHEN e.PersonId IS NULL THEN ld.PlannedChairJobId ELSE e.PersonId END, s.DayNumber, s.ClassNumber) AS Crn
                   FROM LessonDetail ld
                   LEFT JOIN Lesson l ON ld.LessonId = l.LessonId
                   LEFT JOIN Schedule s ON l.ScheduleId = s.ScheduleId
@@ -199,8 +199,8 @@ namespace ClassSchedule.Business.Services
             var query = String.Format(@"
                 WITH WeekLessons AS (
                   SELECT ld.PlannedChairJobId, s.WeekNumber, s.GroupId, e.PersonId, s.DayNumber, s.ClassNumber,
-                    ROW_NUMBER() OVER(PARTITION BY e.PersonId, s.WeekNumber, s.DayNumber ORDER BY e.PersonId, s.DayNumber, s.ClassNumber) AS Drn,
-                    ROW_NUMBER() OVER(PARTITION BY s.WeekNumber ORDER BY e.PersonId, s.WeekNumber, s.DayNumber, s.ClassNumber) AS Crn
+                    ROW_NUMBER() OVER(PARTITION BY CASE WHEN e.PersonId IS NULL THEN ld.PlannedChairJobId ELSE e.PersonId END, s.WeekNumber, s.DayNumber ORDER BY CASE WHEN e.PersonId IS NULL THEN ld.PlannedChairJobId ELSE e.PersonId END, s.DayNumber, s.ClassNumber) AS Drn,
+                    ROW_NUMBER() OVER(PARTITION BY s.WeekNumber ORDER BY CASE WHEN e.PersonId IS NULL THEN ld.PlannedChairJobId ELSE e.PersonId END, s.WeekNumber, s.DayNumber, s.ClassNumber) AS Crn
                   FROM LessonDetail ld
                   LEFT JOIN Lesson l ON ld.LessonId = l.LessonId
                   LEFT JOIN Schedule s ON l.ScheduleId = s.ScheduleId

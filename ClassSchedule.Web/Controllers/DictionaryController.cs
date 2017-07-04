@@ -142,7 +142,7 @@ namespace ClassSchedule.Web.Controllers
         {
             if (Request.IsAjaxRequest())
             {
-                var teachers = _dictionaryService.GetTeachers(UserProfile.EducationYearId ?? 0, chairId, query, take);
+                var teachers = _dictionaryService.GetTeachers(UserProfile.EducationYearId, chairId, query, take);
 
                 return Json(teachers);
             }
@@ -155,7 +155,7 @@ namespace ClassSchedule.Web.Controllers
         {
             if (Request.IsAjaxRequest())
             {
-                var chairTeachers = _dictionaryService.GetTeacherWithEmployment(UserProfile.EducationYearId ?? 0, chairId, weekNumber, dayNumber, classNumber, groupId);
+                var chairTeachers = _dictionaryService.GetTeacherWithEmployment(UserProfile.EducationYearId, chairId, weekNumber, dayNumber, classNumber, groupId);
 
                 return Json(chairTeachers);
             }
@@ -210,6 +210,21 @@ namespace ClassSchedule.Web.Controllers
                 var auditoriums = _dictionaryService.GetAuditoriumWithEmployment(chairId, housingId, weekNumber, dayNumber, classNumber, groupId);
 
                 return Json(auditoriums);
+            }
+
+            return null;
+        }
+
+        [HttpPost]
+        public ActionResult EducationYear()
+        {
+            if (Request.IsAjaxRequest())
+            {
+                var educationYear = _dictionaryService.GetEducationYears()
+                    .Select(x => { x.IsSelectedYear = x.EducationYearId == UserProfile.EducationYearId; return x; })
+                    .ToList();
+
+                return Json(educationYear);
             }
 
             return null;

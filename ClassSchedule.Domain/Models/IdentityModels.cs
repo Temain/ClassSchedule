@@ -74,7 +74,7 @@ namespace ClassSchedule.Domain.Models
         /// <summary>
         /// Учебный год
         /// </summary>
-        public int? EducationYearId { get; set; }
+        public int EducationYearId { get; set; }
         public virtual EducationYear EducationYear { get; set; }
 
         /// <summary>

@@ -20,13 +20,11 @@
 
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <a href="#" id="account-year" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                             <i class="fa fa-calendar fa-32px"></i><br>
-                            <span class="nav-icon-text"></span>2015/2016 Учебный год<span class="caret"></span>
+                            <span class="nav-icon-text"></span>2017/2018 Учебный год@*<span class="caret"></span>*@
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">2016/2017</a></li>
-                        </ul>
+                        @*<ul class="dropdown-menu" id="years"></ul>*@
                     </li>
                     <li class="navbar-divider"></li>
                     <li class="dropdown">
@@ -35,8 +33,8 @@
                             <span class="nav-icon-text"></span>Профиль [@(ViewBag.UserName)] <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="@Url.Action("Index", "AcademicPlan")"><span class="fa fa-upload"></span> Загрузка учебных планов</a></li>
-                            <li role="separator" class="divider"></li>
+                            @*<li><a href="@Url.Action("Index", "AcademicPlan")"><span class="fa fa-upload"></span> Загрузка учебных планов</a></li>
+                            <li role="separator" class="divider"></li>*@
                             <li><a href="javascript:document.getElementById('logoutForm').submit()"><span class="fa fa-power-off"></span> Выйти</a></li>
                         </ul>
                     </li>

@@ -45,7 +45,7 @@ namespace ClassSchedule.Web.Controllers
         public ActionResult Index()
         {
             var groupsIdentifiers = _groupService.GetEditableGroupsIdentifiers(UserProfile.Id);
-            var schedule = _lessonService.GetScheduleForGroups(groupsIdentifiers, UserProfile.EducationYearId ?? 0, UserProfile.WeekNumber, checkDowntimes: true);
+            var schedule = _lessonService.GetScheduleForGroups(groupsIdentifiers, UserProfile.EducationYearId, UserProfile.WeekNumber, checkDowntimes: true);
 
             var viewModel = new ShowScheduleViewModel
             {
@@ -68,7 +68,7 @@ namespace ClassSchedule.Web.Controllers
             if (!Request.IsAjaxRequest()) return null;
 
             var schedule = _lessonService
-                .GetScheduleForGroups(new int[] { groupId }, UserProfile.EducationYearId ?? 0, UserProfile.WeekNumber, dayNumber, classNumber, checkDowntimes: false)
+                .GetScheduleForGroups(new int[] { groupId }, UserProfile.EducationYearId, UserProfile.WeekNumber, dayNumber, classNumber, checkDowntimes: false)
                 .SingleOrDefault();
             if (schedule != null)
             {
@@ -82,7 +82,7 @@ namespace ClassSchedule.Web.Controllers
 
                 foreach (var lesson in schedule.Lessons)
                 {
-                    lesson.ChairTeachers = _dictionaryService.GetTeachers(UserProfile.EducationYearId ?? 0, lesson.ChairId);
+                    lesson.ChairTeachers = _dictionaryService.GetTeachers(UserProfile.EducationYearId, lesson.ChairId);
  
                     foreach (var lessonDetail in lesson.LessonDetails)
                     {
@@ -111,20 +111,18 @@ namespace ClassSchedule.Web.Controllers
         [HttpPost]
         public ActionResult EditLesson(EditLessonViewModel viewModel)
         {
-            if (!Request.IsAjaxRequest())
-            {
-                return new HttpStatusCodeResult(404);
-            }
+            if (!Request.IsAjaxRequest()) return new HttpNotFoundResult();
 
             if (!ModelState.IsValid)
             {
-                var allErrors = ViewData.ModelState.Values.SelectMany(modelState => modelState.Errors).ToList();
-                foreach (ModelError error in allErrors)
-                {
-                    var message = error.ErrorMessage;
-                }
+                var errors = ModelState
+                    .Where(x => x.Value.Errors.Count > 0)
+                    .ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                    );
 
-                return null;
+                return new JsonErrorResult(HttpStatusCode.BadRequest) { Data = errors };
             }
 
             var scheduleState = EntityState.Modified;
@@ -212,6 +210,8 @@ namespace ClassSchedule.Web.Controllers
                 // Удаление занятия(ий)
                 var viewModelLessonIds = viewModel.Lessons.Select(x => x.LessonId);
                 var lessonsForDelete = _context.Lessons
+                    .Include(x => x.Schedule)
+                    .Include(x => x.LessonDetails)
                     .Where(x => x.Schedule.EducationYearId == UserProfile.EducationYearId 
                         && x.Schedule.GroupId == viewModel.GroupId && x.Schedule.WeekNumber == viewModel.WeekNumber
                         && x.Schedule.DayNumber == viewModel.DayNumber && x.Schedule.ClassNumber == viewModel.ClassNumber
@@ -220,6 +220,12 @@ namespace ClassSchedule.Web.Controllers
                 foreach (var lesson in lessonsForDelete)
                 {
                     lesson.DeletedAt = DateTime.Now;
+
+                    var lessonDetails = lesson.LessonDetails.Where(x => x.DeletedAt == null);
+                    foreach (var lessonDetail in lessonDetails)
+                    {
+                        lessonDetail.DeletedAt = DateTime.Now;
+                    }
 
                     Logger.Info("Занятие помечено как удалённое : LessonId=" + lesson.LessonId);
                 }
@@ -248,7 +254,7 @@ namespace ClassSchedule.Web.Controllers
             }
 
             var scheduleViewModel = _lessonService
-               .GetScheduleForGroups(new int[] { viewModel.GroupId }, UserProfile.EducationYearId ?? 0, UserProfile.WeekNumber, viewModel.DayNumber, viewModel.ClassNumber, checkDowntimes: true)
+               .GetScheduleForGroups(new int[] { viewModel.GroupId }, UserProfile.EducationYearId, UserProfile.WeekNumber, viewModel.DayNumber, viewModel.ClassNumber, checkDowntimes: true)
                .SingleOrDefault();
             if (scheduleViewModel != null)
             {
@@ -274,11 +280,13 @@ namespace ClassSchedule.Web.Controllers
                 .SingleOrDefault();
             if (targetSchedule != null)
             {
-                foreach (var targetLesson in targetSchedule.Lessons.Where(x => x.DeletedAt == null))
+                var targetLessons = targetSchedule.Lessons.Where(x => x.DeletedAt == null);
+                foreach (var targetLesson in targetLessons)
                 {
                     targetLesson.DeletedAt = DateTime.Now;
 
-                    foreach (var targetLessonDetail in targetLesson.LessonDetails.Where(x => x.DeletedAt == null))
+                    var targetLessonDetails = targetLesson.LessonDetails.Where(x => x.DeletedAt == null);
+                    foreach (var targetLessonDetail in targetLessonDetails)
                     {
                         targetLessonDetail.DeletedAt = DateTime.Now;
                     }
@@ -337,7 +345,7 @@ namespace ClassSchedule.Web.Controllers
                 // Logger.Info("Скопировано занятие : SourceLessonId={0}, TargetLessonId={1}", sourceLesson.LessonId, targetLesson.LessonId);
 
                 var scheduleViewModel = _lessonService
-                  .GetScheduleForGroups(new int[] { targetGroupId }, UserProfile.EducationYearId ?? 0, UserProfile.WeekNumber, targetDayNumber, targetClassNumber, checkDowntimes: true)
+                  .GetScheduleForGroups(new int[] { targetGroupId }, UserProfile.EducationYearId, UserProfile.WeekNumber, targetDayNumber, targetClassNumber, checkDowntimes: true)
                   .SingleOrDefault();
                 if (scheduleViewModel != null)
                 {
@@ -356,6 +364,7 @@ namespace ClassSchedule.Web.Controllers
         {
             var lessons = _context.Lessons
                 .Include(x => x.Schedule)
+                .Include(x => x.LessonDetails)
                 .Where(x => x.Schedule.GroupId == groupId && x.Schedule.EducationYearId == UserProfile.EducationYearId
                     && x.Schedule.WeekNumber == UserProfile.WeekNumber && x.Schedule.DayNumber == dayNumber && x.Schedule.ClassNumber == classNumber
                     && x.DeletedAt == null)
@@ -363,10 +372,17 @@ namespace ClassSchedule.Web.Controllers
             foreach (var lesson in lessons)
             {
                 lesson.DeletedAt = DateTime.Now;
-                _context.SaveChanges();
 
-                Logger.Info("Занятие помечено как удалённое : LessonId=" + lesson.LessonId);
+                var lessonDetails = lesson.LessonDetails.Where(x => x.DeletedAt == null);
+                foreach (var lessonDetail in lessonDetails)
+                {
+                    lessonDetail.DeletedAt = DateTime.Now;
+                }
             }
+
+            _context.SaveChanges();
+
+            // Logger.Info("Занятие помечено как удалённое : LessonId=" + lesson.LessonId);
 
             return null;
         }
@@ -396,7 +412,7 @@ namespace ClassSchedule.Web.Controllers
                 var targetGroupId = lessonDetail.Lesson.Schedule.GroupId;
                 var targetClassNumber = lessonDetail.Lesson.Schedule.ClassNumber;
                 var dayScheduleViewModel = _lessonService
-                   .GetScheduleForGroups(new int[] { targetGroupId }, UserProfile.EducationYearId ?? 0, UserProfile.WeekNumber, dayNumber, targetClassNumber, checkDowntimes: true)
+                   .GetScheduleForGroups(new int[] { targetGroupId }, UserProfile.EducationYearId, UserProfile.WeekNumber, dayNumber, targetClassNumber, checkDowntimes: true)
                    .SingleOrDefault();
 
                 var lessonCellContent = RenderPartialToString(this, "_LessonCell", dayScheduleViewModel.Lessons, ViewData, TempData);
@@ -606,6 +622,14 @@ namespace ClassSchedule.Web.Controllers
                     CurrentWeekEndDate = ScheduleHelpers.DateOfLesson(yearStartDate, currentWeek, 7).ToString("dd.MM.yyyy"),
                     Weeks = new List<WeekViewModel>()
                 };
+
+                if (currentWeek <= 0)
+                {
+                    currentWeek = 0;
+
+                    viewModel.CurrentWeekStartDate = string.Format("Текущая дата вне {0} учебного года", UserProfile.EducationYear.EducationYearName);
+                    viewModel.CurrentWeekEndDate = "";
+                }
 
                 // Необходим график учебного процесса чтобы узнать количество недель
                 //var courseSchedules = new List<CourseSchedule>();

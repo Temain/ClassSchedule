@@ -25,5 +25,6 @@ namespace ClassSchedule.Business.Interfaces
         List<AuditoriumViewModel> GetAuditoriums(int? chairId, int? housingId, string query, bool shortResult = false, int? take = null);
         List<AuditoriumViewModel> GetAuditoriumWithEmployment(int chairId, int housingId, int weekNumber, int dayNumber, int classNumber, int groupId);
         List<LessonTypeViewModel> GetLessonTypes();
+        List<EducationYearViewModel> GetEducationYears();
     }
 }

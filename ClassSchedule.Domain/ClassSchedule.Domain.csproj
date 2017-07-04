@@ -79,6 +79,10 @@
     <Compile Include="Migrations\201706301048553_AddFieldsToCourseTable.Designer.cs">
       <DependentUpon>201706301048553_AddFieldsToCourseTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201707041235067_MakeEducationYearInUserRequired.cs" />
+    <Compile Include="Migrations\201707041235067_MakeEducationYearInUserRequired.Designer.cs">
+      <DependentUpon>201707041235067_MakeEducationYearInUserRequired.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AcademicDegree.cs" />
     <Compile Include="Models\AcademicDegreeLevel.cs" />
@@ -150,6 +154,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201706301048553_AddFieldsToCourseTable.resx">
       <DependentUpon>201706301048553_AddFieldsToCourseTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707041235067_MakeEducationYearInUserRequired.resx">
+      <DependentUpon>201707041235067_MakeEducationYearInUserRequired.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

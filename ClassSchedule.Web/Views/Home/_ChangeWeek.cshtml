@@ -12,7 +12,14 @@
                 <div class="row modal-container">
                     <dl class="dl-horizontal">
                         <dt>Сегодня</dt>
+
+                        <!-- ko if: CurrentWeekEndDate() -->
                         <dd data-bind="text: CurrentWeek() + ' неделя (' + CurrentWeekStartDate() + 'г. - ' + CurrentWeekEndDate() + 'г.)'"></dd>
+                        <!-- /ko -->
+                        <!-- ko if: !CurrentWeekEndDate() -->
+                        <dd data-bind="text: CurrentWeekStartDate()"></dd>
+                        <!-- /ko -->
+
                         <dt>Редактируется</dt>
                         <dd data-bind="text: EditedWeek() + ' неделя (' + EditedWeekStartDate() + 'г. - ' + EditedWeekEndDate() + 'г.)'"></dd>                       
                     </dl>

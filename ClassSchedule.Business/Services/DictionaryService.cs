@@ -311,5 +311,19 @@ namespace ClassSchedule.Business.Services
 
             return lessonTypes;
         }
+
+        public List<EducationYearViewModel> GetEducationYears()
+        {
+            var educationYears = _context.EducationYears
+                .Where(x => x.DeletedAt == null)
+                .Select(x => new EducationYearViewModel
+                {
+                    EducationYearId = x.EducationYearId,
+                    EducationYearName = x.EducationYearName
+                })
+                .ToList();
+
+            return educationYears;
+        }
     }
 }
