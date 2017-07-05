@@ -208,26 +208,44 @@ namespace ClassSchedule.Web.Controllers
                 }
 
                 // Удаление занятия(ий)
-                var viewModelLessonIds = viewModel.Lessons.Select(x => x.LessonId);
-                var lessonsForDelete = _context.Lessons
+                var lessons = _context.Lessons
                     .Include(x => x.Schedule)
                     .Include(x => x.LessonDetails)
-                    .Where(x => x.Schedule.EducationYearId == UserProfile.EducationYearId 
+                    .Where(x => x.Schedule.EducationYearId == UserProfile.EducationYearId
                         && x.Schedule.GroupId == viewModel.GroupId && x.Schedule.WeekNumber == viewModel.WeekNumber
                         && x.Schedule.DayNumber == viewModel.DayNumber && x.Schedule.ClassNumber == viewModel.ClassNumber
-                        && x.DeletedAt == null)
-                    .Where(x => !viewModelLessonIds.Contains(x.LessonId));
-                foreach (var lesson in lessonsForDelete)
+                        && x.DeletedAt == null && x.Schedule.DeletedAt == null);
+                foreach (var lesson in lessons)
                 {
-                    lesson.DeletedAt = DateTime.Now;
-
-                    var lessonDetails = lesson.LessonDetails.Where(x => x.DeletedAt == null);
-                    foreach (var lessonDetail in lessonDetails)
+                    if (lesson.LessonId != 0)
                     {
-                        lessonDetail.DeletedAt = DateTime.Now;
+                        var lessonViewModel = viewModel.Lessons.SingleOrDefault(x => x.LessonId == lesson.LessonId);
+                        if (lessonViewModel == null)
+                        {
+                            lesson.DeletedAt = DateTime.Now;
+
+                            foreach (var lessonDetail in lesson.LessonDetails)
+                            {
+                                lessonDetail.DeletedAt = DateTime.Now;
+                            }
+                        }
+                        else
+                        {
+                            foreach (var lessonDetail in lesson.LessonDetails)
+                            {
+                                if (lessonDetail.LessonDetailId != 0)
+                                {
+                                    var lessonDetailViewModel = lessonViewModel.LessonDetails.SingleOrDefault(x => x.LessonDetailId == lessonDetail.LessonDetailId);
+                                    if (lessonDetailViewModel == null)
+                                    {
+                                        lessonDetail.DeletedAt = DateTime.Now;
+                                    }
+                                }
+                            }
+                        }
                     }
 
-                    Logger.Info("Занятие помечено как удалённое : LessonId=" + lesson.LessonId);
+                    // Logger.Info("Занятие помечено как удалённое : LessonId=" + lesson.LessonId);
                 }
 
                 if (scheduleState == EntityState.Added)
