@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Linq;
 using ClassSchedule.Business.Interfaces;
+using ClassSchedule.Business.Models;
 using ClassSchedule.Domain.Context;
 using ClassSchedule.Domain.Models.QueryResults;
 
@@ -21,12 +22,12 @@ namespace ClassSchedule.Business.Services
         /// Если аудитория занята, в поле Employment будет список групп
         /// Длинна AuditoriumName + ' ' + AuditoriumTypeName равна во всех строках (для выпадающего списка)
         /// </summary>
-        public List<AuditoriumQueryResult> AuditoriumWithEmployment(int? chairId, int housingId, int weekNumber,
-            int dayNumber, int classNumber, int currentGroupId)
+        public List<AuditoriumViewModel>AuditoriumWithEmployment(int housingId, int weekNumber,
+            int dayNumber, int classNumber, int currentGroupId, int? chairId = null)
         {
             var parameters = new object[]
             {
-                new SqlParameter("@chairId", chairId),
+                new SqlParameter("@chairId", chairId ?? 0),
                 new SqlParameter("@housingId", housingId),
                 new SqlParameter("@weekNumber", weekNumber),
                 new SqlParameter("@dayNumber", dayNumber),
@@ -95,7 +96,7 @@ namespace ClassSchedule.Business.Services
                     ELSE 2
                   END, 
                   aud.AuditoriumNumber;";
-            var auditoriums = _context.Database.SqlQuery<AuditoriumQueryResult>(query, parameters).ToList();
+            var auditoriums = _context.Database.SqlQuery<AuditoriumViewModel>(query, parameters).ToList();
 
             return auditoriums;
         }

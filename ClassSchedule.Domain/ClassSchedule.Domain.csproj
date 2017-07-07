@@ -83,6 +83,34 @@
     <Compile Include="Migrations\201707041235067_MakeEducationYearInUserRequired.Designer.cs">
       <DependentUpon>201707041235067_MakeEducationYearInUserRequired.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201707050744384_AddDisciplinePlannedChairJobsTable.cs" />
+    <Compile Include="Migrations\201707050744384_AddDisciplinePlannedChairJobsTable.Designer.cs">
+      <DependentUpon>201707050744384_AddDisciplinePlannedChairJobsTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201707050811327_AddStudyLoadCalculationStringName.cs" />
+    <Compile Include="Migrations\201707050811327_AddStudyLoadCalculationStringName.Designer.cs">
+      <DependentUpon>201707050811327_AddStudyLoadCalculationStringName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201707050851556_MakeDisciplineNameNotRequired.cs" />
+    <Compile Include="Migrations\201707050851556_MakeDisciplineNameNotRequired.Designer.cs">
+      <DependentUpon>201707050851556_MakeDisciplineNameNotRequired.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201707050854559_RemoveFieldsFromDiscipline.cs" />
+    <Compile Include="Migrations\201707050854559_RemoveFieldsFromDiscipline.Designer.cs">
+      <DependentUpon>201707050854559_RemoveFieldsFromDiscipline.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201707050859407_MakeEducationSemesterInDisciplineNotRequired.cs" />
+    <Compile Include="Migrations\201707050859407_MakeEducationSemesterInDisciplineNotRequired.Designer.cs">
+      <DependentUpon>201707050859407_MakeEducationSemesterInDisciplineNotRequired.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201707050907229_AddStudyLoadCalculationStringid.cs" />
+    <Compile Include="Migrations\201707050907229_AddStudyLoadCalculationStringid.Designer.cs">
+      <DependentUpon>201707050907229_AddStudyLoadCalculationStringid.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201707051138181_RemakeRelationDisciplinePlannedChairJobs.cs" />
+    <Compile Include="Migrations\201707051138181_RemakeRelationDisciplinePlannedChairJobs.Designer.cs">
+      <DependentUpon>201707051138181_RemakeRelationDisciplinePlannedChairJobs.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AcademicDegree.cs" />
     <Compile Include="Models\AcademicDegreeLevel.cs" />
@@ -96,6 +124,7 @@
     <Compile Include="Models\Course.cs" />
     <Compile Include="Models\Discipline.cs" />
     <Compile Include="Models\DisciplineName.cs" />
+    <Compile Include="Models\DisciplinePlannedChairJob.cs" />
     <Compile Include="Models\EducationSemester.cs" />
     <Compile Include="Models\EducationYear.cs" />
     <Compile Include="Models\Employee.cs" />
@@ -157,6 +186,27 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201707041235067_MakeEducationYearInUserRequired.resx">
       <DependentUpon>201707041235067_MakeEducationYearInUserRequired.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707050744384_AddDisciplinePlannedChairJobsTable.resx">
+      <DependentUpon>201707050744384_AddDisciplinePlannedChairJobsTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707050811327_AddStudyLoadCalculationStringName.resx">
+      <DependentUpon>201707050811327_AddStudyLoadCalculationStringName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707050851556_MakeDisciplineNameNotRequired.resx">
+      <DependentUpon>201707050851556_MakeDisciplineNameNotRequired.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707050854559_RemoveFieldsFromDiscipline.resx">
+      <DependentUpon>201707050854559_RemoveFieldsFromDiscipline.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707050859407_MakeEducationSemesterInDisciplineNotRequired.resx">
+      <DependentUpon>201707050859407_MakeEducationSemesterInDisciplineNotRequired.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707050907229_AddStudyLoadCalculationStringid.resx">
+      <DependentUpon>201707050907229_AddStudyLoadCalculationStringid.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707051138181_RemakeRelationDisciplinePlannedChairJobs.resx">
+      <DependentUpon>201707051138181_RemakeRelationDisciplinePlannedChairJobs.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

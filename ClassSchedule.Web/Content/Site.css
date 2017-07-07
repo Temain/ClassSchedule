@@ -698,6 +698,10 @@ html { overflow-y: auto !important; }
     /*color: black;*/
 }
 
+.discipline ul > li > a .text {
+    width: 100%;
+}
+
 /* Кастомный шаблон элемента тайпахеда 
 -------------------------------------------------*/
  .typeahead.dropdown-menu {

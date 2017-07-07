@@ -125,11 +125,11 @@ namespace ClassSchedule.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Discipline(string query, int? chairId)
+        public ActionResult Discipline(int groupId, int? chairId)
         {
             if (Request.IsAjaxRequest())
             {
-                var disciplines = _dictionaryService.GetDisciplines(query, chairId);
+                var disciplines = _dictionaryService.GetDisciplines(groupId, chairId);
 
                 return Json(disciplines);
             }
@@ -151,11 +151,11 @@ namespace ClassSchedule.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult TeacherWithEmployment(int chairId, int weekNumber, int dayNumber, int classNumber, int groupId)
+        public ActionResult TeacherWithEmployment(int weekNumber, int dayNumber, int classNumber, int groupId, int? disciplineId, int? chairId)
         {
             if (Request.IsAjaxRequest())
             {
-                var chairTeachers = _dictionaryService.GetTeacherWithEmployment(UserProfile.EducationYearId, chairId, weekNumber, dayNumber, classNumber, groupId);
+                var chairTeachers = _dictionaryService.GetTeacherWithEmployment(UserProfile.EducationYearId, weekNumber, dayNumber, classNumber, groupId, disciplineId, chairId);
 
                 return Json(chairTeachers);
             }
@@ -207,7 +207,7 @@ namespace ClassSchedule.Web.Controllers
         {
             if (Request.IsAjaxRequest())
             {
-                var auditoriums = _dictionaryService.GetAuditoriumWithEmployment(chairId, housingId, weekNumber, dayNumber, classNumber, groupId);
+                var auditoriums = _dictionaryService.GetAuditoriumWithEmployment(housingId, weekNumber, dayNumber, classNumber, groupId, chairId);
 
                 return Json(auditoriums);
             }

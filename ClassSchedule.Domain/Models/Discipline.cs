@@ -21,10 +21,22 @@ namespace ClassSchedule.Domain.Models
         public Guid? DisciplineGuid { get; set; }
 
         /// <summary>
+        /// Наименование нагрузки из учебных планов
+        /// Используется если дисциплина была добалена напрямую в нагрузку
+        /// </summary>
+        public string StudyLoadCalculationStringName { get; set; }
+
+        /// <summary>
+        /// Идентификатор нагрузки из учебных планов
+        /// </summary>
+        public Guid? StudyLoadCalculationStringGuid { get; set; }
+        public int? StudyLoadCalculationStringId { get; set; }
+
+        /// <summary>
         /// Название дисциплины через справочник наименований дисциплин
         /// </summary>
         [ForeignKey("DisciplineName")]
-        public int DisciplineNameId { get; set; }
+        public int? DisciplineNameId { get; set; }
         public DisciplineName DisciplineName { get; set; }
 
         /// <summary>
@@ -38,7 +50,7 @@ namespace ClassSchedule.Domain.Models
         /// Семестр, в котором читается дисциплина
         /// </summary>
         [ForeignKey("EducationSemester")]
-        public int EducationSemesterId { get; set; }
+        public int? EducationSemesterId { get; set; }
         public EducationSemester EducationSemester { get; set; }
 
         /// <summary>
@@ -90,21 +102,6 @@ namespace ClassSchedule.Domain.Models
         public Chair Chair { get; set; }
 
         /// <summary>
-        /// Если дисциплина помечена, она в расчетах не участвует (факультативы, например)
-        /// </summary>
-        public bool IsExludedFromCalculation { get; set; }
-
-        /// <summary>
-        /// Для нескольких дисциплин по выбору вторую помечаем
-        /// </summary>
-        public bool IsFakeDiscipline { get; set; }
-
-        /// <summary>
-        /// Контейнер (группа) дисциплин
-        /// </summary>
-        public bool IsHeadOfSectionDiscipline { get; set; }
-
-        /// <summary>
         /// Дата последнего обновления записи
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
@@ -133,5 +130,10 @@ namespace ClassSchedule.Domain.Models
         /// Занятия по этой дисциплине
         /// </summary>
         public List<Lesson> Lessons { get; set; }
+
+        /// <summary>
+        /// Преподаватели из распределения нагрузки на кафедре
+        /// </summary>
+        public List<DisciplinePlannedChairJob> PlannedChairJobs { get; set; }
     }
 }

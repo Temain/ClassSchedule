@@ -69,5 +69,10 @@ namespace ClassSchedule.Domain.Models
         /// Занятия, которые проводит данный преподаватель
         /// </summary>
         public List<LessonDetail> LessonDetails { get; set; }
+
+        /// <summary>
+        /// Дисциплины из распределения нагрузки на кафедре
+        /// </summary>
+        public List<DisciplinePlannedChairJob> Disciplines { get; set; }
     }
 }

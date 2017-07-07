@@ -115,6 +115,23 @@
             </div>
         </div>
 
+        <div class="row inline-block-lg">
+            <div class="col-md-4">
+                <div class="title">Выбранные группы</div>
+                <br />
+                <div class="subtitle"></div>
+            </div>
+            <div class="col-md-8">
+                <div class="form-group col-md-12" data-bind="foreach: ViewData().SelectedGroups">
+                    <label class="cbx-label">
+                        <span data-bind="text: GroupName"></span>
+                        <span class="order" data-bind="text: Order"></span>
+                        &nbsp;&nbsp;&nbsp;
+                    </label>
+                </div>
+            </div>
+        </div>
+
         <div class="row inline-block mrgbtm36">
             <div class="col-md-4">
             </div>
@@ -225,6 +242,12 @@
                             };
 
                             ko.mapping.fromJS(data.Groups, groupMapping, viewData.Groups);
+
+                            ko.utils.arrayForEach(viewData.Groups(), function (group) {
+                                if (group.IsSelected()) {
+                                    viewData.SelectedGroups.push(group);
+                                }
+                            });
                         }
                     });
                 }
@@ -244,7 +267,7 @@
                 var viewData = self.ViewData();
                 viewData.EducationLevelId('');
                 viewData.CourseNumber('');
-                viewData.Groups([]);
+                // viewData.Groups([]);
 
                 self.loadCourseNumbers();
             };
@@ -253,14 +276,14 @@
                 self.loadCourseNumbers();
                 var viewData = self.ViewData();
                 viewData.CourseNumber('');
-                viewData.Groups([]);
+                // viewData.Groups([]);
             };
 
             self.educationLevelChanged = function() {
                 self.loadCourseNumbers();
                 var viewData = self.ViewData();
                 viewData.CourseNumber('');
-                viewData.Groups([]);
+                // viewData.Groups([]);
             };
 
             self.courseNumberChanged = function() {
@@ -321,12 +344,19 @@
 
                         return order;
                     });
+
                     $.each(sortedItems, function (index, item) {
                         item.Order(index + 1);
                     });
 
                     if (!item.IsSelected()) {
                         item.Order('');
+                    }
+
+                    if (item.IsSelected()) {
+                        parameters.selectedItems.push(item);
+                    } else {
+                        parameters.selectedItems.remove(item);
                     }
                 });
 
@@ -350,6 +380,8 @@
                 self.CourseNumbers = ko.observableArray([]);
                 self.Groups = ko.observableArray([]);
             }
+
+            self.SelectedGroups = ko.observableArray([]);
 
             var selectFlowMapping = {
                 'GroupSets': {
@@ -381,13 +413,11 @@
 
             ko.mapping.fromJS(data, selectFlowMapping, self);
 
-            self.SelectedGroups = ko.computed(function() {
-                return ko.utils.arrayFilter(self.Groups(), function(value) {
-                    return value.IsSelected();
-                });
-            });
-
-            return self;
+            //self.SelectedGroups = ko.computed(function() {
+            //    return ko.utils.arrayFilter(self.Groups(), function(value) {
+            //        return value.IsSelected();
+            //    });
+            //});            
         }
 
         function GroupSetViewModel(data) {

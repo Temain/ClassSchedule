@@ -1,6 +1,5 @@
 ﻿@using System.Globalization
 @using ClassSchedule.Web.Helpers
-@using WebGrease.Css.Extensions
 @model ClassSchedule.Business.Models.Schedule.ShowScheduleViewModel
 @{
     ViewBag.Title = "Расписание занятий";
@@ -422,6 +421,8 @@
                     data: JSON.stringify(postData),
                     dataType: "html",
                     success: function (data) {
+                        if (!data) return;
+
                         var refreshedCells = JSON.parse(data);
 
                         $.each(refreshedCells, function (index, cell) {

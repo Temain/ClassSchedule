@@ -156,25 +156,43 @@ namespace ClassSchedule.Business.Services
             return profiles;
         }
 
-        public List<DisciplineViewModel> GetDisciplines(string query, int? chairId)
+        public List<DisciplineViewModel> GetDisciplines(int groupId, int? chairId = null, int? educationYearId = null)
         {
             var disciplines = _context.Disciplines
                 .Include(x => x.DisciplineName)
-                .Where(x => x.DisciplineName.Name.StartsWith(query))
-                .Take(20);
+                .Include(x => x.EducationSemester)
+                .Where(x => x.DeletedAt == null);
+
+            var group = _context.Groups
+                .Include(x => x.BaseProgramOfEducation)
+                .SingleOrDefault(x => x.GroupId == groupId && x.DeletedAt == null);
+            if (group != null)
+            {
+                disciplines = disciplines.Where(x => x.BaseProgramOfEducationId == group.BaseProgramOfEducationId);
+            }
 
             if (chairId != null)
             {
                 disciplines = disciplines.Where(d => d.ChairId == chairId);
             }
 
+            if (educationYearId != null)
+            {
+                disciplines = disciplines.Where(x => x.EducationSemester.EducationYearId == educationYearId);
+            }
+
             var result = disciplines
+                .OrderBy(x => x.DisciplineName.Name)
+                .ThenBy(x => x.StudyLoadCalculationStringName)
+                .ThenBy(x => x.EducationSemesterId)
                 .Select(x => new DisciplineViewModel
                 {
                     DisciplineId = x.DisciplineId,
                     DisciplineName = x.DisciplineName.Name,
                     ChairId = x.ChairId,
-                    ChairName = x.Chair.DivisionName
+                    ChairName = x.Chair.DivisionName,
+                    EducationSemesterInd = x.EducationSemesterId,
+                    EducationSemesterNumber = x.EducationSemester.EducationSemesterNumber
                 })
                 .ToList();
 
@@ -186,9 +204,10 @@ namespace ClassSchedule.Business.Services
             return _jobService.ActualTeachers(educationYearId, chairId, query, take);
         }
 
-        public List<TeacherViewModel> GetTeacherWithEmployment(int educationYearId, int chairId, int weekNumber, int dayNumber, int classNumber, int groupId)
+        public List<TeacherViewModel> GetTeacherWithEmployment(int educationYearId, int weekNumber, int dayNumber, int classNumber
+            , int groupId, int? disciplineId, int? chairId = null)
         {
-            return _jobService.ActualTeachersWithEmployment(educationYearId, chairId, weekNumber, dayNumber, classNumber, groupId);
+            return _jobService.ActualTeachersWithEmployment(educationYearId, weekNumber, dayNumber, classNumber, groupId, disciplineId, chairId);
         }
 
         public List<HousingViewModel> GetHousings()
@@ -279,23 +298,9 @@ namespace ClassSchedule.Business.Services
             return result;
         }
 
-        public List<AuditoriumViewModel> GetAuditoriumWithEmployment(int chairId, int housingId, int weekNumber, int dayNumber, int classNumber, int groupId)
+        public List<AuditoriumViewModel> GetAuditoriumWithEmployment(int housingId, int weekNumber, int dayNumber, int classNumber, int groupId, int? chairId = null)
         {
-            var auditoriums = _auditoriumService.AuditoriumWithEmployment(chairId, housingId, weekNumber, dayNumber, classNumber, groupId);
-            var result = auditoriums
-                .Select(x => new AuditoriumViewModel
-                {
-                    AuditoriumId = x.AuditoriumId,
-                    AuditoriumNumber = x.AuditoriumNumber,
-                    AuditoriumTypeName = x.AuditoriumTypeName,
-                    ChairId = x.ChairId,
-                    Places = x.Places,
-                    Comment = x.Comment,
-                    Employment = x.Employment
-                })
-                .ToList();
-
-            return result;
+            return _auditoriumService.AuditoriumWithEmployment(housingId, weekNumber, dayNumber, classNumber, groupId, chairId);
         }
 
         public List<LessonTypeViewModel> GetLessonTypes()

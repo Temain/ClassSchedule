@@ -77,19 +77,20 @@ namespace ClassSchedule.Web.Controllers
                     schedule.Lessons = new List<LessonViewModel>();
                 }
 
+                schedule.Disciplines = _dictionaryService.GetDisciplines(groupId, educationYearId: UserProfile.EducationYearId);
                 schedule.LessonTypes = _dictionaryService.GetLessonTypes();
                 schedule.Housings = _dictionaryService.GetHousingEqualLength();
 
                 foreach (var lesson in schedule.Lessons)
                 {
-                    lesson.ChairTeachers = _dictionaryService.GetTeachers(UserProfile.EducationYearId, lesson.ChairId);
+                    lesson.ChairTeachers = _dictionaryService.GetTeacherWithEmployment(UserProfile.EducationYearId, UserProfile.WeekNumber, dayNumber, classNumber, groupId, lesson.DisciplineId, lesson.ChairId);
  
                     foreach (var lessonDetail in lesson.LessonDetails)
                     {
                         var chairId = lesson.ChairId;
                         var housingId = lessonDetail.HousingId;
 
-                        lessonDetail.Auditoriums = _dictionaryService.GetAuditoriumWithEmployment(chairId, housingId, UserProfile.WeekNumber, dayNumber, classNumber, groupId);
+                        lessonDetail.Auditoriums = _dictionaryService.GetAuditoriumWithEmployment(housingId, UserProfile.WeekNumber, dayNumber, classNumber, groupId, chairId);
                     }
                 }
             }

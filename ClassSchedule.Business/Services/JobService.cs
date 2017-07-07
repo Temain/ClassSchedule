@@ -67,8 +67,8 @@ namespace ClassSchedule.Business.Services
         /// со списком групп, у которых они ведут занятия на определённой паре
         /// Используется при редактировании занятия (выдача подсказки о занятости преподавателя)
         /// </summary>
-        public List<TeacherViewModel> ActualTeachersWithEmployment(int educationYearId, int? chairId,
-            int weekNumber, int dayNumber, int classNumber, int currentGroupId)
+        public List<TeacherViewModel> ActualTeachersWithEmployment(int educationYearId, int weekNumber, int dayNumber, int classNumber
+            , int currentGroupId, int? disciplineId = null, int? chairId = null)
         {
             var plannedChairJobs = _context.PlannedChairJobs
                 .Include(x => x.Job.Employee.Person)
@@ -76,6 +76,11 @@ namespace ClassSchedule.Business.Services
                 .Include(x => x.LessonDetails.Select(s => s.Lesson.Schedule.Group))
                 .Where(x => x.EducationYearId == educationYearId && x.DeletedAt == null
                     && x.Job.DeletedAt == null && x.Job.Employee.DeletedAt == null & x.Job.Employee.Person.DeletedAt == null);
+
+            if (disciplineId != null)
+            {
+                plannedChairJobs = plannedChairJobs.Where(x => x.Disciplines.Any(d => d.DisciplineId == disciplineId));
+            }
 
             if (chairId != null)
             {

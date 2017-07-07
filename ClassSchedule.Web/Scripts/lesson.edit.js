@@ -7,6 +7,8 @@
         self.DayNumber = ko.observable('');
         self.ClassNumber = ko.observable('');
         self.Housings = ko.observableArray([]);
+
+        self.Disciplines = ko.observableArray([]);
         self.LessonTypes = ko.observableArray([]);
         self.Lessons = ko.observableArray([]);
     }
@@ -15,6 +17,11 @@
         'Lessons': {
             create: function (options) {
                 return new LessonViewModel(options.data);
+            }
+        },
+        'Disciplines': {
+            create: function (options) {
+                return new DisciplineViewModel(options.data);
             }
         },
         'LessonTypes': {
@@ -118,9 +125,36 @@
 
     /* Заполнение выпадающих списков
     ------------------------------------------------------------*/
-    self.loadTeachers = function (lesson, chairId, teacherSelects) {
+    self.setDisciplineOptionContent = function (option, item) {
+        if (!item) return;
+
+        var subtext = "<span class='description' style='float: right;'>" + item.EducationSemesterNumber() + " семестр</span><br><span class='description'>Кафедра " + item.ChairName() + "</span>";
+        $(option).attr('data-subtext', subtext);
+        // $(option).text(item.DisciplineName() + " [" + item.EducationSemesterName() + "]");
+        $(option).attr('title', item.DisciplineName() + " [" + item.EducationSemesterNumber() + " семестр]");
+
+        ko.applyBindingsToNode(option, {}, item);
+    };
+
+    self.disciplineChanged = function (lesson, event) {
+        var disciplineSelect = $(event.target);
+
+        var discipline = ko.utils.arrayFirst(self.Disciplines(), function (item) {
+            return lesson.DisciplineId() === item.DisciplineId();
+        });
+
+        if (discipline) {
+            lesson.ChairId(discipline.ChairId())
+        }
+
+        disciplineSelect.closest('.lesson-content').find('.chair-id').val(discipline.ChairId());
+
+        self.loadTeachers(lesson);
+    };
+    
+    self.loadTeachers = function (lesson) {
         var parameters = {
-            chairId: chairId,
+            disciplineId: lesson.DisciplineId(),
             weekNumber: self.WeekNumber(),
             dayNumber: self.DayNumber(),
             classNumber: self.ClassNumber(),
@@ -209,9 +243,7 @@
         
         optionContent += "</span>";
         $(option).attr('data-subtext', optionContent);
-
-        
-
+       
         // $(option).attr('title', item.Abbreviation());
 
         ko.applyBindingsToNode(option, {}, item);
@@ -225,102 +257,102 @@
 
     /* Биндинги
     ------------------------------------------------------------*/
-    ko.bindingHandlers.typeahead = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var $element = $(element);
-            // var allBindings = allBindingsAccessor();          
-            var elementData = ko.utils.unwrapObservable(valueAccessor());
+    //ko.bindingHandlers.typeahead = {
+    //    init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+    //        var $element = $(element);
+    //        // var allBindings = allBindingsAccessor();          
+    //        var elementData = ko.utils.unwrapObservable(valueAccessor());
 
-            // source.DisciplineName.subscribe(function (newValue) {
-            //     alert("The person's new name is " + newValue);
-            // });
+    //        // source.DisciplineName.subscribe(function (newValue) {
+    //        //     alert("The person's new name is " + newValue);
+    //        // });
 
-            var disciplines = {};
-            var disciplineLabels = [];
+    //        var disciplines = {};
+    //        var disciplineLabels = [];
 
-            var searchDiscipline = _.debounce(function (query, process) {
-                $.post('/Dictionary/Discipline', { query: query }, function (data) {
+    //        var searchDiscipline = _.debounce(function (query, process) {
+    //            $.post('/Dictionary/Discipline', { query: query }, function (data) {
 
-                    disciplines = {};
-                    disciplineLabels = [];
+    //                disciplines = {};
+    //                disciplineLabels = [];
 
-                    // if (query.length > 2) {
+    //                // if (query.length > 2) {
 
-                    _.each(data, function (item, ix, list) {
-                        if (_.contains(disciplines, item.DisciplineName)) {
-                            item.DisciplineName = item.DisciplineName + ' #' + item.DisciplineId;
-                        }
-                        disciplineLabels.push(item.DisciplineName);
-                        disciplines[item.DisciplineName] = {
-                            DisciplineId: item.DisciplineId,
-                            DisciplineName: item.DisciplineName,
-                            ChairId: item.ChairId,
-                            ChairName: item.ChairName
-                        };
-                    });
+    //                _.each(data, function (item, ix, list) {
+    //                    if (_.contains(disciplines, item.DisciplineName)) {
+    //                        item.DisciplineName = item.DisciplineName + ' #' + item.DisciplineId;
+    //                    }
+    //                    disciplineLabels.push(item.DisciplineName);
+    //                    disciplines[item.DisciplineName] = {
+    //                        DisciplineId: item.DisciplineId,
+    //                        DisciplineName: item.DisciplineName,
+    //                        ChairId: item.ChairId,
+    //                        ChairName: item.ChairName
+    //                    };
+    //                });
 
-                    var labelsCount = Object.keys(disciplineLabels).length;
-                    if (labelsCount === 0) {
-                        $element.closest(".discipline").siblings('.msg-text').slideDown(250);
-                        elementData.DisciplineId("");
-                        elementData.ChairId("");
-                        elementData.ChairName("");
-                    } else {
-                        $element.closest(".discipline").siblings('.msg-text').slideUp(250);
-                    }
+    //                var labelsCount = Object.keys(disciplineLabels).length;
+    //                if (labelsCount === 0) {
+    //                    $element.closest(".discipline").siblings('.msg-text').slideDown(250);
+    //                    elementData.DisciplineId("");
+    //                    elementData.ChairId("");
+    //                    elementData.ChairName("");
+    //                } else {
+    //                    $element.closest(".discipline").siblings('.msg-text').slideUp(250);
+    //                }
 
-                    process(disciplineLabels);
-                    // }
+    //                process(disciplineLabels);
+    //                // }
 
-                    if (query.length === 0) $element.closest(".discipline").siblings('.msg-text').slideUp(250);
-                });
-            }, 300);
+    //                if (query.length === 0) $element.closest(".discipline").siblings('.msg-text').slideUp(250);
+    //            });
+    //        }, 300);
 
-            var options = {
-                source: function (query, process) {
-                    searchDiscipline(query, process);
-                },
-                updater: function (item) {
-                    elementData.DisciplineId(disciplines[item].DisciplineId);
-                    elementData.ChairId(disciplines[item].ChairId);
-                    elementData.ChairName("Кафедра " + disciplines[item].ChairName);
+    //        var options = {
+    //            source: function (query, process) {
+    //                searchDiscipline(query, process);
+    //            },
+    //            updater: function (item) {
+    //                elementData.DisciplineId(disciplines[item].DisciplineId);
+    //                elementData.ChairId(disciplines[item].ChairId);
+    //                elementData.ChairName("Кафедра " + disciplines[item].ChairName);
 
-                    self.loadTeachers(elementData, disciplines[item].ChairId);
+    //                self.loadTeachers(elementData, disciplines[item].ChairId);
 
-                    $.each(elementData.LessonDetails(), function (index, lessonDetail) {
-                        lessonDetail.HousingId('');
-                    });
+    //                $.each(elementData.LessonDetails(), function (index, lessonDetail) {
+    //                    lessonDetail.HousingId('');
+    //                });
 
-                    return item;
-                },
-                matcher: function (item) {
-                    if (item.toLowerCase().indexOf(this.query.trim().toLowerCase()) !== -1) {
-                        elementData.DisciplineId(disciplines[item].DisciplineId);
+    //                return item;
+    //            },
+    //            matcher: function (item) {
+    //                if (item.toLowerCase().indexOf(this.query.trim().toLowerCase()) !== -1) {
+    //                    elementData.DisciplineId(disciplines[item].DisciplineId);
 
-                        return item;
-                    }
+    //                    return item;
+    //                }
 
-                    elementData.DisciplineId("");
-                    return this.query;
-                },
-                highlighter: function (item) {
-                    var discipline = disciplines[item];
-                    var template = ''
-                        + "<div class='typeahead_wrapper'>"
-                        + "<div class='typeahead_labels'>"
-                        + "<div class='typeahead_primary'>" + discipline.DisciplineName + "</div>"
-                        + "<div class='typeahead_secondary'>" + discipline.ChairName + "</div>"
-                        + "</div>"
-                        + "</div>";
-                    return template;
-                }
-            };
+    //                elementData.DisciplineId("");
+    //                return this.query;
+    //            },
+    //            highlighter: function (item) {
+    //                var discipline = disciplines[item];
+    //                var template = ''
+    //                    + "<div class='typeahead_wrapper'>"
+    //                    + "<div class='typeahead_labels'>"
+    //                    + "<div class='typeahead_primary'>" + discipline.DisciplineName + "</div>"
+    //                    + "<div class='typeahead_secondary'>" + discipline.ChairName + "</div>"
+    //                    + "</div>"
+    //                    + "</div>";
+    //                return template;
+    //            }
+    //        };
 
-            $element
-                .attr('autocomplete', 'off')
-                .typeahead(options);
-        }
-    };
+    //        $element
+    //            .attr('autocomplete', 'off')
+    //            .typeahead(options);
+    //    }
+    //};
 
     // Валидация
     self.isValidationEnabled = ko.observable(false);
@@ -435,6 +467,10 @@ function LessonDetailViewModel(data) {
     });
 
     return self;
+}
+
+function DisciplineViewModel(data) {
+    ko.mapping.fromJS(data, {}, this);
 }
 
 function LessonTypeViewModel(data) {

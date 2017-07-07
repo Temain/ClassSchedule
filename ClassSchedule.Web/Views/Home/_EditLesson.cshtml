@@ -23,11 +23,14 @@
                         <div class="row">
                             <div class="col-md-8 form-group">
                                 <label class="control-label">Дисциплина</label>
-                                <input type="text" class="discipline form-control" data-bind="typeahead: $data, textInput: DisciplineName" data-provide="typeahead" placeholder="Введите название дисциплины" autocomplete="off" value=""/>
+                                <select class="form-control discipline col-md-8" data-bind="selectPicker: DisciplineId, options: $root.EditLessonViewModel().Disciplines, optionsValue: 'DisciplineId', optionsText: 'DisciplineName', optionsCaption: '', 
+                                    event: { change: $root.EditLessonViewModel().disciplineChanged }, optionsAfterRender: $root.EditLessonViewModel().setDisciplineOptionContent"></select>
+
+                                @*<input type="text" class="discipline form-control" data-bind="typeahead: $data, textInput: DisciplineName" data-provide="typeahead" placeholder="Введите название дисциплины" autocomplete="off" value=""/>
                                 <input type="hidden" class="discipline-id" data-bind="value: DisciplineId"/>
                                 <div class="text-danger msg-text" style="display: none">
                                     <span class="glyphicon glyphicon glyphicon-exclamation-sign form-control-feedback"></span>Дисциплина не найдена
-                                </div>
+                                </div>*@
 
                                 <div class="chair" data-bind="text: ChairName"></div>
                                 <input type="hidden" class="chair-id" data-bind="value: ChairId"/>

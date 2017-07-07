@@ -45,6 +45,11 @@ namespace ClassSchedule.Business.Models.Schedule
         public bool IsNotActive { get; set; }
 
         /// <summary>
+        /// Дисциплины
+        /// </summary>
+        public List<DisciplineViewModel> Disciplines { get; set; }
+
+        /// <summary>
         /// Корпуса
         /// </summary>
         public List<HousingViewModel> Housings { get; set; }

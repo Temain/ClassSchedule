@@ -17,8 +17,8 @@ namespace ClassSchedule.Business.Interfaces
         /// со списком групп, у которых они ведут занятия на определённой паре
         /// Используется при редактировании занятия (выдача подсказки о занятости преподавателя)
         /// </summary>
-        List<TeacherViewModel> ActualTeachersWithEmployment(int educationYearId, int? chairId,
-            int weekNumber, int dayNumber, int classNumber, int currentGroupId);
+        List<TeacherViewModel> ActualTeachersWithEmployment(int educationYearId, int weekNumber, int dayNumber, int classNumber
+            , int currentGroupId, int? disciplineId = null, int? chairId = null);
 
         /// <summary>
         /// Окна между занятиями у преподавателей

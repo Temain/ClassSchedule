@@ -19,6 +19,7 @@ namespace ClassSchedule.Domain.Context
         public DbSet<Course> Courses { get; set; }
         public DbSet<CourseSchedule> CourseSchedules { get; set; }
         public DbSet<Discipline> Disciplines { get; set; }
+        public DbSet<DisciplinePlannedChairJob> DisciplinePlannedChairJobs { get; set; }
         public DbSet<DisciplineName> DisciplineNames { get; set; }
         public DbSet<EducationDirection> EducationDirections { get; set; }
         public DbSet<EducationForm> EducationForms { get; set; }
@@ -90,6 +91,16 @@ namespace ClassSchedule.Domain.Context
                 .WithMany(t => t.CombinedDisciplines)
                 .HasForeignKey(m => m.CombinedWithDisciplineId)
                 .WillCascadeOnDelete(false);
+
+            //modelBuilder.Entity<Discipline>()
+            //   .HasMany(s => s.PlannedChairJobs)
+            //   .WithMany(c => c.Disciplines)
+            //   .Map(cs =>
+            //   {
+            //       cs.MapLeftKey("PlannedChairJobId");
+            //       cs.MapRightKey("DisciplineId");
+            //       cs.ToTable("DisciplinePlannedChairJobs");
+            //   });
 
             base.OnModelCreating(modelBuilder);
         }
