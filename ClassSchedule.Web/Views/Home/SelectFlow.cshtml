@@ -171,7 +171,9 @@
                 });
             };
 
-            self.loadCourseNumbers = function() {
+            self.loadCourseNumbers = function () {
+                if (!self.ViewData().FacultyId()) return;
+
                 var parameters = {
                     facultyId: self.ViewData().FacultyId(),
                     educationFormId: self.ViewData().EducationFormId(),
@@ -335,6 +337,12 @@
                 $(element).change(function() {
                     item.IsSelected(!item.IsSelected());
 
+                    if (item.IsSelected()) {
+                        parameters.selectedItems.push(item);
+                    } else {
+                        parameters.selectedItems.remove(item);
+                    }
+
                     var selectedItems = parameters.selectedItems();
                     var sortedItems = _.sortBy(selectedItems, function (item) {
                         var order = item.Order();
@@ -351,12 +359,6 @@
 
                     if (!item.IsSelected()) {
                         item.Order('');
-                    }
-
-                    if (item.IsSelected()) {
-                        parameters.selectedItems.push(item);
-                    } else {
-                        parameters.selectedItems.remove(item);
                     }
                 });
 
