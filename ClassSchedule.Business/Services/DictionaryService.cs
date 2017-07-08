@@ -55,7 +55,7 @@ namespace ClassSchedule.Business.Services
 
             var courseNumbers = courses
                 .Where(x => x.CourseNumber != null)
-                .OrderBy(n => n.CourseName)
+                .OrderBy(n => n.CourseNumber)
                 .Select(x => x.CourseNumber ?? 0)
                 .Distinct()
                 .ToList();
@@ -100,7 +100,7 @@ namespace ClassSchedule.Business.Services
         public List<EducationFormViewModel> GetEducationForms()
         {
             var forms = _context.EducationForms
-                .Where(x => x.DeletedAt == null)
+                .Where(x => x.DeletedAt == null && !x.IsNotUsed)
                 .OrderBy(n => n.EducationFormName)
                 .Select(x => new EducationFormViewModel { EducationFormId = x.EducationFormId, EducationFormName = x.EducationFormName })
                 .ToList();
@@ -111,8 +111,8 @@ namespace ClassSchedule.Business.Services
         public List<EducationLevelViewModel> GetEducationLevels()
         {
             var levels = _context.EducationLevels
-                .Where(x => x.DeletedAt == null)
-                .OrderBy(n => n.EducationLevelName)
+                .Where(x => x.DeletedAt == null && !x.IsNotUsed)
+                .OrderBy(n => n.EducationLevelId)
                 .Select(x => new EducationLevelViewModel { EducationLevelId = x.EducationLevelId, EducationLevelName = x.EducationLevelName })
                 .ToList();
 
@@ -329,6 +329,22 @@ namespace ClassSchedule.Business.Services
                 .ToList();
 
             return educationYears;
+        }
+
+        public List<FacultyViewModel> GetFaculties(string userId = null)
+        {
+            var faculties = _context.Faculties
+                .Where(f => f.DeletedAt == null);
+
+            if (userId != null)
+            {
+                faculties = faculties.Where(x => x.ApplicationUsers.Any(u => u.Id == userId));
+            }
+
+            return faculties
+                .OrderBy(n => n.DivisionName)
+                .Select(x => new FacultyViewModel { FacultyId = x.FacultyId, FacultyName = x.DivisionName })
+                .ToList();
         }
     }
 }

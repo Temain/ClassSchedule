@@ -111,6 +111,10 @@
     <Compile Include="Migrations\201707051138181_RemakeRelationDisciplinePlannedChairJobs.Designer.cs">
       <DependentUpon>201707051138181_RemakeRelationDisciplinePlannedChairJobs.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201707080805425_AddIsNotUsedFields.cs" />
+    <Compile Include="Migrations\201707080805425_AddIsNotUsedFields.Designer.cs">
+      <DependentUpon>201707080805425_AddIsNotUsedFields.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AcademicDegree.cs" />
     <Compile Include="Models\AcademicDegreeLevel.cs" />
@@ -207,6 +211,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201707051138181_RemakeRelationDisciplinePlannedChairJobs.resx">
       <DependentUpon>201707051138181_RemakeRelationDisciplinePlannedChairJobs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707080805425_AddIsNotUsedFields.resx">
+      <DependentUpon>201707080805425_AddIsNotUsedFields.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

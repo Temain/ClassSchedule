@@ -79,6 +79,17 @@ textarea {
     max-width: 280px;
 }*/
 
+.btn-green:focus,
+.btn-green:hover {
+  color: #fff;
+  background: #397043;
+}
+
+.btn-green {
+  background: #2E7F3E;
+  color: #fff;
+}
+
 /* Страница редактирования расписания
 -------------------------------------------*/
 .schedule-container {
@@ -1173,4 +1184,14 @@ html { overflow-y: auto !important; }
     font-weight: bold;
     border-style: solid;
     border-width: 0 2.6em 2.2em 0;
+}
+
+/* Выбор групп
+-----------------------------------------------------*/
+.dt-style {
+    font-weight: normal;
+    color: #848484;
+    font-size: 1em;
+    padding-top: 0.5em;
+    text-align: left;
 }

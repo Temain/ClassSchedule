@@ -493,16 +493,7 @@ namespace ClassSchedule.Web.Controllers
                     viewModel.EducationLevelId = educationLevelId;
                     viewModel.CourseNumber = courseNumber ?? 0;
 
-                    viewModel.CourseNumbers = _context.Courses 
-                        .Where(x => x.DeletedAt == null && x.FacultyId == facultyId && x.YearStart != null
-                            && x.Groups.Any(g => g.BaseProgramOfEducation.EducationFormId == educationFormId
-                                && g.BaseProgramOfEducation.EducationLevelId == educationLevelId
-                                && g.DeletedAt == null)
-                            && x.YearStart + x.CourseNumber == UserProfile.EducationYear.YearEnd)
-                        .OrderBy(x => x.CourseNumber)
-                        .Select(x => x.CourseNumber ?? 0)
-                        .Distinct()
-                        .ToList();
+                    viewModel.CourseNumbers = _dictionaryService.GetCourseNumbers(facultyId, educationFormId, educationLevelId);
 
                     var groups = _context.Groups
                         .Where(x => x.DeletedAt == null && x.Course.FacultyId == facultyId
@@ -541,36 +532,22 @@ namespace ClassSchedule.Web.Controllers
                     {
                         GroupSetId = x.GroupSetId,
                         GroupSetName = x.GroupSetName,
-                        GroupNames = String.Join(", ", x.GroupSetGroups.OrderBy(o => o.Order).Select(g => g.Group.GroupName))
+                        GroupNames = string.Join(", ", x.GroupSetGroups.OrderBy(o => o.Order).Select(g => g.Group.GroupName))
                     })
                     .ToList();
                 viewModel.GroupSets = groupSets;
 
                 if (User.IsInRole("Administrator"))
                 {
-                    viewModel.Faculties = _context.Faculties
-                        .Where(f => f.DeletedAt == null)
-                        .OrderBy(n => n.DivisionName)
-                        .Select(x => new FacultyViewModel { FacultyId = x.FacultyId, FacultyName = x.DivisionName })
-                        .ToList();
+                    viewModel.Faculties = _dictionaryService.GetFaculties();
                 }
                 else
                 {
-                    viewModel.Faculties = UserProfile.Faculties
-                        .Select(x => new FacultyViewModel { FacultyId = x.FacultyId, FacultyName = x.DivisionName })
-                        .OrderBy(n => n.FacultyName)
-                        .ToList();
+                    viewModel.Faculties = _dictionaryService.GetFaculties(UserProfile.Id);
                 }
 
-                viewModel.EducationLevels = _context.EducationLevels
-                    .Where(x => x.DeletedAt == null)
-                    .Select(x => new EducationLevelViewModel { EducationLevelId = x.EducationLevelId, EducationLevelName = x.EducationLevelName })
-                    .ToList();
-
-                viewModel.EducationForms = _context.EducationForms
-                    .Where(x => x.DeletedAt == null)
-                    .Select(x => new EducationFormViewModel { EducationFormId = x.EducationFormId, EducationFormName = x.EducationFormName })
-                    .ToList();
+                viewModel.EducationLevels = _dictionaryService.GetEducationLevels();
+                viewModel.EducationForms = _dictionaryService.GetEducationForms(); ;
             }
 
             return Json(viewModel);

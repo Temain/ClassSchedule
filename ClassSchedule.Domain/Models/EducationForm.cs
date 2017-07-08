@@ -39,6 +39,11 @@ namespace ClassSchedule.Domain.Models
         public DateTime? DeletedAt { get; set; }
 
         /// <summary>
+        /// Не используется
+        /// </summary>
+        public bool IsNotUsed { get; set; }
+
+        /// <summary>
         /// У формы обучения может быть много ООП
         /// </summary>
         public List<BaseProgramOfEducation> BaseProgramOfEducations { get; set; }

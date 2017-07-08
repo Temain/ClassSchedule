@@ -52,7 +52,7 @@ namespace ClassSchedule.Web.Controllers
         {
             if (Request.IsAjaxRequest())
             {
-                var groups = _dictionaryService.GetGroups(facultyId, courseId, educationFormId, educationLevelId, courseNumber);
+                var groups = _dictionaryService.GetGroups(facultyId, courseId, educationFormId, educationLevelId, courseNumber, UserProfile.EducationYear.YearStart);
 
                 return Json(groups);
             }

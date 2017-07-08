@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using ClassSchedule.Business.Models;
 
 namespace ClassSchedule.Business.Interfaces
@@ -26,5 +22,6 @@ namespace ClassSchedule.Business.Interfaces
         List<AuditoriumViewModel> GetAuditoriumWithEmployment(int housingId, int weekNumber, int dayNumber, int classNumber, int groupId, int? chairId = null);
         List<LessonTypeViewModel> GetLessonTypes();
         List<EducationYearViewModel> GetEducationYears();
+        List<FacultyViewModel> GetFaculties(string userId = null);
     }
 }
