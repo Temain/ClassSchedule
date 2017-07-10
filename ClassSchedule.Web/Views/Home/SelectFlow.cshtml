@@ -102,7 +102,7 @@
         </div>
 
         <!-- ko if: $root.ViewData().Groups().length > 0 -->
-        <div class="row inline-block-lg">
+        <div class="row inline-block-lg" data-bind="visible: true" style="display: none;">
             <div class="col-md-4">
                 <div class="title">Выбранные группы</div>
                 <br />
@@ -194,6 +194,15 @@
                         };
 
                         ko.mapping.fromJS(data, groupMapping, self.ViewData().Groups);
+
+                        ko.utils.arrayForEach(self.ViewData().SelectedGroups(), function (selectedGroup) {
+                            ko.utils.arrayForEach(self.ViewData().Groups(), function (group) {
+                                if (selectedGroup.GroupId() == group.GroupId()) {
+                                    var selector = '#group-' + group.GroupId();
+                                    $(selector).trigger('change');
+                                }
+                            });
+                        });
                     });
 
                 }
@@ -235,12 +244,7 @@
                             };
 
                             ko.mapping.fromJS(data.Groups, groupMapping, viewData.Groups);
-
-                            ko.utils.arrayForEach(viewData.Groups(), function (group) {
-                                if (group.IsSelected()) {
-                                    viewData.SelectedGroups.push(group);
-                                }
-                            });
+                            ko.mapping.fromJS(data.SelectedGroups, groupMapping, viewData.SelectedGroups);
                         }
                     });
                 }
@@ -258,9 +262,7 @@
 
             self.facultyChanged = function () {
                 var viewData = self.ViewData();
-                // viewData.EducationLevelId('');
                 viewData.CourseNumber('');
-                // viewData.Groups([]);
 
                 self.loadCourseNumbers();
             };
@@ -269,14 +271,12 @@
                 self.loadCourseNumbers();
                 var viewData = self.ViewData();
                 viewData.CourseNumber('');
-                // viewData.Groups([]);
             };
 
             self.educationLevelChanged = function () {
                 self.loadCourseNumbers();
                 var viewData = self.ViewData();
                 viewData.CourseNumber('');
-                // viewData.Groups([]);
             };
 
             self.courseNumberChanged = function () {
@@ -319,8 +319,8 @@
 
             self.removeSelectedGroup = function (group) {
                 var selector = '#group-' + group.GroupId();
-                $(selector).trigger('change');
                 self.ViewData().SelectedGroups.remove(group);
+                $(selector).trigger('change');
             };
         }
 
@@ -335,7 +335,13 @@
                     item.IsSelected(!item.IsSelected());
 
                     if (item.IsSelected()) {
-                        parameters.selectedItems.push(item);
+                        var match = ko.utils.arrayFirst(parameters.selectedItems(), function (selectedItem) {
+                            return selectedItem.GroupId() === item.GroupId();
+                        });
+
+                        if (!match) {
+                            parameters.selectedItems.push(item);
+                        }
                     } else {
                         parameters.selectedItems.remove(item);
                     }
@@ -411,12 +417,6 @@
             };
 
             ko.mapping.fromJS(data, selectFlowMapping, self);
-
-            //self.SelectedGroups = ko.computed(function() {
-            //    return ko.utils.arrayFilter(self.Groups(), function(value) {
-            //        return value.IsSelected();
-            //    });
-            //});
         }
 
         function GroupSetViewModel(data) {
@@ -428,8 +428,6 @@
             if (!data) {
                 self.GroupId = ko.observable('');
                 self.GroupName = ko.observable('');
-                //self.Order = ko.observable('');
-                //self.IsSelected = ko.observable('');
             }
 
             self.Order = ko.observable('');

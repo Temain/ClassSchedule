@@ -518,6 +518,17 @@ namespace ClassSchedule.Web.Controllers
 
                         viewModel.Groups.Add(groupViewModel);
                     }
+
+                    viewModel.SelectedGroups = groupsSet.GroupSetGroups
+                        .OrderBy(x => x.Order)
+                        .Select(x => new GroupViewModel
+                        {
+                            GroupId = x.GroupId,
+                            GroupName = x.Group.GroupName,
+                            IsSelected = true,
+                            Order = x.Order
+                        })
+                        .ToList();
                 }
             }
             else

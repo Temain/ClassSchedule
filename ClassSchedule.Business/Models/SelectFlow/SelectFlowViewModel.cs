@@ -25,5 +25,7 @@ namespace ClassSchedule.Business.Models.SelectFlow
         public ICollection<int> CourseNumbers { get; set; } 
 
         public ICollection<GroupViewModel> Groups { get; set; }
+
+        public ICollection<GroupViewModel> SelectedGroups { get; set; }
     }
 }

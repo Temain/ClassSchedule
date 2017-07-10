@@ -125,10 +125,10 @@ namespace ClassSchedule.Business.Services
                 .Where(x => x.DeletedAt == null)
                 .OrderBy(n => n.EducationDirectionCode)
                 .Select(x => new EducationDirectionViewModel
-                    {
-                        EducationDirectionId = x.EducationDirectionId,
-                        EducationDirectionName = x.EducationDirectionCode + " " + x.EducationDirectionName
-                    })
+                {
+                    EducationDirectionId = x.EducationDirectionId,
+                    EducationDirectionName = x.EducationDirectionCode + " " + x.EducationDirectionName
+                })
                 .ToList();
 
             return directions;
