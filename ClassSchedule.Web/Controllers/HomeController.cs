@@ -538,6 +538,7 @@ namespace ClassSchedule.Web.Controllers
                 var groupSets = _context.GroupSets
                     .Include(x => x.GroupSetGroups.Select(g => g.Group))
                     .Where(x => x.ApplicationUserId == UserProfile.Id)
+                    .OrderByDescending(x => x.Counter)
                     .ToList()
                     .Select(x => new GroupSetViewModel
                     {
@@ -603,6 +604,7 @@ namespace ClassSchedule.Web.Controllers
 
             currentGroupSet.GroupSetGroups = groupSetGroups;
             currentGroupSet.IsSelected = true;
+            currentGroupSet.Counter = (currentGroupSet.Counter ?? 0) + 1;
 
             _context.SaveChanges();
 

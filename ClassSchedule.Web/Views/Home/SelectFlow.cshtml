@@ -1,5 +1,4 @@
-﻿@*@model ClassSchedule.Web.Models.SelectFlow.SelectFlowViewModel*@
-@{
+﻿@{
     ViewBag.Title = "Выбор потока";
 }
 
@@ -13,7 +12,6 @@
 
     <div class="container">
         <h2>Выбор групп для редактирования расписания</h2>
-        @*<hr/>*@
 
         <div class="row inline-block-lg">
             <div class="col-md-4">
@@ -23,8 +21,8 @@
             </div>
             <div class="col-md-8">
                 <div class="form-group col-md-12">
-                    <select class="form-control" title="" data-size="12" data-bind="selectPicker: ViewData().GroupSetId, options: ViewData().GroupSets, optionsValue: 'GroupSetId',
-                        optionsText: 'GroupSetName', optionsCaption: 'Новый список групп...', event : { change: groupSetChanged }, optionsAfterRender: $root.groupSetOptionContent"></select>
+                    <select class="form-control" title="" data-size="12" data-bind="selectPicker: GroupSetId, options: GroupSets, optionsValue: 'GroupSetId',
+                        optionsText: 'GroupSetName', optionsCaption: 'Новый список групп...', event : { change: GroupSetChanged }, optionsAfterRender: GroupSetOptionContent"></select>
                 </div>
             </div>
         </div>
@@ -45,7 +43,7 @@
                                 Наименование списка
                             </div>
                             <div class="col-md-8">
-                                <input class="form-control" type="text" data-bind="value: ViewData().GroupSetName" />
+                                <input class="form-control" type="text" data-bind="value: GroupSetName" />
                             </div>
                         </div>
 
@@ -54,7 +52,7 @@
                                 Факультет
                             </div>
                             <div class="col-md-8">
-                                <select class="form-control" title="" data-size="12" data-bind="selectPicker: ViewData().FacultyId, options: ViewData().Faculties, optionsValue: 'FacultyId', optionsText: 'FacultyName', optionsCaption: '', event : { change: facultyChanged }"></select>
+                                <select class="form-control" title="" data-size="12" data-bind="selectPicker: FacultyId, options: Faculties, optionsValue: 'FacultyId', optionsText: 'FacultyName', optionsCaption: '', event : { change: FacultyChanged }"></select>
                             </div>  
                         </div>
 
@@ -63,7 +61,7 @@
                                 Форма обучения
                             </div>
                             <div class="col-md-6">
-                                <select class="form-control" title="" data-size="12" data-bind="selectPicker: ViewData().EducationFormId, options: ViewData().EducationForms, optionsValue: 'EducationFormId', optionsText: 'EducationFormName', optionsCaption: '', event : { change: educationFormChanged }"></select>
+                                <select class="form-control" title="" data-size="12" data-bind="selectPicker: EducationFormId, options: EducationForms, optionsValue: 'EducationFormId', optionsText: 'EducationFormName', optionsCaption: '', event : { change: EducationFormChanged }"></select>
                             </div>
                         </div>
 
@@ -72,7 +70,7 @@
                                 Уровень образования
                             </div>
                             <div class="col-md-6">
-                                <select class="form-control" title="" data-size="12" data-bind="selectPicker: ViewData().EducationLevelId, options: ViewData().EducationLevels, optionsValue: 'EducationLevelId', optionsText: 'EducationLevelName', optionsCaption: '', event : { change: educationLevelChanged }"></select>
+                                <select class="form-control" title="" data-size="12" data-bind="selectPicker: EducationLevelId, options: EducationLevels, optionsValue: 'EducationLevelId', optionsText: 'EducationLevelName', optionsCaption: '', event : { change: EducationLevelChanged }"></select>
                             </div>
                         </div>
 
@@ -81,15 +79,15 @@
                                 Курс
                             </div>
                             <div class="col-md-3">
-                                <select id="courseNumber" class="form-control" title="" data-size="12" data-bind="selectPicker: ViewData().CourseNumber, options: ViewData().CourseNumbers, optionsCaption: '', event: { change : courseNumberChanged }"></select>
+                                <select id="courseNumber" class="form-control" title="" data-size="12" data-bind="selectPicker: CourseNumber, options: CourseNumbers, optionsCaption: '', event: { change : CourseNumberChanged }"></select>
                             </div>
                         </div>
                     </div>                              
                                     
-                    <!-- ko foreach: ViewData().Groups -->
+                    <!-- ko foreach: Groups -->
                     <div class="col-md-3" data-bind="visible: true" style="display: none;">
                         <div class="mrgbtm24">
-                            <input type="checkbox" class="checkbox-x" data-three-state="false" data-bind="checkbox: { item: $data, selectedItems: $root.ViewData().SelectedGroups }, attr: { id: 'group-' + GroupId() }">
+                            <input type="checkbox" class="checkbox-x" data-three-state="false" data-bind="checkbox: { item: $data, selectedItems: $root.SelectedGroups, orderFunction: $root.ReorderSelectedGroups }, attr: { id: 'group-' + GroupId() }">
                             <label class="cbx-label" data-bind="attr: { for: 'group-' + GroupId() }">
                                 <span data-bind="text: GroupName"></span>
                                 <span class="order" data-bind="text: Order"></span>
@@ -101,7 +99,7 @@
             </div>
         </div>
 
-        <!-- ko if: $root.ViewData().Groups().length > 0 -->
+        <!-- ko if: Groups().length > 0 -->
         <div class="row inline-block-lg" data-bind="visible: true" style="display: none;">
             <div class="col-md-4">
                 <div class="title">Выбранные группы</div>
@@ -109,11 +107,11 @@
                 <div class="subtitle"></div>
             </div>
             <div class="col-md-8">
-                <div class="form-group col-md-12" data-bind="foreach: ViewData().SelectedGroups">
+                <div class="form-group col-md-12" data-bind="foreach: SelectedGroups">
                     <label class="cbx-label">
                         <span data-bind="text: GroupName"></span>
                         <span class="order" data-bind="text: Order"></span>
-                        <a href="#" data-bind="click: $root.removeSelectedGroup"><span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span></a>
+                        <a href="#" data-bind="click: $root.RemoveSelectedGroup"><span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span></a>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </label>
                 </div>
@@ -126,7 +124,7 @@
             </div>
             <div class="col-md-8">
                 <div class="col-md-3">
-                    <button class="btn btn-green btn-lg" data-bind="click: selectFlow, enable: $root.ViewData().SelectedGroups().length > 0"><i class="fa fa-check-square" aria-hidden="true"></i> Выбрать</button>
+                    <button class="btn btn-green btn-lg" data-bind="click: SelectFlow, enable: SelectedGroups().length > 0"><i class="fa fa-check-square" aria-hidden="true"></i> Выбрать</button>
                 </div>
             </div>
         </div>
@@ -141,46 +139,87 @@
     @Scripts.Render("~/bundles/checkbox-x")
 
     <script>
+        var viewModel = new MainViewModel();
         $(function () {
-            viewModel.loadViewData();
+            viewModel.LoadViewData();
 
             ko.applyBindings(viewModel);
         });
 
-        var viewModel = new MainViewModel();
-
         function MainViewModel() {
             var self = this;
 
-            self.ViewData = ko.observable(new SelectFlowViewModel());
+            self.GroupSetId = ko.observable('');
+            self.GroupSets = ko.observableArray([]);
+            self.GroupSetName = ko.observable('');
+            self.FacultyId = ko.observable('');
+            self.Faculties = ko.observableArray([]);
+            self.EducationLevelId = ko.observable('');
+            self.EducationLevels = ko.observableArray([]);
+            self.EducationFormId = ko.observable('');
+            self.EducationForms = ko.observableArray([]);
+            self.CourseNumber = ko.observable('');
+            self.CourseNumbers = ko.observableArray([]);
+            self.Groups = ko.observableArray([]);
+            self.SelectedGroups = ko.observableArray([]);          
 
-            self.loadViewData = function () {
+            self.LoadViewData = function () {
                 $.post('/Home/SelectFlowData', {}, function (data) {
-                    self.ViewData(new SelectFlowViewModel(data));
+                    ko.mapping.fromJS(data.GroupSets, {
+                        create: function (options) {
+                            return new GroupSetViewModel(options.data);
+                        }
+                    }, self.GroupSets);
+
+                    ko.mapping.fromJS(data.Groups, {
+                        create: function (options) {
+                            return new GroupViewModel(options.data);
+                        }
+                    }, self.Groups);
+
+                    ko.mapping.fromJS(data.Faculties, {
+                        create: function (options) {
+                            return new FacultyViewModel(options.data);
+                        }
+                    }, self.Faculties);
+
+                    ko.mapping.fromJS(data.EducationForms, {
+                        create: function (options) {
+                            return new EducationFormViewModel(options.data);
+                        }
+                    }, self.EducationForms);
+
+                    ko.mapping.fromJS(data.EducationLevels, {
+                        create: function (options) {
+                            return new EducationLevelViewModel(options.data);
+                        }
+                    }, self.EducationLevels);
+
+                    $('select').selectpicker('refresh');
                 });
             };
 
-            self.loadCourseNumbers = function () {
-                if (!self.ViewData().FacultyId()) return;
+            self.LoadCourseNumbers = function () {
+                if (!self.FacultyId()) return;
 
                 var parameters = {
-                    facultyId: self.ViewData().FacultyId(),
-                    educationFormId: self.ViewData().EducationFormId(),
-                    educationLevelId: self.ViewData().EducationLevelId()
+                    facultyId: self.FacultyId(),
+                    educationFormId: self.EducationFormId(),
+                    educationLevelId: self.EducationLevelId()
                 };
 
                 $.post('/Dictionary/CourseNumber', parameters, function (data) {
-                    self.ViewData().CourseNumbers(data);
+                    self.CourseNumbers(data);
                     $('#courseNumber').selectpicker('refresh');
                 });
             };
 
-            self.loadGroups = function () {
+            self.LoadGroups = function () {
                 var parameters = {
-                    facultyId: self.ViewData().FacultyId(),
-                    educationFormId: self.ViewData().EducationFormId(),
-                    educationLevelId: self.ViewData().EducationLevelId(),
-                    courseNumber: self.ViewData().CourseNumber()
+                    facultyId: self.FacultyId(),
+                    educationFormId: self.EducationFormId(),
+                    educationLevelId: self.EducationLevelId(),
+                    courseNumber: self.CourseNumber()
                 };
 
                 if (parameters.facultyId && parameters.educationFormId
@@ -193,10 +232,10 @@
                             }
                         };
 
-                        ko.mapping.fromJS(data, groupMapping, self.ViewData().Groups);
+                        ko.mapping.fromJS(data, groupMapping, self.Groups);
 
-                        ko.utils.arrayForEach(self.ViewData().SelectedGroups(), function (selectedGroup) {
-                            ko.utils.arrayForEach(self.ViewData().Groups(), function (group) {
+                        ko.utils.arrayForEach(self.SelectedGroups(), function (selectedGroup) {
+                            ko.utils.arrayForEach(self.Groups(), function (group) {
                                 if (selectedGroup.GroupId() == group.GroupId()) {
                                     var selector = '#group-' + group.GroupId();
                                     $(selector).trigger('change');
@@ -204,36 +243,34 @@
                             });
                         });
                     });
-
                 }
             };
 
-            self.groupSetChanged = function () {
-                var viewData = self.ViewData();
-                viewData.SelectedGroups([]);
+            self.GroupSetChanged = function () {
+                self.SelectedGroups([]);
 
-                var groupSetId = viewData.GroupSetId();
+                var groupSetId = self.GroupSetId();
                 if (!groupSetId) {
 
-                    viewData.GroupSetName('');
-                    viewData.FacultyId('');
-                    viewData.EducationFormId('');
-                    viewData.EducationLevelId('');
-                    viewData.CourseNumber('');
-                    viewData.CourseNumbers([]);
-                    viewData.Groups([]);
+                    self.GroupSetName('');
+                    self.FacultyId('');
+                    self.EducationFormId('');
+                    self.EducationLevelId('');
+                    self.CourseNumber('');
+                    self.CourseNumbers([]);
+                    self.Groups([]);
 
                 } else {
                     var parameters = { groupSetId: groupSetId };
 
                     $.post('/Home/SelectFlowData', parameters, function (data) {
                         if (data) {
-                            viewData.GroupSetName(data.GroupSetName);
-                            viewData.FacultyId(data.FacultyId);
-                            viewData.EducationFormId(data.EducationFormId);
-                            viewData.EducationLevelId(data.EducationLevelId);
-                            viewData.CourseNumbers(data.CourseNumbers);
-                            viewData.CourseNumber(data.CourseNumber);
+                            self.GroupSetName(data.GroupSetName);
+                            self.FacultyId(data.FacultyId);
+                            self.EducationFormId(data.EducationFormId);
+                            self.EducationLevelId(data.EducationLevelId);
+                            self.CourseNumbers(data.CourseNumbers);
+                            self.CourseNumber(data.CourseNumber);
 
                             $('select').selectpicker('refresh');
 
@@ -243,14 +280,14 @@
                                 }
                             };
 
-                            ko.mapping.fromJS(data.Groups, groupMapping, viewData.Groups);
-                            ko.mapping.fromJS(data.SelectedGroups, groupMapping, viewData.SelectedGroups);
+                            ko.mapping.fromJS(data.Groups, groupMapping, self.Groups);
+                            ko.mapping.fromJS(data.SelectedGroups, groupMapping, self.SelectedGroups);
                         }
                     });
                 }
             };
 
-            self.groupSetOptionContent = function (option, item) {
+            self.GroupSetOptionContent = function (option, item) {
                 if (!item) return;
 
                 $(option).text(item.GroupSetName());
@@ -260,31 +297,27 @@
                 ko.applyBindingsToNode(option, {}, item);
             };
 
-            self.facultyChanged = function () {
-                var viewData = self.ViewData();
-                viewData.CourseNumber('');
-
-                self.loadCourseNumbers();
+            self.FacultyChanged = function () {
+                self.CourseNumber('');
+                self.LoadCourseNumbers();
             };
 
-            self.educationFormChanged = function () {
-                self.loadCourseNumbers();
-                var viewData = self.ViewData();
-                viewData.CourseNumber('');
+            self.EducationFormChanged = function () {
+                self.LoadCourseNumbers();
+                self.CourseNumber('');
             };
 
-            self.educationLevelChanged = function () {
-                self.loadCourseNumbers();
-                var viewData = self.ViewData();
-                viewData.CourseNumber('');
+            self.EducationLevelChanged = function () {
+                self.LoadCourseNumbers();
+                self.CourseNumber('');
             };
 
-            self.courseNumberChanged = function () {
-                self.loadGroups();
+            self.CourseNumberChanged = function () {
+                self.LoadGroups();
             };
 
-            self.selectFlow = function () {
-                var selectFlowViewModel = ko.toJS(self.ViewData());
+            self.SelectFlow = function () {
+                var selectFlowViewModel = ko.toJS(self);
 
                 var postData = {
                     GroupSetId: selectFlowViewModel.GroupSetId,
@@ -317,9 +350,31 @@
                 });
             };
 
-            self.removeSelectedGroup = function (group) {
+            self.ReorderSelectedGroups = function () {
+                var sortedGroups = _.sortBy(self.SelectedGroups(), function (group) {
+                    var order = group.Order();
+                    if (!order) {
+                        return self.SelectedGroups().length;
+                    }
+
+                    return order;
+                });
+
+                $.each(sortedGroups, function (index, group) {
+                    group.Order(index + 1);
+                });
+
+                ko.utils.arrayForEach(self.Groups(), function (group) {
+                    if (!group.IsSelected()) {
+                        group.Order('');
+                    }
+                });
+            };
+
+            self.RemoveSelectedGroup = function (group) {
                 var selector = '#group-' + group.GroupId();
-                self.ViewData().SelectedGroups.remove(group);
+                self.SelectedGroups.remove(group);
+                self.ReorderSelectedGroups();
                 $(selector).trigger('change');
             };
         }
@@ -346,78 +401,14 @@
                         parameters.selectedItems.remove(item);
                     }
 
-                    var selectedItems = parameters.selectedItems();
-                    var sortedItems = _.sortBy(selectedItems, function (item) {
-                        var order = item.Order();
-                        if (!order) {
-                            return selectedItems.length;
-                        }
-
-                        return order;
-                    });
-
-                    $.each(sortedItems, function (index, item) {
-                        item.Order(index + 1);
-                    });
-
-                    if (!item.IsSelected()) {
-                        item.Order('');
+                    if (parameters.orderFunction) {
+                        parameters.orderFunction();
                     }
                 });
 
                 $(element).checkboxX();
             }
         };
-
-        function SelectFlowViewModel(data) {
-            var self = this;
-            if (!data) {
-                self.GroupSetId = ko.observable('');
-                self.GroupSets = ko.observableArray([]);
-                self.GroupSetName = ko.observable('');
-                self.FacultyId = ko.observable('');
-                self.Faculties = ko.observableArray([]);
-                self.EducationLevelId = ko.observable('');
-                self.EducationLevels = ko.observableArray([]);
-                self.EducationFormId = ko.observable('');
-                self.EducationForms = ko.observableArray([]);
-                self.CourseNumber = ko.observable('');
-                self.CourseNumbers = ko.observableArray([]);
-                self.Groups = ko.observableArray([]);
-            }
-
-            self.SelectedGroups = ko.observableArray([]);
-
-            var selectFlowMapping = {
-                'GroupSets': {
-                    create: function (options) {
-                        return new GroupSetViewModel(options.data);
-                    }
-                },
-                'Groups': {
-                    create: function (options) {
-                        return new GroupViewModel(options.data);
-                    }
-                },
-                'Faculties': {
-                    create: function (options) {
-                        return new FacultyViewModel(options.data);
-                    }
-                },
-                'EducationForms': {
-                    create: function (options) {
-                        return new EducationFormViewModel(options.data);
-                    }
-                },
-                'EducationLevels': {
-                    create: function (options) {
-                        return new EducationLevelViewModel(options.data);
-                    }
-                }
-            };
-
-            ko.mapping.fromJS(data, selectFlowMapping, self);
-        }
 
         function GroupSetViewModel(data) {
             ko.mapping.fromJS(data, {}, this);

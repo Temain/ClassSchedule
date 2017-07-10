@@ -29,6 +29,11 @@ namespace ClassSchedule.Domain.Models
         public bool IsSelected { get; set; }
 
         /// <summary>
+        /// Счетчик, наиболее используемые списки отображаются раньше
+        /// </summary>
+        public int? Counter { get; set; }
+
+        /// <summary>
         /// Дата последнего обновления записи
         /// </summary>
         public DateTime CreatedAt { get; set; }
