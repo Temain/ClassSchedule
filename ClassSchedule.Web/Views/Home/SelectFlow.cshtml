@@ -80,7 +80,7 @@
                             <div class="col-md-4 dt-style">
                                 Курс
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <select id="courseNumber" class="form-control" title="" data-size="12" data-bind="selectPicker: ViewData().CourseNumber, options: ViewData().CourseNumbers, optionsCaption: '', event: { change : courseNumberChanged }"></select>
                             </div>
                         </div>
@@ -101,6 +101,7 @@
             </div>
         </div>
 
+        <!-- ko if: $root.ViewData().Groups().length > 0 -->
         <div class="row inline-block-lg">
             <div class="col-md-4">
                 <div class="title">Выбранные группы</div>
@@ -118,6 +119,7 @@
                 </div>
             </div>
         </div>
+        <!-- /ko -->
 
         <div class="row inline-block mrgbtm36">
             <div class="col-md-4">
@@ -316,6 +318,8 @@
             };
 
             self.removeSelectedGroup = function (group) {
+                var selector = '#group-' + group.GroupId();
+                $(selector).trigger('change');
                 self.ViewData().SelectedGroups.remove(group);
             };
         }
