@@ -51,11 +51,11 @@ namespace ClassSchedule.Web
                       "~/Scripts/knockout.validation.js",
                       "~/Scripts/knockout.bindings.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/edit-lesson").Include(
-                       "~/Scripts/lesson.edit.js"));
-
-            bundles.Add(new ScriptBundle("~/bundles/changeweek").Include(
-                       "~/Scripts/changeweek.js"));
+            bundles.Add(new ScriptBundle("~/bundles/schedule").Include(
+                       "~/Scripts/schedule/viewmodels.js",
+                       "~/Scripts/schedule/lesson.edit.js",
+                       "~/Scripts/schedule/changeweek.js",
+                       "~/Scripts/schedule/copyschedule.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/highcharts").Include(
                        "~/Scripts/highcharts/highcharts.js",

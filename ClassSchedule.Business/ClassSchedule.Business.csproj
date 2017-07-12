@@ -68,7 +68,9 @@
     <Compile Include="Models\Auditorium\AuditoriumDisciplineTeacherViewModel.cs" />
     <Compile Include="Models\Auditorium\AuditoriumLessonViewModel.cs" />
     <Compile Include="Models\ChangeWeek\ChangeWeekViewModel.cs" />
-    <Compile Include="Models\ChangeWeek\WeekViewModel.cs" />
+    <Compile Include="Models\CopySchedule\CopyScheduleViewModel.cs" />
+    <Compile Include="Models\DayViewModel.cs" />
+    <Compile Include="Models\WeekViewModel.cs" />
     <Compile Include="Models\CourseViewModel.cs" />
     <Compile Include="Models\EducationDirectionViewModel.cs" />
     <Compile Include="Models\EducationFormViewModel.cs" />

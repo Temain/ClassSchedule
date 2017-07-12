@@ -1,4 +1,4 @@
-﻿namespace ClassSchedule.Business.Models.ChangeWeek
+﻿namespace ClassSchedule.Business.Models
 {
     public class WeekViewModel
     {

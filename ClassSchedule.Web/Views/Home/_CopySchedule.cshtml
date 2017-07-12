@@ -1,37 +1,57 @@
 ﻿<!-- Modal -->
-<div id="copy-schedule" class="modal fade" role="dialog">
+<div id="copy-schedule" class="modal fade" data-bind="with: $root.CopyScheduleViewModel" role="dialog">
     <div class="modal-dialog">
 
         <!-- Modal content-->
         <div class="modal-content custom-modal-content">
-            <div class="modal-header custom-modal-header primary">
+            <div class="modal-header custom-modal-header warning">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Копирование расписания</h4>
             </div>
             <div class="modal-body">
-                @*<div class="row modal-container">
+                <div class="row modal-container">
                     <dl class="dl-horizontal">
                         <dt>Сегодня</dt>
+
+                        <!-- ko if: CurrentWeekEndDate() -->
                         <dd data-bind="text: CurrentWeek() + ' неделя (' + CurrentWeekStartDate() + 'г. - ' + CurrentWeekEndDate() + 'г.)'"></dd>
+                        <!-- /ko -->
+                        <!-- ko if: !CurrentWeekEndDate() -->
+                        <dd data-bind="text: CurrentWeekStartDate()"></dd>
+                        <!-- /ko -->
+
                         <dt>Редактируется</dt>
                         <dd data-bind="text: EditedWeek() + ' неделя (' + EditedWeekStartDate() + 'г. - ' + EditedWeekEndDate() + 'г.)'"></dd>
                     </dl>
 
                     <div class="week">
-                        <div class="week-label"><label class="control-label">Выберите неделю</label></div>
-                        <div class="week-select ">
-                            <select class="form-control" data-bind="selectPicker: SelectedWeek, options: $root.ChangeWeekViewModel().Weeks, optionsValue: 'WeekNumber', optionsText: 'WeekNumber', optionsAfterRender: $root.ChangeWeekViewModel().setWeekOptionContent"></select>
+                        <div class="week-label"><label class="control-label">Копировать на</label></div>
+                        <div class="week-select">
+                            <select id="days" multiple="multiple" class="form-control" title="" data-size="12" data-bind="selectPicker: SelectedWeeks, selectPickerOptions: { optionsArray : $root.CopyScheduleViewModel().Weeks }, optionsValue: 'WeekNumber', optionsText: 'WeekNumber', optionsCaption : '', optionsAfterRender: $root.CopyScheduleViewModel().setWeekOptionContent"></select>
                         </div>
                     </div>
-                </div>*@
+
+                    <div class="week mrgtop12">
+                        <div class="week-label"><label class="control-label">Дни</label></div>
+                        <div class="week-select">
+                            <select id="days" multiple="multiple" class="form-control" title="" data-size="12" data-bind="selectPicker: SelectedDays, selectPickerOptions: { optionsArray : $root.CopyScheduleViewModel().Days }, optionsValue: 'DayNumber', optionsText: 'DayName', optionsCaption : '', optionsAfterRender: $root.CopyScheduleViewModel().setDaysOptionContent"></select>
+                        </div>
+                    </div>
+
+                    <div class="week mrgtop12">
+                        <div class="week-label"><label class="control-label">Для групп</label></div>
+                        <div class="week-select">
+                            <select id="days" multiple="multiple" class="form-control" title="" data-size="12" data-bind="selectPicker: SelectedGroups, selectPickerOptions: { optionsArray : $root.CopyScheduleViewModel().Groups }, optionsValue: 'GroupId', optionsText: 'GroupName', optionsCaption : ''"></select>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="custom-modal-footer modal-footer">
                 <div class="btn-group" role="group" aria-label="...">
                     <button type="button" id="modal-cancel" class="btn btn-default" data-dismiss="modal">Отмена</button>
-                    <a id="modal-confirm-copy" class="btn btn-primary">Копировать</a>
+                    <a id="modal-confirm" class="btn btn-warning">Копировать</a>
                 </div>
             </div>
         </div>
-
     </div>
 </div>

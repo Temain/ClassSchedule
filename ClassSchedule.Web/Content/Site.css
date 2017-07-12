@@ -1055,7 +1055,8 @@ html { overflow-y: auto !important; }
 
 /* Выбор недели
 ------------------------------------------------*/
-#change-week dl > dt {
+#change-week dl > dt,
+#copy-schedule dl > dt {
     font-weight: normal;
     color: #848484;
     font-size: 1em;
@@ -1068,22 +1069,26 @@ html { overflow-y: auto !important; }
     padding: 20px;
 }
 
-#change-week .week {
+#change-week .week,
+#copy-schedule .week {
     /*border-top: 1px solid #E7E7EC;
     padding-top: 20px;*/
 }
 
-#change-week .week-label {
+#change-week .week-label,
+#copy-schedule .week-label {
     width: 35%;
     display: inline-block;
 }
 
-#change-week .week-select {
+#change-week .week-select,
+#copy-schedule .week-select {
     width: 60%;
     display: inline-block;
 }
 
-#change-week .schedule-type {
+#change-week .schedule-type,
+#copy-schedule .schedule-type {
     font-weight: bold;
     font-size: 1.1em;
 }

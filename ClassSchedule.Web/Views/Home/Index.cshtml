@@ -116,8 +116,7 @@
     @Scripts.Render("~/bundles/knockout")
     @Scripts.Render("~/bundles/typeahead")
     @Scripts.Render("~/bundles/bootstrap-select")
-    @Scripts.Render("~/bundles/edit-lesson")
-    @Scripts.Render("~/bundles/changeweek")
+    @Scripts.Render("~/bundles/schedule")
     @Scripts.Render("~/bundles/highcharts")
 
     <script>
@@ -203,6 +202,7 @@
 
             self.ChangeWeekViewModel = ko.observable(new ChangeWeekViewModel());
             self.EditLessonViewModel = ko.observable(new EditLessonViewModel());
+            self.CopyScheduleViewModel = ko.observable(new CopyScheduleViewModel());
 
             self.editLesson = function ( /*lessonCell*/) {
                 var lessonCell = self.SelectedLessonCell();
@@ -320,8 +320,11 @@
                             self.cellMark.check();
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
-                            alert(xhr.status);
-                            alert(thrownError);
+                            if (xhr.Status || thrownError) {
+                                alert(xhr.status + " " + thrownError);
+                            } else {
+                                alert("Произошла ошибка при копировании занятия");
+                            }
                         }
                     });
 
@@ -460,7 +463,6 @@
                     flashContent.text('');
                     flashContent.removeClass('fa fa-check');
                 },
-
                 check: function (lessonCell) {
                     this.clear(lessonCell);
 
@@ -567,25 +569,38 @@
             }
 
             self.copySchedule = function () {
-                // $.post('/Home/EditableWeeks', {}, function (data) {
-                // self.ChangeWeekViewModel(new ChangeWeekViewModel(data));
+                $.get('/Home/CopySchedule', {}, function (data) {
+                    self.CopyScheduleViewModel(new CopyScheduleViewModel(data));
 
-                $('#copy-schedule').modal({
-                    backdrop: 'static',
-                    keyboard: false
+                    $('#copy-schedule').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+
+                    $('#copy-schedule').on('click', '#modal-confirm', function () {
+                        var postData = ko.toJSON(self.CopyScheduleViewModel());
+
+                        $.ajax({
+                            method: 'post',
+                            url: '/Home/CopySchedule',
+                            data: postData,
+                            contentType: "application/json; charset=utf-8",
+                            error: function (response) {
+                                console.log(response);
+                            },
+                            success: function (response) {
+                                console.log('Расписание успешно скопировано.');
+
+                                $('#copy-schedule').modal('hide');
+                            }
+                        });
+                    });
+
+                    $('#copy-schedule').on('click', '#modal-cancel', function () {
+                        $('#copy-schedule').modal('hide');
+                        $('#copy-schedule').unbind('click');
+                    });
                 });
-
-                //$('#change-week').on('click', '#modal-confirm', function () {
-                //    $.post('/Home/ChangeWeek',{ weekNumber: self.ChangeWeekViewModel().SelectedWeek() }, function () { });
-
-                //    $('#change-week').modal('hide');
-                //});
-
-                //$('#change-week').on('click', '#modal-cancel', function () {
-                //    $('#change-week').modal('hide');
-                //    $('#change-week').unbind('click');
-                //});
-                // });
             }
         };
     </script>

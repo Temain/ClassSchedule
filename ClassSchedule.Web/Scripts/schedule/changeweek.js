@@ -47,7 +47,3 @@
     ko.mapping.fromJS(data, changeWeekMapping, self);
     self.SelectedWeek = ko.observable(self.EditedWeek());
 }
-
-function WeekViewModel(data) {
-    ko.mapping.fromJS(data, {}, this);
-}

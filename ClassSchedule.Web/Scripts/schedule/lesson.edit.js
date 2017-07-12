@@ -468,23 +468,3 @@ function LessonDetailViewModel(data) {
 
     return self;
 }
-
-function DisciplineViewModel(data) {
-    ko.mapping.fromJS(data, {}, this);
-}
-
-function LessonTypeViewModel(data) {
-    ko.mapping.fromJS(data, {}, this);
-}
-
-function TeacherViewModel(data) {
-    ko.mapping.fromJS(data, {}, this);
-}
-
-function HousingViewModel(data) {
-    ko.mapping.fromJS(data, {}, this);
-}
-
-function AuditoriumViewModel(data) {
-    ko.mapping.fromJS(data, {}, this);
-}

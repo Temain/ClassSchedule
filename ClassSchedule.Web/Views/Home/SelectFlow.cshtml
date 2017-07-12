@@ -133,6 +133,7 @@
 
 @section Scripts
 {
+    <script src="~/Scripts/schedule/viewmodels.js"></script>
     @Scripts.Render("~/bundles/underscore")
     @Scripts.Render("~/bundles/bootstrap-select")
     @Scripts.Render("~/bundles/knockout")
@@ -344,8 +345,7 @@
                         }
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
-                        alert(xhr.status);
-                        alert(thrownError);
+                        alert(xhr.status + ' ' + thrownError);
                     }
                 });
             };
@@ -409,36 +409,5 @@
                 $(element).checkboxX();
             }
         };
-
-        function GroupSetViewModel(data) {
-            ko.mapping.fromJS(data, {}, this);
-        }
-
-        function GroupViewModel(data) {
-            var self = this;
-            if (!data) {
-                self.GroupId = ko.observable('');
-                self.GroupName = ko.observable('');
-            }
-
-            self.Order = ko.observable('');
-            self.IsSelected = ko.observable(false);
-
-            ko.mapping.fromJS(data, {}, self);
-
-            return self;
-        }
-
-        function FacultyViewModel(data) {
-            ko.mapping.fromJS(data, {}, this);
-        }
-
-        function EducationFormViewModel(data) {
-            ko.mapping.fromJS(data, {}, this);
-        }
-
-        function EducationLevelViewModel(data) {
-            ko.mapping.fromJS(data, {}, this);
-        }
     </script>
 }
