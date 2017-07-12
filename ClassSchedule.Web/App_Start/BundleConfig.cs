@@ -57,11 +57,19 @@ namespace ClassSchedule.Web
                        "~/Scripts/schedule/changeweek.js",
                        "~/Scripts/schedule/copyschedule.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/changeweek").Include(
+                       "~/Scripts/schedule/viewmodels.js",
+                       "~/Scripts/schedule/changeweek.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/highcharts").Include(
                        "~/Scripts/highcharts/highcharts.js",
                        "~/Scripts/highcharts/highcharts-more.js",
                        "~/Scripts/highcharts/modules/data.js",
                        "~/Scripts/highcharts/modules/exporting.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/noty").Include(
+                       "~/Scripts/noty/options.js",
+                       "~/Scripts/noty/noty.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap-select").Include(
                        "~/Scripts/bootstrap-select.js"));
@@ -78,6 +86,8 @@ namespace ClassSchedule.Web
                       "~/Content/font-awesome.css",
                       "~/Content/login.css"));
 
+            bundles.Add(new StyleBundle("~/Content/noty").Include(
+                     "~/Content/noty/noty.css"));
         }
     }
 }

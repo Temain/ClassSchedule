@@ -89,11 +89,22 @@
 
                 $("#edit-lesson").modal('hide');
 
-                viewModel.cellMark.check();            
+                viewModel.cellMark.check();
+
+                var message = 'Занятие успешно сохранено';
+                console.log(message);
+                var noty = new Noty(notyOptions);
+                noty.options.type = 'success';
+                noty.options.text = message;
+                noty.show();
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                alert(xhr.status);
-                alert(thrownError);
+                var message = 'Произошла ошибка при сохранении занятия';
+                console.log(message);
+                var noty = new Noty(notyOptions);
+                noty.options.type = 'error';
+                noty.options.text = message;
+                noty.show();
             }
         });
     };

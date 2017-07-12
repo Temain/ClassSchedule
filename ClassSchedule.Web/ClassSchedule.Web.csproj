@@ -300,6 +300,7 @@
     <Content Include="Content\Images\logo_vert2_240.png" />
     <Content Include="Content\Images\pdf_icon.png" />
     <Content Include="Content\Login.css" />
+    <Content Include="Content\noty\noty.css" />
     <Content Include="Content\theme-krajee-flatblue.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="Fonts\blisspro-bold-webfont.svg" />
@@ -339,6 +340,7 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap-select.css.map" />
+    <Content Include="Content\noty\noty.css.map" />
     <None Include="Properties\PublishProfiles\file.pubxml" />
     <None Include="Properties\PublishProfiles\smarterasp.net.pubxml" />
     <None Include="Properties\PublishProfiles\somee.com.pubxml" />
@@ -348,6 +350,9 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\bootstrap3-typeahead.js" />
     <Content Include="Scripts\bootstrap3-typeahead.min.js" />
+    <Content Include="Scripts\noty\noty.js" />
+    <Content Include="Scripts\noty\noty.min.js" />
+    <Content Include="Scripts\noty\options.js" />
     <Content Include="Scripts\schedule\copyschedule.js" />
     <Content Include="Scripts\schedule\changeweek.js" />
     <Content Include="Scripts\schedule\changeyear.js" />
@@ -546,6 +551,8 @@
     <Content Include="Views\Home\_CopySchedule.cshtml" />
     <Content Include="Views\Teacher\_TeacherWeekSchedule.cshtml" />
     <Content Include="Views\Auditorium\_AuditoriumWeekSchedule.cshtml" />
+    <Content Include="Scripts\noty\noty.js.map" />
+    <Content Include="Scripts\noty\noty.min.js.map" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

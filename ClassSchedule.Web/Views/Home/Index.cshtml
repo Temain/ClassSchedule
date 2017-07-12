@@ -23,6 +23,7 @@
 }
 
 @Styles.Render("~/Content/bootstrap-select")
+@Styles.Render("~/Content/noty")
 
 <div class="schedule-container">
     @Html.Partial("_Navbar")
@@ -118,6 +119,7 @@
     @Scripts.Render("~/bundles/bootstrap-select")
     @Scripts.Render("~/bundles/schedule")
     @Scripts.Render("~/bundles/highcharts")
+    @Scripts.Render("~/bundles/noty")
 
     <script>
         $(function () {
@@ -239,8 +241,12 @@
                         });
                     },
                     error: function (xhr, status, error) {
-                        var err = eval("(" + xhr.responseText + ")");
-                        alert(err.Message);
+                        var message = 'Произошла ошибка при попытке редактирования занятия';
+                        console.log(message);
+                        var noty = new Noty(notyOptions);
+                        noty.options.type = 'error';
+                        noty.options.text = message;
+                        noty.show();
                     }
                 });
             };
@@ -318,13 +324,25 @@
                             }
 
                             self.cellMark.check();
+
+                            var message = 'Занятие успешно копировано';
+                            console.log(message);
+                            var noty = new Noty(notyOptions);
+                            noty.options.type = 'success';
+                            noty.options.text = message;
+                            noty.show();
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
                             if (xhr.Status || thrownError) {
-                                alert(xhr.status + " " + thrownError);
-                            } else {
-                                alert("Произошла ошибка при копировании занятия");
-                            }
+                                console.log(xhr.status + " " + thrownError);
+                            } 
+
+                            var message = 'Произошла ошибка при копировании занятия';
+                            console.log(message);
+                            var noty = new Noty(notyOptions);
+                            noty.options.type = 'error';
+                            noty.options.text = message;
+                            noty.show();
                         }
                     });
 
@@ -368,10 +386,21 @@
 
                             $(selectedCell).find(".lesson-cell-part").html('');
                             self.cellMark.check();
+
+                            var message = 'Занятие успешно удалено';
+                            console.log(message);
+                            var noty = new Noty(notyOptions);
+                            noty.options.type = 'success';
+                            noty.options.text = message;
+                            noty.show();
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
-                            alert(xhr.status);
-                            alert(thrownError);
+                            var message = 'При удалении занятия произошла ошибка';
+                            console.log(message);
+                            var noty = new Noty(notyOptions);
+                            noty.options.type = 'error';
+                            noty.options.text = message;
+                            noty.show();
                         }
                     });
 
@@ -516,28 +545,28 @@
                 clear: function () {
                     if (this.lastStyle) {
                         $('#action-modal .custom-modal-header').removeClass(this.lastStyle);
-                        $('#modal-confirm').removeClass('btn-' + this.lastStyle);
+                        $('#action-modal #modal-confirm').removeClass('btn-' + this.lastStyle);
                     }
                 },
 
                 setSucessStyle: function () {
                     this.clear();
                     $('#action-modal .custom-modal-header').addClass('success');
-                    $('#modal-confirm').addClass('btn-success');
+                    $('#action-modal #modal-confirm').addClass('btn-success');
                     this.lastStyle = 'success';
                 },
 
                 setWarningStyle: function () {
                     this.clear();
                     $('#action-modal .custom-modal-header').addClass('warning');
-                    $('#modal-confirm').addClass('btn-warning');
+                    $('#action-modal #modal-confirm').addClass('btn-warning');
                     this.lastStyle = 'warning';
                 },
 
                 setDangerStyle: function () {
                     this.clear();
                     $('#action-modal .custom-modal-header').addClass('danger');
-                    $('#modal-confirm').addClass('btn-danger');
+                    $('#action-modal #modal-confirm').addClass('btn-danger');
                     this.lastStyle = 'danger';
                 },
 
@@ -570,6 +599,7 @@
 
             self.copySchedule = function () {
                 $.get('/Home/CopySchedule', {}, function (data) {
+
                     self.CopyScheduleViewModel(new CopyScheduleViewModel(data));
 
                     $('#copy-schedule').modal({
@@ -586,14 +616,25 @@
                             data: postData,
                             contentType: "application/json; charset=utf-8",
                             error: function (response) {
-                                console.log(response);
+                                var message = 'При копировании расписания произошла ошибка';
+                                console.log(message);
+                                var noty = new Noty(notyOptions);
+                                noty.options.type = 'error';
+                                noty.options.text = message;
+                                noty.show();
                             },
                             success: function (response) {
-                                console.log('Расписание успешно скопировано.');
+                                var message = 'Расписание успешно скопировано';
+                                console.log(message);
+                                var noty = new Noty(notyOptions);
+                                noty.options.text = message;
+                                noty.show();
 
                                 $('#copy-schedule').modal('hide');
                             }
                         });
+
+                        $('#copy-schedule').unbind('click');
                     });
 
                     $('#copy-schedule').on('click', '#modal-cancel', function () {

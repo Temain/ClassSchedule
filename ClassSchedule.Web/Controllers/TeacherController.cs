@@ -70,8 +70,7 @@ namespace ClassSchedule.Web.Controllers
                                     Groups = a.Select(ag => ag.Lesson.Schedule.Group.GroupName)
                                 })
                         })
-                }
-                )
+                })
                 .ToList();
 
             // Окна в расписании преподавателя

@@ -9,7 +9,6 @@
         self.CurrentWeekEndDate = ko.observable('');
         self.Today = ko.observable('');
         self.Weeks = ko.observableArray([]);
-        self.SelectedWeeks = ko.observableArray([]);
         self.Days = ko.observableArray([]);
         self.SelectedDays = ko.observableArray([]);
         self.Groups = ko.observableArray([]);
@@ -72,6 +71,8 @@
     };
 
     ko.mapping.fromJS(data, changeWeekMapping, self);
+
+    self.SelectedWeeks = ko.observableArray([]);
 }
 
 CopyScheduleViewModel.prototype.toJSON = function () {

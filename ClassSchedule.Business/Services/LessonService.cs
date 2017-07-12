@@ -103,10 +103,10 @@ namespace ClassSchedule.Business.Services
 
             if (checkDowntimes)
             {
-                var downtimes = _jobService.TeachersDowntime(weekNumber, maxDiff: 2);
+                var downtimes = _jobService.TeachersDowntime(weekNumber, maxDiff: 2, groupsIds: groupsIds);
                 foreach (var downtime in downtimes)
                 {
-                    scheduleViewModel.Where(x => x.GroupId == downtime.GroupId && x.DayNumber == downtime.DayNumber && x.ClassNumber == downtime.ClassNumber)
+                    scheduleViewModel.Where(x => /*x.GroupId == downtime.GroupId && */x.DayNumber == downtime.DayNumber /*&& x.ClassNumber == downtime.ClassNumber*/)
                         .SelectMany(g => g.Lessons.SelectMany(d => d.LessonDetails))
                         .Where(p => p.PlannedChairJobId == downtime.PlannedChairJobId)
                         .All(c => { c.TeacherHasDowntime = true; return true; });

@@ -116,8 +116,9 @@ namespace ClassSchedule.Business.Services
         /// <param name="weekNumber">Номер недели</param>
         /// <param name="teacherId">Идентификатор преподавателя (JobId)</param>
         /// <param name="maxDiff">Размер окна (количество занятий)</param>
-        public List<TeacherDowntimeQueryResult> TeachersDowntime(int weekNumber, int? chairJobId = 0, int maxDiff = 1)
+        public List<TeacherDowntimeQueryResult> TeachersDowntime(int weekNumber, int? chairJobId = 0, int maxDiff = 1, int[] groupsIds = null)
         {
+            var groupsStr = string.Join(",", groupsIds);
             var parameters = new object[]
             {
                 new SqlParameter("@weekNumber", weekNumber), 
@@ -125,7 +126,9 @@ namespace ClassSchedule.Business.Services
                 new SqlParameter("@maxDiff", maxDiff)
             };
 
-            var query = @"
+            var conditionalWhere = groupsIds != null ? ("AND s1.GroupId IN (" + groupsStr + ") ") : "";
+
+            var query = string.Format(@"
                 WITH WeekLessons AS (
                   SELECT ld.PlannedChairJobId, s.GroupId, e.PersonId, s.DayNumber, s.ClassNumber,
                     ROW_NUMBER() OVER(PARTITION BY CASE WHEN e.PersonId IS NULL THEN ld.PlannedChairJobId ELSE e.PersonId END, s.DayNumber ORDER BY CASE WHEN e.PersonId IS NULL THEN ld.PlannedChairJobId ELSE e.PersonId END, s.DayNumber, s.ClassNumber) AS Drn,
@@ -145,7 +148,7 @@ namespace ClassSchedule.Business.Services
                     LEFT JOIN Job j1 ON pcj1.JobId = j1.JobId
                     LEFT JOIN Employee e1 ON j1.EmployeeId = e1.EmployeeId
                     WHERE s1.WeekNumber = @weekNumber
-                      --AND s1.GroupId IN (233,309,500)
+                      {0}
                       AND l1.DeletedAt IS NULL AND s1.DeletedAt IS NULL
                       AND tls.DeletedAt IS NULL
                   )
@@ -156,7 +159,7 @@ namespace ClassSchedule.Business.Services
                     LEFT JOIN Schedule s1 ON l1.ScheduleId = s1.ScheduleId
                     LEFT JOIN PlannedChairJob pcj2 ON tls.PlannedChairJobId = pcj2.PlannedChairJobId
                     WHERE s1.WeekNumber = @weekNumber
-                      --AND s1.GroupId IN (233,309,500)
+                      {0}
                       AND l1.DeletedAt IS NULL AND s1.DeletedAt IS NULL
                       AND tls.DeletedAt IS NULL
                   ))
@@ -178,7 +181,7 @@ namespace ClassSchedule.Business.Services
                 ) AS t0 ON (w2.PersonId = t0.PersonId OR w2.PlannedChairJobId = t0.PlannedChairJobId) AND w2.DayNumber = t0.DayNumber 
                   AND (w2.ClassNumber = t0.ClassNumber OR w2.ClassNumber = t0.ClassNumber - t0.ClassDiff - 1)
                 WHERE t0.ClassDiff IS NOT NULL
-                ORDER BY w2.PersonId, w2.DayNumber, w2.ClassNumber;";
+                ORDER BY w2.PersonId, w2.DayNumber, w2.ClassNumber;", conditionalWhere);
             var downtimes = _context.Database.SqlQuery<TeacherDowntimeQueryResult>(query, parameters).ToList();
 
             return downtimes;
@@ -212,7 +215,7 @@ namespace ClassSchedule.Business.Services
                   LEFT JOIN PlannedChairJob pcj ON ld.PlannedChairJobId = pcj.PlannedChairJobId
                   LEFT JOIN Job j ON pcj.JobId = j.JobId
                   LEFT JOIN Employee e ON j.EmployeeId = e.EmployeeId
-                  WHERE s.WeekNumber IN (1,2)
+                  WHERE s.WeekNumber IN ({0})
                     AND ld.PlannedChairJobId = CASE WHEN @chairJobId <> 0 THEN @chairJobId ELSE ld.PlannedChairJobId END
                     AND s.DeletedAt IS NULL AND ld.DeletedAt IS NULL AND l.DeletedAt IS NULL
                 )
