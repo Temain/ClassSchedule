@@ -118,7 +118,6 @@ namespace ClassSchedule.Business.Services
         /// <param name="maxDiff">Размер окна (количество занятий)</param>
         public List<TeacherDowntimeQueryResult> TeachersDowntime(int weekNumber, int? chairJobId = 0, int maxDiff = 1, int[] groupsIds = null)
         {
-            var groupsStr = string.Join(",", groupsIds);
             var parameters = new object[]
             {
                 new SqlParameter("@weekNumber", weekNumber), 
@@ -126,7 +125,7 @@ namespace ClassSchedule.Business.Services
                 new SqlParameter("@maxDiff", maxDiff)
             };
 
-            var conditionalWhere = groupsIds != null ? ("AND s1.GroupId IN (" + groupsStr + ") ") : "";
+            var conditionalWhere = groupsIds != null ? ("AND s1.GroupId IN (" + string.Join(",", groupsIds) + ") ") : "";
 
             var query = string.Format(@"
                 WITH WeekLessons AS (

@@ -608,32 +608,10 @@
                     });
 
                     $('#copy-schedule').on('click', '#modal-confirm', function () {
-                        var postData = ko.toJSON(self.CopyScheduleViewModel());
-
-                        $.ajax({
-                            method: 'post',
-                            url: '/Home/CopySchedule',
-                            data: postData,
-                            contentType: "application/json; charset=utf-8",
-                            error: function (response) {
-                                var message = 'При копировании расписания произошла ошибка';
-                                console.log(message);
-                                var noty = new Noty(notyOptions);
-                                noty.options.type = 'error';
-                                noty.options.text = message;
-                                noty.show();
-                            },
-                            success: function (response) {
-                                var message = 'Расписание успешно скопировано';
-                                console.log(message);
-                                var noty = new Noty(notyOptions);
-                                noty.options.text = message;
-                                noty.show();
-
-                                $('#copy-schedule').modal('hide');
-                            }
+                        self.CopyScheduleViewModel().submit(function () {
+                            $('#copy-schedule').modal('hide');
                         });
-
+                                                
                         $('#copy-schedule').unbind('click');
                     });
 

@@ -11,7 +11,7 @@ namespace ClassSchedule.Business.Models.Schedule
         public int AuditoriumId { get; set; }
         public string AuditoriumName { get; set; }
 
-        public int PlannedChairJobId { get; set; }
+        public int? PlannedChairJobId { get; set; }
         public string TeacherLastName { get; set; }
         public string TeacherFirstName { get; set; }
         public string TeacherMiddleName { get; set; }

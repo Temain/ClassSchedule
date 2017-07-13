@@ -70,9 +70,50 @@
         ko.applyBindingsToNode(option, {}, item);
     };
 
+    self.submit = function (onComplete) {
+        self.InProgress(true);
+        var postData = ko.toJSON(self);
+
+        $.ajax({
+            method: 'post',
+            url: '/Home/CopySchedule',
+            data: postData,
+            contentType: "application/json; charset=utf-8",
+            beforeSend: function() {
+                var message = 'Подождите, идёт копирование расписания';
+                console.log(message);
+                var noty = new Noty(notyOptions);
+                noty.options.type = 'information';
+                noty.options.text = message;
+                noty.show();
+            },
+            complete: function () {
+                self.InProgress(false);
+                if (onComplete) onComplete();
+            },
+            error: function (response) {
+                var message = 'При копировании расписания произошла ошибка';
+                console.log(message);
+                var noty = new Noty(notyOptions);
+                noty.options.type = 'error';
+                noty.options.text = message;
+                noty.show();
+            },
+            success: function (response) {
+                var message = 'Расписание успешно копировано';
+                console.log(message);
+                var noty = new Noty(notyOptions);
+                noty.options.type = 'success';
+                noty.options.text = message;
+                noty.show();
+            }
+        });
+    };
+
     ko.mapping.fromJS(data, changeWeekMapping, self);
 
     self.SelectedWeeks = ko.observableArray([]);
+    self.InProgress = ko.observable(false);
 }
 
 CopyScheduleViewModel.prototype.toJSON = function () {

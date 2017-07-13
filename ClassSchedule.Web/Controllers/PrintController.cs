@@ -105,8 +105,8 @@ namespace ClassSchedule.Web.Controllers
                       SELECT DISTINCT ls.DayNumber, ls.ClassNumber,
                         STUFF((SELECT DISTINCT ',' + CHAR(10) + dn.Name + CASE WHEN tmp1.LessonTypeId = 1 THEN ' (лек.)' ELSE '' END + ' - ' +
                             STUFF((SELECT DISTINCT ', ' 
-                                + CASE WHEN pcj.JobId IS NULL THEN pcj.PlannedChairJobComment ELSE (p.LastName + COALESCE(' ' + LEFT(p.FirstName, 1) + '.', '') + COALESCE(' ' + LEFT(p.MiddleName, 1) + '.', '')) END
-                                + ' (' + a.AuditoriumNumber + h.Abbreviation + ')'
+                                + COALESCE(CASE WHEN pcj.JobId IS NULL THEN pcj.PlannedChairJobComment ELSE (p.LastName + COALESCE(' ' + LEFT(p.FirstName, 1) + '.', '') + COALESCE(' ' + LEFT(p.MiddleName, 1) + '.', '')) END, '')
+                                + ' (' + CASE WHEN a.AuditoriumNumber = h.Abbreviation THEN h.Abbreviation ELSE a.AuditoriumNumber + h.Abbreviation END + ')'
                               FROM Group{0}Lessons tmp2 
                               LEFT JOIN PlannedChairJob pcj ON pcj.PlannedChairJobId = tmp2.PlannedChairJobId
                               LEFT JOIN Job j ON pcj.JobId = j.JobId
@@ -164,8 +164,16 @@ namespace ClassSchedule.Web.Controllers
 
             report.SetParameterValue("GRC", groups.Count());
 
-            report.PrintSettings.PrintOnSheetHeight = 420;
-            report.PrintSettings.PrintOnSheetWidth = 297;
+            // Изменение размера для каждой страницы
+            foreach (PageBase page in report.Pages)
+            {
+                if (page is ReportPage)
+                {
+                    (page as ReportPage).PaperWidth = 420;
+                    (page as ReportPage).PaperHeight = 297;
+                }
+            }
+
             report.Prepare();
 
             var exportedReport = ExportReport(report, (int)ExportTypes.Pdf, fileName: "GroupSetSchedule");

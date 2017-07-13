@@ -266,105 +266,6 @@
         self.loadAuditoriums(lessonDetail, chairId);
     };
 
-    /* Биндинги
-    ------------------------------------------------------------*/
-    //ko.bindingHandlers.typeahead = {
-    //    init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-    //        var $element = $(element);
-    //        // var allBindings = allBindingsAccessor();          
-    //        var elementData = ko.utils.unwrapObservable(valueAccessor());
-
-    //        // source.DisciplineName.subscribe(function (newValue) {
-    //        //     alert("The person's new name is " + newValue);
-    //        // });
-
-    //        var disciplines = {};
-    //        var disciplineLabels = [];
-
-    //        var searchDiscipline = _.debounce(function (query, process) {
-    //            $.post('/Dictionary/Discipline', { query: query }, function (data) {
-
-    //                disciplines = {};
-    //                disciplineLabels = [];
-
-    //                // if (query.length > 2) {
-
-    //                _.each(data, function (item, ix, list) {
-    //                    if (_.contains(disciplines, item.DisciplineName)) {
-    //                        item.DisciplineName = item.DisciplineName + ' #' + item.DisciplineId;
-    //                    }
-    //                    disciplineLabels.push(item.DisciplineName);
-    //                    disciplines[item.DisciplineName] = {
-    //                        DisciplineId: item.DisciplineId,
-    //                        DisciplineName: item.DisciplineName,
-    //                        ChairId: item.ChairId,
-    //                        ChairName: item.ChairName
-    //                    };
-    //                });
-
-    //                var labelsCount = Object.keys(disciplineLabels).length;
-    //                if (labelsCount === 0) {
-    //                    $element.closest(".discipline").siblings('.msg-text').slideDown(250);
-    //                    elementData.DisciplineId("");
-    //                    elementData.ChairId("");
-    //                    elementData.ChairName("");
-    //                } else {
-    //                    $element.closest(".discipline").siblings('.msg-text').slideUp(250);
-    //                }
-
-    //                process(disciplineLabels);
-    //                // }
-
-    //                if (query.length === 0) $element.closest(".discipline").siblings('.msg-text').slideUp(250);
-    //            });
-    //        }, 300);
-
-    //        var options = {
-    //            source: function (query, process) {
-    //                searchDiscipline(query, process);
-    //            },
-    //            updater: function (item) {
-    //                elementData.DisciplineId(disciplines[item].DisciplineId);
-    //                elementData.ChairId(disciplines[item].ChairId);
-    //                elementData.ChairName("Кафедра " + disciplines[item].ChairName);
-
-    //                self.loadTeachers(elementData, disciplines[item].ChairId);
-
-    //                $.each(elementData.LessonDetails(), function (index, lessonDetail) {
-    //                    lessonDetail.HousingId('');
-    //                });
-
-    //                return item;
-    //            },
-    //            matcher: function (item) {
-    //                if (item.toLowerCase().indexOf(this.query.trim().toLowerCase()) !== -1) {
-    //                    elementData.DisciplineId(disciplines[item].DisciplineId);
-
-    //                    return item;
-    //                }
-
-    //                elementData.DisciplineId("");
-    //                return this.query;
-    //            },
-    //            highlighter: function (item) {
-    //                var discipline = disciplines[item];
-    //                var template = ''
-    //                    + "<div class='typeahead_wrapper'>"
-    //                    + "<div class='typeahead_labels'>"
-    //                    + "<div class='typeahead_primary'>" + discipline.DisciplineName + "</div>"
-    //                    + "<div class='typeahead_secondary'>" + discipline.ChairName + "</div>"
-    //                    + "</div>"
-    //                    + "</div>";
-    //                return template;
-    //            }
-    //        };
-
-    //        $element
-    //            .attr('autocomplete', 'off')
-    //            .typeahead(options);
-    //    }
-    //};
-
     // Валидация
     self.isValidationEnabled = ko.observable(false);
     self.validationObject = ko.validatedObservable({
@@ -432,8 +333,6 @@ function LessonDetailViewModel(data) {
         self.AuditoriumName = ko.observable('');
         self.Auditoriums = ko.observableArray([]);
         self.IsNotActive = ko.observable('');
-
-        //return self;
     }
 
     var lessonDetailMapping = {
@@ -448,15 +347,15 @@ function LessonDetailViewModel(data) {
 
     // Валидация
     self.validationObject = ko.validatedObservable({
-        PlannedChairJobId: self.PlannedChairJobId.extend({
-            required: {
-                params: true,
-                message: " ",
-                onlyIf: function () {
-                    return viewModel.EditLessonViewModel().isValidationEnabled();
-                }
-            }
-        }),
+        //PlannedChairJobId: self.PlannedChairJobId.extend({
+        //    required: {
+        //        params: true,
+        //        message: " ",
+        //        onlyIf: function () {
+        //            return viewModel.EditLessonViewModel().isValidationEnabled();
+        //        }
+        //    }
+        //}),
         HousingId: self.HousingId.extend({
             required: {
                 params: true,

@@ -59,7 +59,7 @@
                                     </a>
                                 </div>
                                 <!-- /ko -->
-                                <!-- ko if: $parent.LessonDetails().length === 2 && ($index() === ($parent.LessonDetails().length - 1)) -->
+                                <!-- ko if: $parent.LessonDetails().length > 1 -->
                                 <div class="col-md-4 no-paddings">
                                     <a class="btn btn-link teacher-btn remove" data-bind="click: function() { return $root.EditLessonViewModel().removeTeacher($parent, $data); }">
                                         <span class="fa fa-user-times"></span>

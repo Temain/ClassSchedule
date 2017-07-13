@@ -20,12 +20,12 @@
                         <dd data-bind="text: CurrentWeekStartDate()"></dd>
                         <!-- /ko -->
 
-                        <dt>Редактируется</dt>
+                        <dt>Копируется</dt>
                         <dd data-bind="text: EditedWeek() + ' неделя (' + EditedWeekStartDate() + 'г. - ' + EditedWeekEndDate() + 'г.)'"></dd>
                     </dl>
 
                     <div class="week">
-                        <div class="week-label"><label class="control-label">Копировать на</label></div>
+                        <div class="week-label"><label class="control-label">На неделю(и)</label></div>
                         <div class="week-select">
                             <select id="days" multiple="multiple" class="form-control" title="" data-size="12" data-bind="selectPicker: SelectedWeeks, selectPickerOptions: { optionsArray : $root.CopyScheduleViewModel().Weeks }, optionsValue: 'WeekNumber', optionsText: 'WeekNumber', optionsCaption : '', optionsAfterRender: $root.CopyScheduleViewModel().setWeekOptionContent"></select>
                         </div>
@@ -49,7 +49,7 @@
             <div class="custom-modal-footer modal-footer">
                 <div class="btn-group" role="group" aria-label="...">
                     <button type="button" id="modal-cancel" class="btn btn-default" data-dismiss="modal">Отмена</button>
-                    <button id="modal-confirm" class="btn btn-warning" data-bind="enable: SelectedWeeks().length">Копировать</button>
+                    <button id="modal-confirm" class="btn btn-warning" data-bind="enable: SelectedWeeks().length && !InProgress()">Копировать</button>
                 </div>
             </div>
         </div>

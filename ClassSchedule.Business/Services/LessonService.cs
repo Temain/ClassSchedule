@@ -75,9 +75,10 @@ namespace ClassSchedule.Business.Services
                                     LessonDetailId = ld.LessonDetailId,
                                     LessonId = ld.LessonId,
                                     AuditoriumId = ld.AuditoriumId,
-                                    AuditoriumName = ld.Auditorium != null && ld.Auditorium.Housing != null ? ld.Auditorium.AuditoriumNumber + ld.Auditorium.Housing.Abbreviation + "." : "",
+                                    AuditoriumName = ld.Auditorium != null && ld.Auditorium.Housing != null 
+                                        ? ld.Auditorium.AuditoriumNumber + (ld.Auditorium.AuditoriumNumber != ld.Auditorium.Housing.Abbreviation ? ld.Auditorium.Housing.Abbreviation : "") + "." : "",
                                     HousingId = ld.Auditorium != null ? ld.Auditorium.HousingId : 0,
-                                    PlannedChairJobId = ld.PlannedChairJobId ?? 0,
+                                    PlannedChairJobId = ld.PlannedChairJobId,
                                     TeacherLastName = ld.PlannedChairJob != null
                                             && ld.PlannedChairJob.Job != null
                                             && ld.PlannedChairJob.Job.Employee != null
@@ -112,6 +113,12 @@ namespace ClassSchedule.Business.Services
                         .All(c => { c.TeacherHasDowntime = true; return true; });
                 }
             }
+
+            // Сортировка в порядке идентификаторов групп
+            scheduleViewModel = groupsIds
+                .Join(scheduleViewModel, i => i, s => s.GroupId, (i, s) => new { i, s })
+                .Select(x => x.s)
+                .ToList();
 
             var index = 0;
             var groups = _context.Groups
