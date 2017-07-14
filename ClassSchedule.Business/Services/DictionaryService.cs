@@ -346,5 +346,18 @@ namespace ClassSchedule.Business.Services
                 .Select(x => new FacultyViewModel { FacultyId = x.FacultyId, FacultyName = x.DivisionName })
                 .ToList();
         }
+
+        public List<DayViewModel> GetDays()
+        {
+            return new List<DayViewModel>
+            {
+                new DayViewModel { DayNumber = 1, DayName = "Понедельник", DayShortName = "Пн" },
+                new DayViewModel { DayNumber = 2, DayName = "Вторник", DayShortName = "Вт" },
+                new DayViewModel { DayNumber = 3, DayName = "Среда", DayShortName = "Ср" },
+                new DayViewModel { DayNumber = 4, DayName = "Черверг", DayShortName = "Чт" },
+                new DayViewModel { DayNumber = 5, DayName = "Пятница", DayShortName = "Пт" },
+                new DayViewModel { DayNumber = 6, DayName = "Суббота", DayShortName = "Сб" }
+            };
+        }
     }
 }

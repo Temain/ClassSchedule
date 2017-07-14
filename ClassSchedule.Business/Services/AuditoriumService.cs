@@ -67,7 +67,8 @@ namespace ClassSchedule.Business.Services
                 WHERE s.DeletedAt IS NULL
                   AND s.WeekNumber = @weekNumber AND s.DayNumber = @dayNumber
                   AND s.ClassNumber = @classNumber
-                  AND s.GroupId <> @groupId;
+                  AND s.GroupId <> @groupId
+                  AND ld.DeletedAt IS NULL;
 
                 DECLARE @MaxLength INT;
                 SELECT @MaxLength = (SELECT MAX(LEN(am.AuditoriumNumber + at.AuditoriumTypeName))

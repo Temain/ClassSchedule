@@ -23,5 +23,6 @@ namespace ClassSchedule.Business.Interfaces
         List<LessonTypeViewModel> GetLessonTypes();
         List<EducationYearViewModel> GetEducationYears();
         List<FacultyViewModel> GetFaculties(string userId = null);
+        List<DayViewModel> GetDays();
     }
 }

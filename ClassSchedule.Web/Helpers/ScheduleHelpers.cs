@@ -50,47 +50,47 @@ namespace ClassSchedule.Web.Helpers
         /// </summary>
         public static string DayOfWeek(int dayNumber)
         {
-            string[] days = {"Пн","Вт","Ср","Чт","Пт","Сб","Вс"};
+            string[] days = { "Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс" };
 
             return days[dayNumber];
         }
 
-        /// <summary>
-        /// Определение даты занятия по номеру недели, дня и дате начала учебного года
-        /// </summary>
-        public static DateTime DateOfLesson(DateTime yearStartDate, int weekNumber, int dayNumber)
-        {
-            int delta = System.DayOfWeek.Monday - yearStartDate.DayOfWeek;
-            DateTime firstMonday = yearStartDate.AddDays(delta);
-            return firstMonday.AddDays(((weekNumber - 1) * 7) + dayNumber - 1);
-        }
+        ///// <summary>
+        ///// Определение даты занятия по номеру недели, дня и дате начала учебного года
+        ///// </summary>
+        //public static DateTime DateOfLesson(DateTime yearStartDate, int weekNumber, int dayNumber)
+        //{
+        //    int delta = System.DayOfWeek.Monday - yearStartDate.DayOfWeek;
+        //    DateTime firstMonday = yearStartDate.AddDays(delta);
+        //    return firstMonday.AddDays(((weekNumber - 1) * 7) + dayNumber - 1);
+        //}
 
-        /// <summary>
-        /// Определение недели занятия по дате
-        /// </summary>
-        public static int WeekOfLesson(DateTime yearStartDate, DateTime date)
-        {
-            int delta = System.DayOfWeek.Monday - yearStartDate.DayOfWeek;
-            DateTime firstMonday = yearStartDate.AddDays(delta);
-            return (date - firstMonday).Days / 7 + 1;
-        }
+        ///// <summary>
+        ///// Определение недели занятия по дате
+        ///// </summary>
+        //public static int WeekOfLesson(DateTime yearStartDate, DateTime date)
+        //{
+        //    int delta = System.DayOfWeek.Monday - yearStartDate.DayOfWeek;
+        //    DateTime firstMonday = yearStartDate.AddDays(delta);
+        //    return (date - firstMonday).Days / 7 + 1;
+        //}
 
         /// <summary>
         /// Возвращает преподавателей и аудиторию занятия
         /// </summary>
         [Obsolete]
-        public static MvcHtmlString TeachersWithAuditorium(IEnumerable<LessonPartViewModel> lessonParts)
+        public static MvcHtmlString TeachersWithAuditorium(IEnumerable<LessonPartViewModel> lessonDetails)
         {
             var teachers = new List<string>();
-            foreach (var lessonPart in lessonParts)
+            foreach (var lessonDetail in lessonDetails)
             {
-                var hasDowntime = lessonPart.TeacherHasDowntime ? "red" : "";
-                var teacher = @"<span class='teacher " + hasDowntime + "' data-teacher='" + lessonPart.TeacherId + "'>" + ScheduleHelpers.PersonShortName(lessonPart.TeacherLastName, lessonPart.TeacherFirstName, lessonPart.TeacherMiddleName) + "</span>"
-                    + "<span class='auditorium' data-auditorium='" + lessonPart.AuditoriumId + "'>" +"(" + lessonPart.AuditoriumName + ")</span>";
+                var hasDowntime = lessonDetail.TeacherHasDowntime ? "red" : "";
+                var teacher = @"<span class='teacher " + hasDowntime + "' data-teacher='" + lessonDetail.TeacherId + "'>" + ScheduleHelpers.PersonShortName(lessonDetail.TeacherLastName, lessonDetail.TeacherFirstName, lessonDetail.TeacherMiddleName) + "</span>"
+                    + "<span class='auditorium' data-auditorium='" + lessonDetail.AuditoriumId + "'>" +"(" + lessonDetail.AuditoriumName + ")</span>";
                 teachers.Add(teacher);
             }
 
-            var result = String.Join(",", teachers);
+            var result = string.Join(",", teachers);
 
             return MvcHtmlString.Create(result);
         }
@@ -103,12 +103,12 @@ namespace ClassSchedule.Web.Helpers
             const string initialTerminator = ".";
             var shortName = lastName;
 
-            if (!String.IsNullOrEmpty(firstName))
+            if (!string.IsNullOrEmpty(firstName))
             {
                 shortName += " " + firstName[0] + initialTerminator;
             }
 
-            if (!String.IsNullOrEmpty(middleName))
+            if (!string.IsNullOrEmpty(middleName))
             {
                 shortName += middleName[0] + initialTerminator;
             }

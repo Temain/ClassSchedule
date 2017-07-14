@@ -1,14 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ClassSchedule.Domain.Models;
 
-namespace ClassSchedule.Domain.Helpers
-{
+namespace ClassSchedule.Business.Helpers
+{    
     public static class DateHelpers
-    {
+    {     
+        /// <summary>
+        /// Определение даты занятия по номеру недели, дня и дате начала учебного года
+        /// </summary>
+        public static DateTime DateOfLesson(DateTime yearStartDate, int weekNumber, int dayNumber)
+        {
+            int delta = System.DayOfWeek.Monday - yearStartDate.DayOfWeek;
+            DateTime firstMonday = yearStartDate.AddDays(delta);
+            return firstMonday.AddDays(((weekNumber - 1) * 7) + dayNumber - 1);
+        }
+
+        /// <summary>
+        /// Определение недели занятия по дате
+        /// </summary>
+        public static int WeekOfLesson(DateTime yearStartDate, DateTime date)
+        {
+            int delta = System.DayOfWeek.Monday - yearStartDate.DayOfWeek;
+            DateTime firstMonday = yearStartDate.AddDays(delta);
+            return (date - firstMonday).Days / 7 + 1;
+        }
+
         /// <summary>
         /// Метод проверяет ситуацию, когда проверяемая дата меньше чем начало учебного года
         /// </summary>

@@ -58,7 +58,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context\ApplicationDbContext.cs" />
-    <Compile Include="Helpers\DateHelpers.cs" />
     <Compile Include="Migrations\201706291107163_Init.cs" />
     <Compile Include="Migrations\201706291107163_Init.Designer.cs">
       <DependentUpon>201706291107163_Init.cs</DependentUpon>
