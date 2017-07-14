@@ -333,11 +333,12 @@
                             noty.show();
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
-                            if (xhr.Status || thrownError) {
-                                console.log(xhr.status + " " + thrownError);
+                            var message = 'Произошла ошибка при копировании занятия';
+                            if (xhr.responseText) {
+                                message = xhr.responseText.replace('"', '').replace('"', '');
+                                console.log(xhr.responseText);
                             } 
 
-                            var message = 'Произошла ошибка при копировании занятия';
                             console.log(message);
                             var noty = new Noty(notyOptions);
                             noty.options.type = 'error';

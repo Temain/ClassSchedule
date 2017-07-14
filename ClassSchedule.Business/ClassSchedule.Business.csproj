@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\DisciplineNotFoundException.cs" />
     <Compile Include="Helpers\DateHelpers.cs" />
     <Compile Include="Interfaces\IAuditoriumService.cs" />
     <Compile Include="Interfaces\IDictionaryService.cs" />
@@ -114,7 +115,6 @@
     <Compile Include="Services\LessonService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Exceptions\" />
     <Folder Include="Settings\" />
   </ItemGroup>
   <ItemGroup>

@@ -8,6 +8,7 @@ using ClassSchedule.Domain.Context;
 using ClassSchedule.Domain.Models;
 using ClassSchedule.Business.Helpers;
 using ClassSchedule.Business.Models.CopySchedule;
+using ClassSchedule.Business.Exceptions;
 
 namespace ClassSchedule.Business.Services
 {
@@ -363,7 +364,20 @@ namespace ClassSchedule.Business.Services
                 .SingleOrDefault();
             if (targetSchedule != null)
             {
-                RemoveLesson(targetGroupId, user.EducationYearId, user.WeekNumber, targetDayNumber, targetClassNumber, ref changeLog);
+                // RemoveLesson(targetGroupId, user.EducationYearId, user.WeekNumber, targetDayNumber, targetClassNumber, ref changeLog);
+
+                var targetLessons = targetSchedule.Lessons.Where(x => x.DeletedAt == null);
+                foreach (var targetLesson in targetLessons)
+                {
+                    targetLesson.DeletedAt = DateTime.Now;
+
+                    var targetLessonDetails = targetLesson.LessonDetails.Where(x => x.DeletedAt == null);
+                    foreach (var targetLessonDetail in targetLessonDetails)
+                    {
+                        targetLessonDetail.DeletedAt = DateTime.Now;
+                        changeLog += string.Format("Удалено занятие. [LessonId: {0}] [lessonDetailId: {1}]", targetLesson.LessonId, targetLessonDetail.LessonDetailId);
+                    }
+                }
             }
             else
             {
@@ -421,8 +435,7 @@ namespace ClassSchedule.Business.Services
 
                         if (targetDiscipline == null)
                         {
-                            // throw;
-                            // return new JsonErrorResult(HttpStatusCode.BadRequest) { Data = "Копирование занятия невозможно" };
+                            throw new DisciplineNotFoundException();
                         }
 
                         var targetLesson = new Lesson
@@ -494,6 +507,7 @@ namespace ClassSchedule.Business.Services
                         foreach (var targetLessonDetail in targetLesson.LessonDetails)
                         {
                             targetLessonDetail.DeletedAt = DateTime.Now;
+                            changeLog += string.Format("Удалено занятие. [LessonId: {0}] [lessonDetailId: {1}]", targetLesson.LessonId, targetLessonDetail.LessonDetailId);
                         }
                     }
 
@@ -523,6 +537,9 @@ namespace ClassSchedule.Business.Services
                     }
                 }
             }
+
+            changeLog += string.Format("Копировано расписание. [GroupIds: {0}] [EducationYearId: {1}] [SourceWeek: {2} => TargetWeeks: {3}] [Days: {4}]"
+                , string.Join(", ", viewModel.SelectedGroups), user.EducationYearId, viewModel.EditedWeek, string.Join(", ", viewModel.SelectedWeeks), string.Join(", ", viewModel.SelectedDays));
 
             _context.SaveChanges();
         }

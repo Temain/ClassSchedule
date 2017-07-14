@@ -18,6 +18,7 @@ using System.IO;
 using System.Net;
 using ClassSchedule.Business.Models.CopySchedule;
 using ClassSchedule.Business.Helpers;
+using ClassSchedule.Business.Exceptions;
 
 namespace ClassSchedule.Web.Controllers
 {
@@ -176,6 +177,11 @@ namespace ClassSchedule.Web.Controllers
             }
             catch (Exception ex)
             {
+                if (ex is DisciplineNotFoundException)
+                {
+                    return new JsonErrorResult(HttpStatusCode.BadRequest) { Data = "Дисциплина не проводится у целевой группы" };
+                }
+
                 Logger.Error(ex, "Ошибка при копировании занятия");
 
                 return new JsonErrorResult(HttpStatusCode.InternalServerError) { Data = "ErrorMessage:" + ex.Message + ", StackTrace:" + ex.StackTrace };
