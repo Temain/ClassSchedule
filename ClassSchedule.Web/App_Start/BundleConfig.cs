@@ -86,7 +86,7 @@ namespace ClassSchedule.Web
                       "~/Content/font-awesome.css",
                       "~/Content/login.css"));
 
-            bundles.Add(new StyleBundle("~/Content/noty").Include(
+            bundles.Add(new StyleBundle("~/Content/notifications").Include(
                      "~/Content/noty/noty.css"));
         }
     }

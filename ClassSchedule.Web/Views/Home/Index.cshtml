@@ -23,7 +23,7 @@
 }
 
 @Styles.Render("~/Content/bootstrap-select")
-@Styles.Render("~/Content/noty")
+@Styles.Render("~/Content/notifications")
 
 <div class="schedule-container">
     @Html.Partial("_Navbar")
@@ -39,7 +39,7 @@
         @foreach (var group in groupLessons)
         {
             <div class="group bordered-rb text-center" data-group-id="@group.GroupId" style="width: @widthOfGroupColumn%; float: left">
-                <a href="@Url.Action("Info", "AcademicPlan", new {groupId = group.GroupId})" class="group-info" target="_blank" data-bind="tooltip: { title: 'Информация о группе', trigger: 'hover' }">
+                <a href="#" class="group-info" target="_blank" data-bind="tooltip: { title: 'Информация о группе', trigger: 'hover' }">
                     <span>@group.GroupName</span>
                 </a>
             </div>

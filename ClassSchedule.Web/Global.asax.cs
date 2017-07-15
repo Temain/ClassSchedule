@@ -22,6 +22,12 @@ namespace ClassSchedule.Web
             NLogConfig.Configure();
         }
 
+        protected void Application_BeginRequest()
+        {
+            if (!Context.Request.IsSecureConnection)
+                Response.Redirect(Context.Request.Url.ToString().Replace("http:", "https:"));
+        }
+
         // Обработка HTTP исключений
         protected void Application_Error(object sender, EventArgs e)
         {

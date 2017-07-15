@@ -113,7 +113,7 @@ namespace ClassSchedule.Web.Controllers
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
-                    ModelState.AddModelError("", "Неудачная попытка входа.");
+                    ModelState.AddModelError("", "Неудачная попытка входа");
                     return View(model);
             }
         }
@@ -166,7 +166,7 @@ namespace ClassSchedule.Web.Controllers
             }
 
             Logger.Info("Изменен пароль пользователя. UserId = {0}", model.UserId);
-            TempData["Result"] = "Пароль успешно изменен.";
+            TempData["Result"] = "Пароль успешно изменен";
 
             return RedirectToAction("ChangePassword", "Account");
         }

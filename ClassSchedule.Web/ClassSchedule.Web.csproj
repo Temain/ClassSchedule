@@ -342,6 +342,7 @@
     <Content Include="Content\bootstrap-select.css.map" />
     <Content Include="Content\noty\noty.css.map" />
     <None Include="Properties\PublishProfiles\file.pubxml" />
+    <None Include="Properties\PublishProfiles\production.pubxml" />
     <None Include="Properties\PublishProfiles\smarterasp.net.pubxml" />
     <None Include="Properties\PublishProfiles\somee.com.pubxml" />
     <Content Include="Scripts\bootstrap-select.js" />

@@ -41,7 +41,7 @@ namespace ClassSchedule.Web
             // container.RegisterType<ApplicationDbContext>(new HierarchicalLifetimeManager(), new InjectionConstructor());
             container.RegisterType<ApplicationDbContext>(new PerRequestLifetimeManager());
 
-            container.RegisterType<ManageController>(new InjectionConstructor());
+            // container.RegisterType<ManageController>(new InjectionConstructor());
 
             container.RegisterType<ILessonService, LessonService>();
             container.RegisterType<IJobService, JobService>();
