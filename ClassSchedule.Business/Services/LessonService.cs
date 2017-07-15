@@ -375,7 +375,7 @@ namespace ClassSchedule.Business.Services
                     foreach (var targetLessonDetail in targetLessonDetails)
                     {
                         targetLessonDetail.DeletedAt = DateTime.Now;
-                        changeLog += string.Format("Удалено занятие. [LessonId: {0}] [lessonDetailId: {1}]", targetLesson.LessonId, targetLessonDetail.LessonDetailId);
+                        changeLog += string.Format("Удалено занятие. [LessonId: {0}] [lessonDetailId: {1}]\r\n", targetLesson.LessonId, targetLessonDetail.LessonDetailId);
                     }
                 }
             }
@@ -458,8 +458,8 @@ namespace ClassSchedule.Business.Services
                     }
                 }
 
-                changeLog += string.Format("\r\nКопировано занятие. [SourceScheduleId: {0} => TargetScheduleId: {1}]\r\n[SourceGroupId: {2}] => TargetGroupId: {3}]\r\n[EducationYearId: {4}]\r\n[SourceDayNumber: {5} => TargetDayNumber: {6}]\r\n[SourceClassNumber: {7} => TargetClassNumber: {8}]"
-                    , sourceSchedule.ScheduleId, (targetSchedule.ScheduleId != 0 ? targetSchedule.ScheduleId + "" : "New"), sourceGroupId, targetGroupId, user.EducationYearId, sourceDayNumber, targetDayNumber, sourceClassNumber, targetClassNumber);
+                changeLog += string.Format("Копировано занятие. [SourceScheduleId: {0} => TargetScheduleId: {1}]\r\n[SourceGroup: {2}] => TargetGroup: {3}]\r\n[EducationYearId: {4}]\r\n[SourceDayNumber: {5} => TargetDayNumber: {6}]\r\n[SourceClassNumber: {7} => TargetClassNumber: {8}]"
+                    , sourceSchedule.ScheduleId, (targetSchedule.ScheduleId != 0 ? targetSchedule.ScheduleId + "" : "New"), "(" + sourceGroup.GroupId + ")" + sourceGroup.GroupName, "(" + targetGroup.GroupId + ")" + targetGroup.GroupName, user.EducationYearId, sourceDayNumber, targetDayNumber, sourceClassNumber, targetClassNumber);
             }
 
             _context.SaveChanges();
@@ -470,6 +470,7 @@ namespace ClassSchedule.Business.Services
         /// </summary>
         public void CopySchedule(CopyScheduleViewModel viewModel, ApplicationUser user, ref string changeLog)
         {
+            changeLog += "Копирование расписания.";
             var sourceSchedules = GetScheduleForGroups(viewModel.SelectedGroups, user.EducationYearId, user.WeekNumber)
                 .Where(x => viewModel.SelectedDays.Contains(x.DayNumber));
             var targetSchedules = _context.Schedule
@@ -507,7 +508,7 @@ namespace ClassSchedule.Business.Services
                         foreach (var targetLessonDetail in targetLesson.LessonDetails)
                         {
                             targetLessonDetail.DeletedAt = DateTime.Now;
-                            changeLog += string.Format("Удалено занятие. [LessonId: {0}] [lessonDetailId: {1}]", targetLesson.LessonId, targetLessonDetail.LessonDetailId);
+                            changeLog += string.Format("\r\nУдалено занятие. [LessonId: {0}] [lessonDetailId: {1}]", targetLesson.LessonId, targetLessonDetail.LessonDetailId);
                         }
                     }
 
@@ -538,7 +539,7 @@ namespace ClassSchedule.Business.Services
                 }
             }
 
-            changeLog += string.Format("Копировано расписание. [GroupIds: {0}] [EducationYearId: {1}] [SourceWeek: {2} => TargetWeeks: {3}] [Days: {4}]"
+            changeLog += string.Format("\r\nКопировано расписание. [GroupIds: {0}] [EducationYearId: {1}] [SourceWeek: {2} => TargetWeeks: {3}] [Days: {4}]"
                 , string.Join(", ", viewModel.SelectedGroups), user.EducationYearId, viewModel.EditedWeek, string.Join(", ", viewModel.SelectedWeeks), string.Join(", ", viewModel.SelectedDays));
 
             _context.SaveChanges();

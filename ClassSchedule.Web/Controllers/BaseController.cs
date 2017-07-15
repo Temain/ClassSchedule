@@ -113,7 +113,7 @@ namespace ClassSchedule.Web.Controllers
                 };
             }
 
-            Logger.Error(filterContext.Exception.Message, filterContext.Exception, new {});
+            Logger.Error(filterContext.Exception, filterContext.Exception.Message, new {});
 
             filterContext.ExceptionHandled = true;
             filterContext.HttpContext.Response.Clear();

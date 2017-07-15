@@ -418,6 +418,11 @@ namespace ClassSchedule.Web.Controllers
 
             _context.SaveChanges();
 
+            var groups = _groupService.GetEditableGroups(UserProfile.Id)
+                .Select(x => "(" + x.GroupId + ")" + x.GroupName);
+            var logMessage = string.Format("Выбраны группы для редактирования расписания. [Groups: {0}]", string.Join(",", groups));
+            Logger.Info(logMessage);
+
             return Json(new { result = "Redirect", url = Url.Action("Index", "Home") });
         }
 

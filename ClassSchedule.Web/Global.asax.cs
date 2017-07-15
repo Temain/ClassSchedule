@@ -32,12 +32,12 @@ namespace ClassSchedule.Web
 
             if (currentRouteData != null)
             {
-                if (currentRouteData.Values["controller"] != null && !String.IsNullOrEmpty(currentRouteData.Values["controller"].ToString()))
+                if (currentRouteData.Values["controller"] != null && !string.IsNullOrEmpty(currentRouteData.Values["controller"].ToString()))
                 {
                     currentController = currentRouteData.Values["controller"].ToString();
                 }
 
-                if (currentRouteData.Values["action"] != null && !String.IsNullOrEmpty(currentRouteData.Values["action"].ToString()))
+                if (currentRouteData.Values["action"] != null && !string.IsNullOrEmpty(currentRouteData.Values["action"].ToString()))
                 {
                     currentAction = currentRouteData.Values["action"].ToString();
                 }
@@ -61,7 +61,7 @@ namespace ClassSchedule.Web
                         action = "NotFound";
                         break;
 
-                    // и т.д.
+                        // и т.д.
                 }
             }
 
@@ -71,7 +71,7 @@ namespace ClassSchedule.Web
             var declaringType = source != null ? source.GetMethod().DeclaringType : this.GetType();
 
             var logger = LogManager.GetLogger(declaringType.FullName);
-            logger.Error(ex, ex.Message);
+            logger.Fatal(ex, ex.Message);
 
             httpContext.ClearError();
             httpContext.Response.Clear();
